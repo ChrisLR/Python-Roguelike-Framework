@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class MessageType(Enum):
-    pass
+    ObjectDestroyed = 0
 
 
 class QueryType(Enum):

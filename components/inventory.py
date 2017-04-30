@@ -1,6 +1,4 @@
 from components.component import Component
-from items.item import ItemStack
-from copy import deepcopy
 
 
 class Inventory(Component):
@@ -12,28 +10,26 @@ class Inventory(Component):
     """
     def __init__(self):
         super().__init__()
-        self._item_stacks = dict()
+        self._items = []
+        self._destroyed_items = []
+
+    def clear_destroyed_items(self):
+        for item in self._destroyed_items:
+            self._items.remove(item)
+        self._destroyed_items = []
 
     def copy(self):
         new_copy = Inventory()
-        new_copy._item_stacks = self._item_stacks.copy()
-        for item_stack in new_copy._item_stacks:
-            item_stack.item = item_stack.item.copy()
+        for item in self._items:
+            new_copy._items.append(item.copy())
 
         return new_copy
 
     def add_item(self, item):
-        if item in self._item_stacks:
-            self._item_stacks[item].add_to_stack()
-        else:
-            self._item_stacks[item] = ItemStack(item)
+        self._items.append(item)
 
-    def pop_item(self, item):
-        if item in self._item_stacks:
-            popped_item = self._item_stacks[item].pop_from_stack()
-            if self._item_stacks[item].amount <= 0:
-                del self._item_stacks[item]
-            return popped_item
+    def remove_item(self, item):
+        self._items.remove(item)
 
     def get_items(self, uid, count=0, pop=False):
         """
@@ -43,20 +39,28 @@ class Inventory(Component):
         :return: List of items found.
         """
         found_items = []
-        item_stacks = [item_stack for item_stack in self._item_stacks.values() if item_stack.item.uid == uid]
-        for item_stack in item_stacks:
+        for item in self._items:
+            if item.destroyed:
+                self._destroyed_items.append(item)
+                continue
+
             if count and len(found_items) >= count:
                 break
+            if item.uid == uid:
+                found_items.append(item)
+                if pop:
+                    self.remove_item(item)
 
-            if pop:
-                found_items.append(self.pop_item(item_stack.item))
-            else:
-                found_items.append(item_stack.item)
-
+        self.clear_destroyed_items()
         return found_items
 
     def get_all_items(self):
-        return self._item_stacks.values()
+        for item in self._items:
+            if item.destroyed:
+                self._destroyed_items.append(item)
+        self.clear_destroyed_items()
+
+        return self._items
 
 
 class KeyBoundInventory(Inventory):
@@ -74,7 +78,7 @@ class KeyBoundInventory(Inventory):
         self._assigned_symbols = {0: {}}
 
     def add_item(self, item):
-        if item not in self._item_stacks:
+        if item not in self._items:
             super(KeyBoundInventory, self).add_item(item)
             next_symbol = self.__return_next_assigned_symbol()
             self._assigned_symbols[self._page][next_symbol] = item
@@ -82,6 +86,11 @@ class KeyBoundInventory(Inventory):
 
         super(KeyBoundInventory, self).add_item(item)
         return self.get_symbol_from_item(item)
+
+    def clear_destroyed_items(self):
+        for item in self._destroyed_items:
+            self.pop_item_from_symbol(self.get_symbol_from_item(item))
+        self._destroyed_items = []
 
     def get_symbol_from_uid(self, item_uid):
         return next(
@@ -96,7 +105,9 @@ class KeyBoundInventory(Inventory):
 
     def pop_item_from_symbol(self, symbol):
         self._unassigned_symbols[self._page].append(symbol)
-        return self.pop_item(self._assigned_symbols[self._page].pop(symbol))
+        item = self._assigned_symbols[self._page].pop(symbol)
+        self.remove_item(item)
+        return item
 
     def get_assigned_symbols(self, page):
         return {symbol: name for symbol, name in self._assigned_symbols[page].items()}

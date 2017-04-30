@@ -6,6 +6,7 @@ class GameObject(object):
         self.components = {}
         self.observers = {}
         self.responders = {}
+        self.destroyed = False
 
     def copy_to(self, new_game_object):
         for component in self.components.values():
@@ -15,6 +16,9 @@ class GameObject(object):
 
     def get_component(self, component_name):
         return self.components.get(component_name, None)
+
+    def mark_as_destroyed(self):
+        self.destroyed = True
 
     def update(self):
         for component in self.components.values():
