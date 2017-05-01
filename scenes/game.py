@@ -116,7 +116,9 @@ class GameScene(BaseScene):
                             callback_function=lambda chosen_item: actions.consume(player, chosen_item), **kwargs)
 
                     if moved:
+                        player.update()
                         for monster in current_level.spawned_monsters:
+                            monster.update()
                             self.action_manager.monster_take_turn(monster, player)
                         moved = False
 

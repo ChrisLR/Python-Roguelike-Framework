@@ -31,12 +31,11 @@ class CharacterFactory(object):
         else:
             raise Exception("Could not find template for UID " + uid)
 
-    def create(self, name, class_uid, race_uid, stats, body_uid):
+    def create(self, uid, name, class_uid, race_uid, stats, body_uid):
         """
         Creates a new character based on arguments
         :return:
         """
-        uid = "player"
         new_instance = Character(
             uid=uid,
             name=name,

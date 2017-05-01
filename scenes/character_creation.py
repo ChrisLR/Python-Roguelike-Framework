@@ -1,12 +1,11 @@
 import tdl
-
 from base.scene import BaseScene
-
 from components.stats import make_character_stats
+from components.needs import Needs
 from data.python_templates.classes import character_class_templates
-from data.python_templates.races import race_templates
 from data.python_templates.outfits import starter_warrior, starter_thief
-from stats.enums import StatsEnum
+from data.python_templates.races import race_templates
+from data.python_templates.needs import hunger, thirst
 from managers.console_manager import Menu
 from ui import controls
 
@@ -103,6 +102,7 @@ class CharacterCreationScene(BaseScene):
             for key_event in key_events:
                 if key_event.keychar.upper() == 'A':
                     self.game_context.player = self.character_factory.create(
+                        uid="player",
                         name=self.control_name.answer,
                         class_uid=self.control_class.answer.uid,
                         race_uid=self.control_race.answer.uid,
@@ -111,11 +111,10 @@ class CharacterCreationScene(BaseScene):
                         body_uid="humanoid"
                     )
                     player = self.game_context.player
+                    player.register_component(Needs.create_standard(1, 100, hunger, thirst))
                     # TODO We will need a much better way to assign outfits.
                     if self.control_class.answer.uid.lower() == "thief":
                         starter_thief.apply(player)
                     else:
                         starter_warrior.apply(player)
-
-
                     self.transition_to("GameScene")

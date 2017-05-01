@@ -1,4 +1,5 @@
 from .component import Component
+from managers.echo import EchoService
 
 
 class Needs(Component):
@@ -9,6 +10,7 @@ class Needs(Component):
         self.current_points = maximum_points.copy()
         self.maximum_points = maximum_points
         self.tick = 10
+        self.last_threshold = maximum_points.copy()
 
     def update(self):
         if self.tick:
@@ -18,7 +20,14 @@ class Needs(Component):
         self.tick = 10
         for need in self.needs:
             cost = 1 * self.metabolism[need]
-            self.current_points[need] -= cost
+            if not self.current_points[need] <= -self.maximum_points[need]:
+                self.current_points[need] -= cost
+
+            for threshold, message in need.negative_threshold_messages.items():
+                if self.last_threshold[need] > threshold >= self.current_points[need]:
+                    EchoService.singleton.standard_context_echo(message=message)
+                    self.last_threshold[need] = threshold
+                    break
 
     @classmethod
     def create_standard(cls, metabolism, maximum_points, *args):
