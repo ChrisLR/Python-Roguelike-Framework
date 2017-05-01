@@ -22,6 +22,13 @@ def attack(attacker, target, console):
     combat_manager.execute_combat_round(attacker, target)
 
 
+def consume(actor, chosen_item):
+    if chosen_item.consumable:
+        chosen_item.consumable.consume(actor)
+    else:
+        echo.EchoService.singleton.standard_context_echo("You can't eat that!")
+
+
 def move(actor, dx, dy):
     x, y = actor.location.get_local_coords()
     new_x = x + dx

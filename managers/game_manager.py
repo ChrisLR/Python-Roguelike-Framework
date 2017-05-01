@@ -28,7 +28,6 @@ class GameManager(object):
         while True:  # Continue in an infinite game loop.
             self.console_manager.main_console.clear()  # Blank the console
             self.scene_manager.render_current_scene(player=self.game_context.player)
-            # TODO We might want to GET the tdl key event here so we don't have to reimplement generic stuff.
             all_key_events = list(tdl.event.get())
             for key_event in all_key_events:
                 if key_event.type == 'QUIT':
@@ -38,7 +37,6 @@ class GameManager(object):
 
             self.scene_manager.handle_input(player=self.game_context.player, key_events=key_events)
             tdl.flush()
-            # TODO When dead it should switch to a new scene for character dump.
 
     def load_game_data(self):
         """

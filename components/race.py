@@ -13,8 +13,6 @@ class Race(Component):
         super().__init__()
         self.uid = uid
         self.name = name
-        # TODO Some races won't be leveled, should acknowledge a level_tree of one
-        # TODO and avoid registering a pool
         self.level_tree = level_tree
         self.body_template_uid = body_template_uid
         self.get_level = lambda: 0

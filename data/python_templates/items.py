@@ -102,7 +102,6 @@ def build_breastplate():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_torso"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 
@@ -124,7 +123,6 @@ def build_leather_cuirass():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_torso"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 
@@ -146,7 +144,6 @@ def build_bracer():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_arm"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 
@@ -168,7 +165,6 @@ def build_gauntlet():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_hand"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 
@@ -190,7 +186,6 @@ def build_greave():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_leg"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 
@@ -213,7 +208,6 @@ def build_leather_pants():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_leg"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 
@@ -235,7 +229,6 @@ def build_boot():
             armor_category=item_enums.ArmorCategory.Medium,
             wearable_body_parts_uid=["humanoid_foot"],
             worn_layer=item_enums.WornLayer.Outer,
-            maximum_dexterity_bonus=2
         )
     )
 

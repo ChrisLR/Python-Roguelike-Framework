@@ -2,18 +2,18 @@ import logging
 import random
 from enum import Enum
 
-import tdl
-
 import settings
+import tdl
 from areas.level import Level
 from base.scene import BaseScene
-from stats.enums import StatsEnum
-from managers.action_manager import ActionManager
-from generators.dungeon_generator import DungeonGenerator
-from managers.echo import EchoService
-from settings import DUNGEON_COLORS as COLORS
+from characters import actions
 from data.python_templates.characters import character_templates
 from data.python_templates.items import item_templates
+from generators.dungeon_generator import DungeonGenerator
+from managers.action_manager import ActionManager
+from managers.echo import EchoService
+from settings import DUNGEON_COLORS as COLORS
+from stats.enums import StatsEnum
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -93,7 +93,6 @@ class GameScene(BaseScene):
         key_events = kwargs["key_events"]
         for key_event in key_events:
             if key_event.type == 'KEYDOWN':
-                # TODO Make Inventory System, Switch to Inventory Scene
                 # TODO Make stairs system to go up or down
                 # TODO Add Action to pick up items
                 # TODO We will need to implement an action mapping
@@ -112,13 +111,9 @@ class GameScene(BaseScene):
                         self.scene_manager.transition_to('InventoryScene', **kwargs)
 
                     if key_event.keychar == "e":
-                        # TODO Move this out.
-                        def consume(chosen_item):
-                            if chosen_item.consumable:
-                                chosen_item.consumable.consume(player)
-                            else:
-                                EchoService.singleton.standard_context_echo("You can't eat that!")
-                        self.scene_manager.transition_to('InventoryQueryScene', callback_function=consume, **kwargs)
+                        self.scene_manager.transition_to(
+                            'InventoryQueryScene',
+                            callback_function=lambda chosen_item: actions.consume(player, chosen_item), **kwargs)
 
                     if moved:
                         for monster in current_level.spawned_monsters:
@@ -137,7 +132,6 @@ class GameScene(BaseScene):
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
-        # TODO The player must be built and retrieved here.
         dungeon_generator = DungeonGenerator(self.game_context.factory_service)
         player = self.game_context.player
         player.is_player = True

@@ -19,9 +19,6 @@ class InputControl(object):
         key_events = kwargs["key_events"]
         for key_event in key_events:
             if key_event.keychar:
-                if key_event.key == "F4":
-                    # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
-                    raise SystemExit("Window was closed.")
                 if key_event.key == "ENTER":
                     self.finished = True
                     return
@@ -84,10 +81,6 @@ class ListChoiceControl(object):
         key_events = kwargs["key_events"]
         for key_event in key_events:
             if key_event.keychar:
-                if key_event.key == "F4":
-                    # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
-                    raise SystemExit("Window was closed.")
-
                 chosen_option = next((option for letter, option in self.options if letter == key_event.keychar), None)
                 if chosen_option:
                     self.answer = chosen_option
