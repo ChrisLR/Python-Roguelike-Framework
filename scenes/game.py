@@ -32,7 +32,7 @@ class GameScene(BaseScene):
     ID = "Game"
 
     def __init__(self, console_manager, scene_manager, game_context):
-        super().__init__(console_manager, scene_manager, game_context)
+        super().__init__(console_manager, scene_manager, game_context, persistent=True)
         # TODO Eventually we will want to map more than just movement keys
         self.loaded_levels = []
         self.movement_keys = settings.KEY_MAPPINGS

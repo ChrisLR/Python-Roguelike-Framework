@@ -9,13 +9,9 @@ from scenes import (
 
 class SceneManager(object):
     def __init__(self, console_manager, game_context):
-        # TODO Should have a service to access templates instead of using the manager..
-        # TODO Not sure about the callbacks, think of a better way.
         self.console_manager = console_manager
         self.game_context = game_context
         self.current_scene = None
-        # TODO Quickfix for not reinstancing game scene.
-        self.game_scene = None
         self.scenes = {
             "CharacterCreationScene": CharacterCreationScene,
             "GameScene": GameScene,
@@ -23,19 +19,16 @@ class SceneManager(object):
             "InventoryQueryScene": InventoryQueryScene,
             "MainMenuScene": MainMenuScene
         }
+        self.scenes_cache = {}
         self.transition_to("MainMenuScene")
 
     def transition_to(self, scene_name, **kwargs):
-        if scene_name == "GameScene":
-            if self.game_scene:
-                self.current_scene = self.game_scene
-                return
-            else:
-                self.game_scene = self.scenes[scene_name](self.console_manager, self, self.game_context, **kwargs)
-                self.current_scene = self.game_scene
-                return
-        else:
-            self.current_scene = self.scenes[scene_name](self.console_manager, self, self.game_context, **kwargs)
+        new_scene = self.scenes_cache.get(scene_name, None)
+        if not new_scene:
+            new_scene = self.scenes[scene_name](self.console_manager, self, self.game_context, **kwargs)
+            if new_scene.persistent:
+                self.scenes_cache[scene_name] = new_scene
+        self.current_scene = new_scene
 
     def render_current_scene(self, **kwargs):
         self.current_scene.render(**kwargs)

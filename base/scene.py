@@ -8,11 +8,12 @@ class BaseScene(object):
     """Abstract class for all scenes"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, console_manager, scene_manager, game_context):
+    def __init__(self, console_manager, scene_manager, game_context, persistent=False):
         self.console_manager = console_manager
         self.main_console = console_manager.main_console
         self.scene_manager = scene_manager
         self.game_context = game_context
+        self.persistent = persistent
 
     @abc.abstractmethod
     def render(self):
