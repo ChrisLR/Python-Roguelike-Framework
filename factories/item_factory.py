@@ -2,7 +2,7 @@ from data.python_templates.items import item_templates
 from data.python_templates.material import material_templates
 from items.item import Item
 from components.consumable import Consumable
-from managers.echo import StandardMessageVariables
+from managers.echo import MessageVariables
 
 
 class ItemFactory(object):
