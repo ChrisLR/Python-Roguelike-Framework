@@ -22,5 +22,5 @@ class BaseScene(object):
     def handle_input(self):
         pass
 
-    def transition_to(self, scene_name):
-        self.scene_manager.transition_to(scene_name)
+    def transition_to(self, scene_name, **kwargs):
+        self.scene_manager.transition_to(scene_name, **kwargs)

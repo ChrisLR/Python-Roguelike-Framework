@@ -1,6 +1,8 @@
 from data.python_templates.items import item_templates
 from data.python_templates.material import material_templates
 from items.item import Item
+from components.consumable import Consumable
+from managers.echo import StandardMessageVariables
 
 
 class ItemFactory(object):
@@ -42,6 +44,21 @@ class ItemFactory(object):
         item_template.copy_to(new_instance)
 
         return new_instance
+
+    @staticmethod
+    def create_food(name, description, nutrition_value):
+        """ Helper method to create food something can eat."""
+        uid = name.lower().replace(" ", "_")
+
+        material = material_templates.get('misc').copy()
+        material.name = name
+        material.uid = uid
+
+        new_food_item = Item(uid=uid, name=name, description=description)
+        new_food_item.register_component(Consumable(message="{actor} eats a {target_item}", effects=[]))
+        new_food_item.register_component(material)
+
+        return new_food_item
 
     def get_material_template_by_uid(self, uid):
         return material_templates[uid]

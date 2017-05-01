@@ -96,6 +96,7 @@ class GameScene(BaseScene):
                 # TODO Make Inventory System, Switch to Inventory Scene
                 # TODO Make stairs system to go up or down
                 # TODO Add Action to pick up items
+                # TODO We will need to implement an action mapping
 
                 # We mix special keys with normal characters so we use keychar.
                 if not player.is_dead():
@@ -108,7 +109,16 @@ class GameScene(BaseScene):
                         moved = True
 
                     if key_event.keychar == "i":
-                        self.scene_manager.enter_inventory_screen(**kwargs)
+                        self.scene_manager.transition_to('InventoryScene', **kwargs)
+
+                    if key_event.keychar == "e":
+                        # TODO Move this out.
+                        def consume(chosen_item):
+                            if chosen_item.consumable:
+                                chosen_item.consumable.consume(player)
+                            else:
+                                EchoService.singleton.standard_context_echo("You can't eat that!")
+                        self.scene_manager.transition_to('InventoryQueryScene', callback_function=consume, **kwargs)
 
                     if moved:
                         for monster in current_level.spawned_monsters:

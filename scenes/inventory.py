@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 class InventoryScene(BaseScene):
     ID = "Inventory"
 
-    def __init__(self, console_manager, scene_manager, game_context):
+    def __init__(self, console_manager, scene_manager, game_context, **kwargs):
         super().__init__(console_manager, scene_manager, game_context)
         self.item_list_window = ItemListWindow(self.main_console)
         self.item_detail_window = ItemDetailWindow(self.main_console)
@@ -25,6 +25,7 @@ class InventoryScene(BaseScene):
             self.item_list_window,
             self.item_detail_window
         ]
+        self.on_switch(**kwargs)
 
     def on_switch(self, **kwargs):
         if "player" not in kwargs:
@@ -42,7 +43,7 @@ class InventoryScene(BaseScene):
         key_events = kwargs["key_events"]
         for key_event in key_events:
             if key_event.key == "ESCAPE":
-                self.transition_to_callback()
+                self.transition_to("GameScene")
                 return
             for window in self.windows:
                 window.handle_input(**kwargs)

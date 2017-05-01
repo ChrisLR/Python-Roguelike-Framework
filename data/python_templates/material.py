@@ -20,7 +20,14 @@ Bronze = Material('bronze', 'Bronze', hardness=0.6, sharpness=0.8, potency=0.6, 
 Iron = Material('iron', 'Iron', hardness=0.7, sharpness=1, potency=0.6, weight=5.85, value=20)
 Steel = Material('steel', 'Steel', hardness=0.8, sharpness=1.2, potency=0.8, weight=6.5, value=150)
 
+# This MISC material is for special cases where we want to build something for the sake of doing it.
+# Instances of this material are expected to rename but keep very poor values.
+# If something needs to be better than that it should be made into its own balanced material.
+# Example: A sword made out of bread.
+Misc = Material('misc', 'Misc')
+
 material_templates = {
+    Misc.uid: Misc,
     Skin.uid: Skin,
     Flesh.uid: Flesh,
     Fur.uid: Fur,

@@ -100,7 +100,9 @@ class ListChoiceControl(object):
             color = INACTIVE_CONTROL_COLOR
 
         width_char_count = 0
+        console.setColors(fg=color, bg=BLACK_COLOR)
         console.printStr(self.question + "\n")
+        console.setColors(fg=INACTIVE_CONTROL_COLOR, bg=BLACK_COLOR)
         for letter, option in self.options:
             new_text = "    ({}){}".format(letter, option.name)
             if width_char_count + len(new_text) > self.root_console.width:
@@ -111,7 +113,7 @@ class ListChoiceControl(object):
             if self.answer and self.answer == option:
                 console.setColors(fg=CHOSEN_CONTROL_COLOR, bg=BLACK_COLOR)
             else:
-                console.setColors(fg=color, bg=BLACK_COLOR)
+                console.setColors(fg=INACTIVE_CONTROL_COLOR, bg=BLACK_COLOR)
             console.printStr(new_text)
         console.printStr("\n")
 

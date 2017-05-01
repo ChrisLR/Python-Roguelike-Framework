@@ -1,5 +1,6 @@
 from characters.outfit import Outfit
 from data.python_templates import items
+from data.python_templates import consumables
 from data.python_templates import material
 
 
@@ -20,7 +21,8 @@ def build_starter_warrior():
         ],
         items_held=[
             items.short_sword
-        ]
+        ],
+        items_in_inventory=[consumables.bread]
     )
 
 
@@ -46,7 +48,8 @@ def build_starter_thief():
         ],
         items_held=[
             items.short_sword
-        ]
+        ],
+        items_in_inventory=[consumables.bread]
     )
 
 starter_warrior = build_starter_warrior()

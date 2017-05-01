@@ -116,4 +116,6 @@ class CharacterCreationScene(BaseScene):
                         starter_thief.apply(player)
                     else:
                         starter_warrior.apply(player)
+
+
                     self.transition_to("GameScene")
