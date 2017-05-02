@@ -49,25 +49,3 @@ class Item(GameObject):
         new_item = Item(self.uid, self._name, self._description, self.location, self.display)
         return super().copy_to(new_item)
 
-    def __eq__(self, other):
-        return (
-            self.uid == other.uid,
-            self.name == other.name,
-            self.description == other.description,
-            self.material == other.material,
-            self.stats == other.stats
-        )
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(
-            (
-                self.uid,
-                self.name,
-                self.description,
-                self.material,
-                self.stats
-            )
-        )

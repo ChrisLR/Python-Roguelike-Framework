@@ -30,6 +30,7 @@ def consume(actor, chosen_item):
 
 
 def move(actor, dx, dy):
+
     x, y = actor.location.get_local_coords()
     new_x = x + dx
     new_y = y + dy
@@ -39,6 +40,8 @@ def move(actor, dx, dy):
 
     # move by the given amount, if the destination is not blocked
     if not new_tile.is_blocked:
+        # TODO This kind of is blocked causes bugs where an actor moves somewhere an actor dies.
+        # TODO makes it impossible to auto attack on that tile.
         actor.location.local_x = new_x
         actor.location.local_y = new_y
         old_tile.contains_object = False

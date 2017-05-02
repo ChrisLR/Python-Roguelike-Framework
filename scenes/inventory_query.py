@@ -25,7 +25,6 @@ class InventoryQueryScene(BaseScene):
         self.callback_function = None
         self.on_switch(**kwargs)
 
-
     def on_switch(self, **kwargs):
         if "player" not in kwargs:
             logger.error("InventoryQueryScene: Player was not given in kwargs.")
@@ -54,6 +53,8 @@ class InventoryQueryScene(BaseScene):
         if self.item_query_window.chosen_item:
             self.transition_to('GameScene')
             self.callback_function(chosen_item=self.item_query_window.chosen_item)
+            self.callback_function = None
+            self.item_query_window.chosen_item = None
 
 
 class ItemQueryWindow(object):
