@@ -1,8 +1,7 @@
 from characters.character import Character
 from components.display import Display
-from components.experience_pool import ExperiencePool
+from components.effects import Effects
 from components.inventory import Inventory
-from components.race import Race
 from data.python_templates.characters import character_templates
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
@@ -51,6 +50,7 @@ class CharacterFactory(object):
         total_health = health_base + constitution_bonus
         new_instance.stats.set_core_current_value(StatsEnum.Health, total_health)
         new_instance.stats.set_core_maximum_value(StatsEnum.Health, total_health)
+        new_instance.register_component(Effects())
 
         return new_instance
 

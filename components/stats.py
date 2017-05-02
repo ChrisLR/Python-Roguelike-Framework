@@ -1,7 +1,7 @@
 import six
 
 from components.component import Component
-from components.messages import QueryType
+from components.messages import QueryType, MessageType
 from stats.enums import StatsEnum
 from stats.stat import Stat
 
@@ -17,13 +17,23 @@ class Stats(Component):
         for key, value in six.iteritems(kwargs):
             self.add_core_stat(StatsEnum[key.capitalize()], value, value)
 
+    def on_register(self, host):
+        super().on_register(host)
+        host.register_observer(self, MessageType.AlterStat, self.alter_stat)
+
+    def alter_stat(self, stat_altered, potency):
+        self.modify_core_current_value(stat_altered, potency)
+
     def add_core_stat(self, stat, current_value, maximum_value):
         if stat in StatsEnum:
             self._core_stats[stat] = Stat(stat, current_value, maximum_value)
 
     def modify_core_current_value(self, stat, modifier):
         if stat in self._core_stats:
-            self._core_stats[stat].current += modifier
+            if self._core_stats[stat].maximum >= self._core_stats[stat].current + modifier:
+                self._core_stats[stat].current += modifier
+            else:
+                self._core_stats[stat].current = self._core_stats[stat].maximum
 
     def set_core_current_value(self, stat, current_value):
         if stat in self._core_stats:

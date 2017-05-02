@@ -1,8 +1,8 @@
+from data.python_templates import effects
 from data.python_templates.items import item_templates
 from data.python_templates.material import material_templates
 from items.item import Item
 from components.consumable import Consumable
-from managers.echo import MessageVariables
 
 
 class ItemFactory(object):
@@ -46,7 +46,7 @@ class ItemFactory(object):
         return new_instance
 
     @staticmethod
-    def create_food(name, description, nutrition_value):
+    def create_food(name, description, nutrition_value=0, extra_effects=None):
         """ Helper method to create food something can eat."""
         uid = name.lower().replace(" ", "_")
 
@@ -55,7 +55,41 @@ class ItemFactory(object):
         material.uid = uid
 
         new_food_item = Item(uid=uid, name=name, description=description)
-        new_food_item.register_component(Consumable(message="{actor} eats a {target_item}", effects=[]))
+        on_consume_effects = []
+        if nutrition_value:
+            nutrition_effect = effects.restore_hunger.copy()
+            nutrition_effect.potency = nutrition_value
+            on_consume_effects.append(nutrition_effect)
+
+        if extra_effects:
+            on_consume_effects.extend(extra_effects)
+        new_food_item.register_component(
+            Consumable(message="{actor} eats a {target_item}", effects=on_consume_effects))
+        new_food_item.register_component(material)
+
+        return new_food_item
+
+    @staticmethod
+    def create_drink(name, description, nutrition_value=0, extra_effects=None):
+        """ Helper method to create something one can drink from."""
+        uid = name.lower().replace(" ", "_")
+
+        material = material_templates.get('misc').copy()
+        material.name = name
+        material.uid = uid
+
+        on_consume_effects = []
+        if nutrition_value:
+            nutrition_effect = effects.restore_thirst.copy()
+            nutrition_effect.potency = nutrition_value
+            on_consume_effects.append(nutrition_effect)
+
+        if extra_effects:
+            on_consume_effects.extend(extra_effects)
+
+        new_food_item = Item(uid=uid, name=name, description=description)
+        new_food_item.register_component(
+            Consumable(message="{actor} drinks from {target_item}", effects=on_consume_effects))
         new_food_item.register_component(material)
 
         return new_food_item

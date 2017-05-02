@@ -12,7 +12,9 @@ class Consumable(Component):
         self.on_consume_effects = effects
 
     def consume(self, consumer):
-        for effect in self.on_consume_effects:
-            effect.apply(consumer)
+        if consumer.effects:
+            for effect in self.on_consume_effects:
+                consumer.effects.add_effect(effect)
+
         EchoService.singleton.standard_context_echo(message=self.message, actor=consumer, target_item=self.host)
         self.host.mark_as_destroyed()

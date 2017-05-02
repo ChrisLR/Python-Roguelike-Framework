@@ -1,4 +1,5 @@
 from .component import Component
+from components.messages import MessageType
 from managers.echo import EchoService
 
 
@@ -12,6 +13,44 @@ class Needs(Component):
         self.tick = 10
         self.last_threshold = maximum_points.copy()
 
+    def on_register(self, host):
+        super().on_register(host)
+        host.register_observer(self, MessageType.AlterNeed, self.alter_need)
+
+    def _get_threshold_percent(self, need):
+        return round(self.current_points[need] * 100 / self.maximum_points[need])
+
+    def alter_need(self, need_altered, potency):
+        if need_altered in self.needs:
+            if potency > 0:
+                if self.current_points[need_altered] + potency < self.maximum_points[need_altered]:
+                    self.current_points[need_altered] += potency
+                else:
+                    self.current_points[need_altered] = self.maximum_points[need_altered]
+                self.echo_positive(need_altered)
+            elif potency < 0:
+                if self.current_points[need_altered] - potency > -self.maximum_points[need_altered]:
+                    self.current_points[need_altered] -= potency
+                else:
+                    self.current_points[need_altered] = -self.maximum_points[need_altered]
+                self.echo_negative(need_altered)
+
+    def echo_positive(self, need):
+        current_percent = self._get_threshold_percent(need)
+        for threshold, message in need.positive_threshold_messages.items():
+            if self.last_threshold[need] <= threshold <= current_percent:
+                EchoService.singleton.standard_context_echo(message=message)
+                self.last_threshold[need] = threshold
+                break
+
+    def echo_negative(self, need):
+        current_percent = self._get_threshold_percent(need)
+        for threshold, message in need.negative_threshold_messages.items():
+            if self.last_threshold[need] > threshold >= current_percent:
+                EchoService.singleton.standard_context_echo(message=message)
+                self.last_threshold[need] = threshold
+                break
+
     def update(self):
         if self.tick:
             self.tick -= 1
@@ -23,11 +62,7 @@ class Needs(Component):
             if not self.current_points[need] <= -self.maximum_points[need]:
                 self.current_points[need] -= cost
 
-            for threshold, message in need.negative_threshold_messages.items():
-                if self.last_threshold[need] > threshold >= self.current_points[need]:
-                    EchoService.singleton.standard_context_echo(message=message)
-                    self.last_threshold[need] = threshold
-                    break
+            self.echo_negative(need)
 
     @classmethod
     def create_standard(cls, metabolism, maximum_points, *args):

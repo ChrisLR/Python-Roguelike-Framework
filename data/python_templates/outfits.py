@@ -22,7 +22,7 @@ def build_starter_warrior():
         items_held=[
             items.short_sword
         ],
-        items_in_inventory=[consumables.bread]
+        items_in_inventory=[consumables.bread, consumables.waterskin, consumables.potion_of_healing]
     )
 
 
@@ -49,7 +49,7 @@ def build_starter_thief():
         items_held=[
             items.short_sword
         ],
-        items_in_inventory=[consumables.bread]
+        items_in_inventory=[consumables.bread, consumables.waterskin, consumables.potion_of_healing]
     )
 
 starter_warrior = build_starter_warrior()
