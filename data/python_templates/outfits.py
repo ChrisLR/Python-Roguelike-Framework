@@ -20,7 +20,7 @@ def build_starter_warrior():
             items.boot,
         ],
         items_held=[
-            items.short_sword
+            items.longsword
         ],
         items_in_inventory=[consumables.bread, consumables.waterskin, consumables.potion_of_healing]
     )
