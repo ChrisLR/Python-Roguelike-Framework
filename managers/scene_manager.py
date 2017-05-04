@@ -1,8 +1,6 @@
 from scenes import (
     CharacterCreationScene,
     GameScene,
-    InventoryScene,
-    InventoryQueryScene,
     MainMenuScene
 )
 
@@ -15,20 +13,12 @@ class SceneManager(object):
         self.scenes = {
             "CharacterCreationScene": CharacterCreationScene,
             "GameScene": GameScene,
-            "InventoryScene": InventoryScene,
-            "InventoryQueryScene": InventoryQueryScene,
             "MainMenuScene": MainMenuScene
         }
-        self.scenes_cache = {}
         self.transition_to("MainMenuScene")
 
     def transition_to(self, scene_name):
-        new_scene = self.scenes_cache.get(scene_name, None)
-        if not new_scene:
-            new_scene = self.scenes[scene_name](self.console_manager, self, self.game_context)
-            if new_scene.persistent:
-                self.scenes_cache[scene_name] = new_scene
-        self.current_scene = new_scene
+        self.current_scene = self.scenes[scene_name](self.console_manager, self, self.game_context)
 
     def render_current_scene(self):
         self.current_scene.render()

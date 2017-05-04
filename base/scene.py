@@ -13,18 +13,27 @@ class BaseScene(object):
         self.main_console = console_manager.main_console
         self.scene_manager = scene_manager
         self.game_context = game_context
+        self.active_windows = []
 
-    @abc.abstractmethod
     def render(self):
-        pass
+        if self.active_windows:
+            self.active_windows[0].render()
 
-    @abc.abstractmethod
     def handle_input(self, key_events):
-        pass
+        for key_event in key_events:
+            if key_event.keychar == "ESCAPE":
+                self.close_window()
 
-    @abc.abstractmethod
+        if self.active_windows:
+            self.active_windows[0].handle_input(key_events)
+
     def invoke_window(self, window):
-        pass
+        self.active_windows.insert(0, window)
+
+    def close_window(self):
+        if len(self.active_windows) > 1:
+            self.active_windows.pop(0)
+            return
 
     def transition_to(self, scene_name):
         self.scene_manager.transition_to(scene_name)

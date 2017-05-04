@@ -27,12 +27,13 @@ class SingleWindow(BaseWindow):
         for key_event in key_events:
             if key_event.key == "TAB":
                 self.active_control_index += 1
-                if self.active_control_index >= len(self.controls):
+                if self.active_control_index >= len(self.controls) + 1:
                     self.active_control_index = 0
 
-        active_control = self.controls[self.active_control_index]
-        if active_control:
-            active_control.handle_input(key_events)
+        if self.controls:
+            active_control = self.controls[self.active_control_index]
+            if active_control:
+                active_control.handle_input(key_events)
 
 
 class MultipartWindow(BaseWindow):

@@ -13,5 +13,6 @@ class GameContext(object):
         self.item_factory = None
         self.echo_service = None
         self.current_level = None
+        self.action_manager = None
+        self.console_manager = None
 
-        # TODO That factory service up there should contain the needs to use the factories themselves..
