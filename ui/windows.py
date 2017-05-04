@@ -27,7 +27,7 @@ class SingleWindow(BaseWindow):
         for key_event in key_events:
             if key_event.key == "TAB":
                 self.active_control_index += 1
-                if self.active_control_index >= len(self.controls) + 1:
+                if self.active_control_index >= len(self.controls):
                     self.active_control_index = 0
 
         if self.controls:
