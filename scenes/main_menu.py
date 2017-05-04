@@ -19,13 +19,11 @@ class MainMenuScene(BaseScene):
         self.current_y = 20
         self.menu.create_menu(self.current_x, self.current_y)
 
-    def render(self, **kwargs):
+    def render(self):
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
-
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.keychar.upper() == 'A':
                 self.transition_to("CharacterCreationScene")

@@ -71,7 +71,7 @@ class CharacterCreationScene(BaseScene):
         for text in self.menu_draws:
             self.menu.printStr(text)
 
-    def render(self, **kwargs):
+    def render(self):
         self.menu.clear()
         self.menu.move(0, 0)
         for control in self.controls:
@@ -88,9 +88,9 @@ class CharacterCreationScene(BaseScene):
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
-    def handle_input(self, **kwargs):
+    def handle_input(self, key_events):
         if self.active_control:
-            self.active_control.handle_input(**kwargs)
+            self.active_control.handle_input(key_events)
             if self.active_control.finished:
                 new_index = self.controls.index(self.active_control) + 1
                 if new_index < len(self.controls):
@@ -98,7 +98,6 @@ class CharacterCreationScene(BaseScene):
                 else:
                     self.active_control = None
         else:
-            key_events = kwargs["key_events"]
             for key_event in key_events:
                 if key_event.keychar.upper() == 'A':
                     self.game_context.player = self.character_factory.create(

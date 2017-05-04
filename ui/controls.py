@@ -15,8 +15,7 @@ class InputControl(object):
         self.answer = ""
         self.finished = False
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.keychar:
                 if key_event.key == "ENTER":
@@ -32,7 +31,7 @@ class InputControl(object):
     def text(self):
         return self.question + " " + self.answer
 
-    def render(self, console, active, **kwargs):
+    def render(self, console, active):
         if active:
             color = ACTIVE_CONTROL_COLOR
         else:
@@ -77,8 +76,7 @@ class ListChoiceControl(object):
 
         return self._formatted_options
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.keychar:
                 chosen_option = next((option for letter, option in self.options if letter == key_event.keychar), None)
@@ -86,7 +84,7 @@ class ListChoiceControl(object):
                     self.answer = chosen_option
                     self.finished = True
 
-    def render(self, console, active, **kwargs):
+    def render(self, console, active):
         if active:
             color = ACTIVE_CONTROL_COLOR
         else:
@@ -147,8 +145,7 @@ class PointDistributionControl(object):
 
         return self._formatted_options
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.keychar:
                 if key_event.key == "F4":
@@ -174,7 +171,7 @@ class PointDistributionControl(object):
                     else:
                         self.__cycle_next_option()
 
-    def render(self, console, active, **kwargs):
+    def render(self, console, active):
         console.printStr("Points Left {}\n".format(self.total_points - self.used_points))
         self._get_formatted_options()
         for option, text in self.list_formatted_options:

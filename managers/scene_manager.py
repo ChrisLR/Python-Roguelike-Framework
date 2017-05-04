@@ -22,16 +22,16 @@ class SceneManager(object):
         self.scenes_cache = {}
         self.transition_to("MainMenuScene")
 
-    def transition_to(self, scene_name, **kwargs):
+    def transition_to(self, scene_name):
         new_scene = self.scenes_cache.get(scene_name, None)
         if not new_scene:
-            new_scene = self.scenes[scene_name](self.console_manager, self, self.game_context, **kwargs)
+            new_scene = self.scenes[scene_name](self.console_manager, self, self.game_context)
             if new_scene.persistent:
                 self.scenes_cache[scene_name] = new_scene
         self.current_scene = new_scene
 
-    def render_current_scene(self, **kwargs):
-        self.current_scene.render(**kwargs)
+    def render_current_scene(self):
+        self.current_scene.render()
 
-    def handle_input(self, **kwargs):
-        self.current_scene.handle_input(**kwargs)
+    def handle_input(self, key_events):
+        self.current_scene.handle_input(key_events)

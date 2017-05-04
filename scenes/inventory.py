@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 class InventoryScene(BaseScene):
     ID = "Inventory"
 
-    def __init__(self, console_manager, scene_manager, game_context, **kwargs):
+    def __init__(self, console_manager, scene_manager, game_context):
         super().__init__(console_manager, scene_manager, game_context)
         self.item_list_window = ItemListWindow(self.main_console)
         self.item_detail_window = ItemDetailWindow(self.main_console)
@@ -25,28 +25,19 @@ class InventoryScene(BaseScene):
             self.item_list_window,
             self.item_detail_window
         ]
-        self.on_switch(**kwargs)
+        self.item_list_window.build(self.game_context.player)
 
-    def on_switch(self, **kwargs):
-        if "player" not in kwargs:
-            logger.error("Render: Player was not given in kwargs.")
-            return
-
-        player = kwargs["player"]
-        self.item_list_window.build(player)
-
-    def render(self, **kwargs):
+    def render(self):
         for window in self.windows:
-            window.render(**kwargs)
+            window.render()
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.key == "ESCAPE":
                 self.transition_to("GameScene")
                 return
             for window in self.windows:
-                window.handle_input(**kwargs)
+                window.handle_input(key_events)
 
             if self.active_window == self.windows.index(self.item_list_window):
                 if self.item_list_window.chosen_item is not None:
@@ -88,19 +79,19 @@ class ItemListWindow(object):
                 self.window
             )
 
-    def render(self, **kwargs):
+    def render(self):
         self.window.move(0, 0)
         if self.wielded_items_control:
-            self.wielded_items_control.render(self.window, True, **kwargs)
+            self.wielded_items_control.render(self.window, True)
         if self.worn_items_control:
-            self.worn_items_control.render(self.window, True, **kwargs)
+            self.worn_items_control.render(self.window, True)
         if self.inventory_items_control:
-            self.inventory_items_control.render(self.window, True, **kwargs)
+            self.inventory_items_control.render(self.window, True)
 
-    def handle_input(self, **kwargs):
+    def handle_input(self, key_events):
         # TODO Find an intuitive way to handle all three sections
         if self.inventory_items_control:
-            self.inventory_items_control.handle_input(**kwargs)
+            self.inventory_items_control.handle_input(key_events)
             if self.inventory_items_control.finished:
                 self.chosen_item = self.inventory_items_control.answer
 
@@ -122,11 +113,11 @@ class ItemDetailWindow(object):
             # TODO Show Item Detail View here
             pass
 
-    def render(self, **kwargs):
+    def render(self):
         self.window.move(0, 0)
         if self.control:
-            self.control.render(**kwargs)
+            self.control.render()
 
-    def handle_input(self, **kwargs):
+    def handle_input(self, key_events):
         if self.control:
-            self.control.handle_input(**kwargs)
+            self.control.handle_input(key_events)

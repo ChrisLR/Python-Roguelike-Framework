@@ -27,7 +27,7 @@ class GameManager(object):
         tdl.setTitle("Roguelike Framework")
         while True:  # Continue in an infinite game loop.
             self.console_manager.main_console.clear()  # Blank the console
-            self.scene_manager.render_current_scene(player=self.game_context.player)
+            self.scene_manager.render_current_scene()
             all_key_events = list(tdl.event.get())
             for key_event in all_key_events:
                 if key_event.type == 'QUIT':
@@ -35,7 +35,7 @@ class GameManager(object):
                     raise SystemExit('The window has been closed.')
             key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
 
-            self.scene_manager.handle_input(player=self.game_context.player, key_events=key_events)
+            self.scene_manager.handle_input(key_events=key_events)
             tdl.flush()
 
     def load_game_data(self):

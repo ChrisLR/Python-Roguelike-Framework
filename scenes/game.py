@@ -14,6 +14,7 @@ from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from settings import DUNGEON_COLORS as COLORS
 from stats.enums import StatsEnum
+from ui.windows import SingleWindow
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -32,10 +33,9 @@ class GameScene(BaseScene):
     ID = "Game"
 
     def __init__(self, console_manager, scene_manager, game_context):
-        super().__init__(console_manager, scene_manager, game_context, persistent=True)
+        super().__init__(console_manager, scene_manager, game_context)
         # TODO Eventually we will want to map more than just movement keys
         self.loaded_levels = []
-        self.movement_keys = settings.KEY_MAPPINGS
         self.consoles = {
             GameConsoles.ActionLog: self.console_manager.create_new_console(80, 15),
             GameConsoles.Status: self.console_manager.create_new_console(20, 15)
@@ -47,80 +47,6 @@ class GameScene(BaseScene):
         logger.info("Initialized GameScene")
         logger.info("Starting new game.")
         self.new_game()
-
-    def render(self, **kwargs):
-        """
-        Render the areas, characters, items, etc..
-        """
-        if "player" not in kwargs:
-            logger.error("Render: Player was not given in kwargs.")
-            return
-
-        player = kwargs["player"]
-        current_level = player.location.level
-        self.render_gui(player)
-        self.set_tiles_background_color(current_level)
-
-        player_x = player.location.local_x
-        player_y = player.location.local_y
-
-        def is_transparent_callback(x, y):
-            if x <= 0 or y <= 0:
-                return False
-            return self.is_transparent(current_level, x, y)
-
-        player.fov = tdl.map.quickFOV(player_x, player_y, is_transparent_callback, 'basic')
-        # NB: Order in which things are render is important
-        self.render_map(current_level, player.fov)
-        self.render_items(player, current_level)
-        self.render_characters(player, current_level)
-        self.render_player(player)
-        if player.is_dead():
-            self.consoles[GameConsoles.Status].drawStr(0, 4, 'You have died!')
-
-    def handle_input(self, **kwargs):
-        """
-        Any keyboard interaction from the user occurs here
-        """
-        if "player" not in kwargs:
-            logger.error("Handle Input: Player was not given in kwargs.")
-            return
-
-        player = kwargs["player"]
-        current_level = player.location.level
-        moved = False
-
-        key_events = kwargs["key_events"]
-        for key_event in key_events:
-            if key_event.type == 'KEYDOWN':
-                # TODO Make stairs system to go up or down
-                # TODO Add Action to pick up items
-                # TODO We will need to implement an action mapping
-
-                # We mix special keys with normal characters so we use keychar.
-                if not player.is_dead():
-                    if key_event.key == 'KP5' or key_event.key == '.':
-                        moved = True
-
-                    if key_event.keychar.upper() in self.movement_keys:
-                        key_x, key_y = self.movement_keys[key_event.keychar.upper()]
-                        self.action_manager.move_or_attack(player, key_x, key_y)
-                        moved = True
-
-                    if key_event.keychar == "i":
-                        self.scene_manager.transition_to('InventoryScene', **kwargs)
-
-                    if key_event.keychar == "e":
-                        self.scene_manager.transition_to(
-                            'InventoryQueryScene',
-                            callback_function=lambda chosen_item: actions.consume(player, chosen_item), **kwargs)
-
-                    if moved:
-                        player.update()
-                        for monster in current_level.spawned_monsters:
-                            monster.update()
-                            self.action_manager.monster_take_turn(monster, player)
-                        moved = False
 
     def new_game(self):
         # TODO This should prepare the first level
@@ -149,15 +75,66 @@ class GameScene(BaseScene):
         forerunner = Forerunner(level, player)
         forerunner.run()
 
+
+    @staticmethod
+    def is_transparent(current_level, x, y):
+        """
+        Used by map.quickFOV to determine which tile fall within the players "field of view"
+        """
+        try:
+            # Pass on IndexErrors raised for when a player gets near the edge of the screen
+            # and tile within the field of view fall out side the bounds of the maze.
+            tile = current_level.maze[x][y]
+            if tile.block_sight and tile.is_blocked:
+                return False
+            else:
+                return True
+        except IndexError:
+            return False
+
+
+class GameWindow(SingleWindow):
+    def __init__(self, main_console, game_scene, game_context):
+        super().__init__(main_console)
+        self.game_context = game_context
+        self.game_scene = game_scene
+        self.movement_keys = settings.KEY_MAPPINGS
+
+    def render(self):
+        """
+        Render the areas, characters, items, etc..
+        """
+        player = self.game_context.player
+        current_level = player.location.level
+        self.render_gui(player)
+        self.set_tiles_background_color(current_level)
+
+        player_x = player.location.local_x
+        player_y = player.location.local_y
+
+        def is_transparent_callback(x, y):
+            if x <= 0 or y <= 0:
+                return False
+            return self.game_scene.is_transparent(current_level, x, y)
+
+        player.fov = tdl.map.quickFOV(player_x, player_y, is_transparent_callback, 'basic')
+        # NB: Order in which things are render is important
+        self.render_map(current_level, player.fov)
+        self.render_items(player, current_level)
+        self.render_characters(player, current_level)
+        self.render_player(player)
+        if player.is_dead():
+            self.game_scene.consoles[GameConsoles.Status].drawStr(0, 4, 'You have died!')
+
     def render_gui(self, player):
-        status_console = self.consoles[GameConsoles.Status]
+        status_console = self.game_scene.consoles[GameConsoles.Status]
         status_console.drawStr(0, 2, "Health: {}\n\n".format(int(player.stats.get_current_value(StatsEnum.Health))))
         status_console.drawStr(0, 5, "Attack Power: {}\n\n".format(player.get_attack_modifier()))
         status_console.drawStr(0, 8, "Defense: {}\n\n".format(player.get_armor_class()))
         status_console.drawStr(0, 11, "Speed: {}\n\n".format(player.get_speed_modifier()))
 
-        self.console_manager.render_console(self.consoles[GameConsoles.ActionLog], 0, 45)
-        self.console_manager.render_console(status_console, 80, 45)
+        self.game_scene.console_manager.render_console(self.game_scene.consoles[GameConsoles.ActionLog], 0, 45)
+        self.game_scene.console_manager.render_console(status_console, 80, 45)
 
     def render_map(self, current_level, viewer_fov):
         for x, y in viewer_fov:
@@ -189,6 +166,51 @@ class GameScene(BaseScene):
             **player.display.get_draw_info()
         )
 
+    def handle_input(self, key_events):
+        """
+        Any keyboard interaction from the user occurs here
+        """
+        player = self.game_context.player
+        current_level = player.location.level
+        moved = False
+
+        for key_event in key_events:
+            if key_event.type == 'KEYDOWN':
+                # TODO Make stairs system to go up or down
+                # TODO Add Action to pick up items
+                # TODO We will need to implement an action mapping
+
+                # We mix special keys with normal characters so we use keychar.
+                if not player.is_dead():
+                    if key_event.key == 'KP5' or key_event.key == '.':
+                        moved = True
+
+                    if key_event.keychar.upper() in self.movement_keys:
+                        key_x, key_y = self.movement_keys[key_event.keychar.upper()]
+                        # TODO MANAGERS SHOULD BE IN THE GAME CONTEXT AND ACCESSED FROM IT, NOT GAME SCENE
+                        self.game_scene.action_manager.move_or_attack(player, key_x, key_y)
+                        moved = True
+
+                    if key_event.keychar == "ESCAPE":
+                        # TODO THIS EXITS A WINDOW IF THERE IS ANOTHER UNDERNEATH IT.
+                        pass
+
+                    if key_event.keychar == "i":
+                        # TODO THESE ARE NO LONGER TRANSITIONS, THEY INVOKE A WINDOW.
+                        self.game_scene.scene_manager.transition_to('InventoryScene')
+
+                    if key_event.keychar == "e":
+                        self.game_scene.transition_to(
+                            'InventoryQueryScene',
+                            callback_function=lambda chosen_item: actions.consume(player, chosen_item))
+
+                    if moved:
+                        player.update()
+                        for monster in current_level.spawned_monsters:
+                            monster.update()
+                            self.game_scene.action_manager.monster_take_turn(monster, player)
+                        moved = False
+
     def set_tiles_background_color(self, current_level):
         # TODO Instead of using a different color, we should darken whatever color it is.
         # TODO Allowing us to use many colors as walls and tiles to create levels with different looks.
@@ -203,22 +225,6 @@ class GameScene(BaseScene):
                         self.main_console.drawChar(x, y, '#', fgcolor=COLORS['dark_gray_wall'])
                     elif ground:
                         self.main_console.drawChar(x, y, '.', fgcolor=COLORS['dark_ground'])
-
-    @staticmethod
-    def is_transparent(current_level, x, y):
-        """
-        Used by map.quickFOV to determine which tile fall within the players "field of view"
-        """
-        try:
-            # Pass on IndexErrors raised for when a player gets near the edge of the screen
-            # and tile within the field of view fall out side the bounds of the maze.
-            tile = current_level.maze[x][y]
-            if tile.block_sight and tile.is_blocked:
-                return False
-            else:
-                return True
-        except IndexError:
-            return False
 
 
 class Forerunner(object):

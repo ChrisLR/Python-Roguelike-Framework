@@ -8,20 +8,23 @@ class BaseScene(object):
     """Abstract class for all scenes"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, console_manager, scene_manager, game_context, persistent=False):
+    def __init__(self, console_manager, scene_manager, game_context):
         self.console_manager = console_manager
         self.main_console = console_manager.main_console
         self.scene_manager = scene_manager
         self.game_context = game_context
-        self.persistent = persistent
 
     @abc.abstractmethod
     def render(self):
         pass
 
     @abc.abstractmethod
-    def handle_input(self):
+    def handle_input(self, key_events):
         pass
 
-    def transition_to(self, scene_name, **kwargs):
-        self.scene_manager.transition_to(scene_name, **kwargs)
+    @abc.abstractmethod
+    def invoke_window(self, window):
+        pass
+
+    def transition_to(self, scene_name):
+        self.scene_manager.transition_to(scene_name)

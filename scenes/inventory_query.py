@@ -26,29 +26,23 @@ class InventoryQueryScene(BaseScene):
         self.on_switch(**kwargs)
 
     def on_switch(self, **kwargs):
-        if "player" not in kwargs:
-            logger.error("InventoryQueryScene: Player was not given in kwargs.")
-            return
-
         if 'callback_function' not in kwargs:
             logger.error("InventoryQueryScene: Callback Function was not given in kwargs.")
         self.callback_function = kwargs['callback_function']
 
-        player = kwargs["player"]
-        self.item_query_window.build(player)
+        self.item_query_window.build(self.game_context.player)
 
     def render(self, **kwargs):
         for window in self.windows:
             window.render(**kwargs)
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.key == "ESCAPE":
                 self.transition_to("GameScene")
                 return
             for window in self.windows:
-                window.handle_input(**kwargs)
+                window.handle_input(key_events)
 
         if self.item_query_window.chosen_item:
             self.transition_to('GameScene')
@@ -95,17 +89,16 @@ class ItemQueryWindow(object):
         self.active_section_index = 0
         self.sections = [self.wielded_items_control, self.worn_items_control, self.inventory_items_control]
 
-    def render(self, **kwargs):
+    def render(self):
         self.window.move(0, 0)
         active_control = self.sections[self.active_section_index]
         for control in self.sections:
             if control == active_control:
-                control.render(self.window, True, **kwargs)
+                control.render(self.window, True)
             else:
-                control.render(self.window, False, **kwargs)
+                control.render(self.window, False)
 
-    def handle_input(self, **kwargs):
-        key_events = kwargs["key_events"]
+    def handle_input(self, key_events):
         for key_event in key_events:
             if key_event.key == "TAB":
                 self.active_section_index += 1
@@ -114,6 +107,6 @@ class ItemQueryWindow(object):
 
         active_control = self.sections[self.active_section_index]
         if active_control:
-            active_control.handle_input(**kwargs)
+            active_control.handle_input(key_events)
             if active_control.finished:
                 self.chosen_item = active_control.answer
