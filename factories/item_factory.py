@@ -67,7 +67,7 @@ class ItemFactory(object):
             on_consume_effects.extend(extra_effects)
 
         new_food_item.register_component(
-            Consumable(message="{actor} eat{actor_3rds} a {target_item}", effects=on_consume_effects)
+            Consumable(message="{actor} eat a {target_item}", effects=on_consume_effects)
         )
         new_food_item.register_component(material)
         new_food_item.register_component(Stats(size=Size.Tiny))
@@ -94,7 +94,7 @@ class ItemFactory(object):
 
         new_food_item = Item(uid=uid, name=name, description=description)
         new_food_item.register_component(
-            Consumable(message="{actor} drink{actor_3rds} from {target_item}", effects=on_consume_effects))
+            Consumable(message="{actor} drink from {target_item}", effects=on_consume_effects))
         new_food_item.register_component(material)
         new_food_item.register_component(Stats(size=Size.Tiny))
 
