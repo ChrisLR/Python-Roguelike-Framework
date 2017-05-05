@@ -6,7 +6,6 @@ class GameObject(object):
         self.components = {}
         self.observers = {}
         self.responders = {}
-        self.destroyed = False
 
     def copy_to(self, new_game_object):
         for component in self.components.values():
@@ -16,9 +15,6 @@ class GameObject(object):
 
     def get_component(self, component_name):
         return self.components.get(component_name, None)
-
-    def mark_as_destroyed(self):
-        self.destroyed = True
 
     def update(self):
         for component in self.components.values():
@@ -62,6 +58,11 @@ class GameObject(object):
         if component.NAME in self.components:
             component.on_unregister()
             del self.components[component.NAME]
+
+    def unregister_component_name(self, component_name):
+        if component_name in self.components:
+            self.components[component_name].on_unregister()
+            del self.components[component_name]
 
     def __getattr__(self, item):
         if item in valid_components:

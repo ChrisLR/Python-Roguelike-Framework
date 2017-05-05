@@ -1,6 +1,6 @@
 from components.component import Component
+from components.messages import QueryType
 from stats.enums import StatsEnum
-from itertools import chain
 from util.decorators import cached, invalidate_cache
 
 
@@ -39,6 +39,22 @@ class Equipment(Component):
     def on_register(self, host):
         super().on_register(host)
         self.host_body = host.body
+        host.register_query_responder(self, QueryType.RemoveObject, self.remove_item)
+
+    @invalidate_cache
+    def remove_item(self, item):
+        success = False
+        for item_list in self.worn_equipment_map.values():
+            if item in item_list:
+                item_list.remove(item)
+                success = True
+
+        for key in self.wielded_equipment_map.copy().keys():
+            if self.wielded_equipment_map[key] == item:
+                del self.wielded_equipment_map[key]
+                success = True
+
+        return success
 
     @invalidate_cache
     def wear(self, item):
@@ -81,7 +97,7 @@ class Equipment(Component):
             relative_size_modifier = round(relative_size_modifier / 10) if relative_size_modifier else 0
             relative_size = self.host.stats.get_current_value(StatsEnum.Size) + relative_size_modifier
             item_size = int(item.stats.get_current_value(StatsEnum.Size))
-            if relative_size >= item_size >= relative_size - 2:
+            if relative_size >= item_size:
                 # Can be wielded in one "hands"
                 self.wielded_equipment_map[grasp_able_body_part] = item
                 return True

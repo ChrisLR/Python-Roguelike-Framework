@@ -10,4 +10,5 @@ class MessageType(Enum):
 class QueryType(Enum):
     StatModifier = 0
     ExperiencePool = 1
+    RemoveObject = 2
 

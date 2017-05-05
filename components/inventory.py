@@ -1,4 +1,5 @@
 from components.component import Component
+from components.messages import QueryType
 
 
 class Inventory(Component):
@@ -11,12 +12,10 @@ class Inventory(Component):
     def __init__(self):
         super().__init__()
         self._items = []
-        self._destroyed_items = []
 
-    def clear_destroyed_items(self):
-        for item in self._destroyed_items:
-            self._items.remove(item)
-        self._destroyed_items = []
+    def on_register(self, host):
+        super().on_register(host)
+        host.register_query_responder(self, QueryType.RemoveObject, self.remove_item)
 
     def copy(self):
         new_copy = Inventory()
@@ -29,7 +28,10 @@ class Inventory(Component):
         self._items.append(item)
 
     def remove_item(self, item):
-        self._items.remove(item)
+        if item in self._items:
+            self._items.remove(item)
+            return True
+        return False
 
     def get_items(self, uid, count=0, pop=False):
         """
@@ -40,26 +42,15 @@ class Inventory(Component):
         """
         found_items = []
         for item in self._items:
-            if item.destroyed:
-                self._destroyed_items.append(item)
-                continue
-
             if count and len(found_items) >= count:
                 break
             if item.uid == uid:
                 found_items.append(item)
                 if pop:
                     self.remove_item(item)
-
-        self.clear_destroyed_items()
         return found_items
 
     def get_all_items(self):
-        for item in self._items:
-            if item.destroyed:
-                self._destroyed_items.append(item)
-        self.clear_destroyed_items()
-
         return self._items
 
 
@@ -87,10 +78,9 @@ class KeyBoundInventory(Inventory):
         super(KeyBoundInventory, self).add_item(item)
         return self.get_symbol_from_item(item)
 
-    def clear_destroyed_items(self):
-        for item in self._destroyed_items:
+    def remove_item(self, item):
+        if item in self._items:
             self.pop_item_from_symbol(self.get_symbol_from_item(item))
-        self._destroyed_items = []
 
     def get_symbol_from_uid(self, item_uid):
         return next(

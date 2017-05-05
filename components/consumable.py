@@ -17,4 +17,4 @@ class Consumable(Component):
                 consumer.effects.add_effect(effect)
 
         EchoService.singleton.standard_context_echo(message=self.message, actor=consumer, target_item=self.host)
-        self.host.mark_as_destroyed()
+
