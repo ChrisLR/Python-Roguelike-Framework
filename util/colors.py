@@ -1,8 +1,10 @@
 class Colors:
     BLACK_COLOR = (0, 0, 0)
     WHITE_COLOR = (255, 255, 255)
-    DARK_BLUE = (0, 0, 100)
+    DARK_BLUE = (0, 0, 150)
     DARK_GRAY = (75, 75, 75)
+    DARK_BROWN = (100, 50, 50)
     TROLL_GREEN = (100, 180, 150)
     ORC_GREEN = (150, 250, 230)
     BLOOD_RED = (255, 50, 50)
+    DARK_RED = (100, 0, 0)

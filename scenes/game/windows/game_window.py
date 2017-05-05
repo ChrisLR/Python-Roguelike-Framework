@@ -69,7 +69,7 @@ class GameWindow(SingleWindow):
 
     def render_items(self, player, level):
         for item in level.spawned_items:
-            x, y = item.location.coords
+            x, y = item.location.get_local_coords()
             if (x, y) in player.fov:
                 self.main_console.drawChar(x, y, **item.display.get_draw_info())
 

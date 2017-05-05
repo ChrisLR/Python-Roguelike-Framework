@@ -20,14 +20,10 @@ class Item(GameObject):
         self.uid = uid
         self._name = name
         self._description = description
-        self.location = location
-        self.display = display
-
-        # TODO Items should have weapon stats AND armor stats of D&D
-        # TODO They should be affected by material, so you can have a base item of iron breastplate of +2 AC
-        # TODO that could be reforged to steel for a total of +4 AC that could then be enchanted for a +6
-        # TODO Having these materials affects may not be very D&D but lets talk about it again
-        # TODO Once you craft a breastplate out of bones.
+        if location:
+            self.register_component(location)
+        if display:
+            self.register_component(display)
 
     @property
     def description(self):
@@ -45,7 +41,11 @@ class Item(GameObject):
         """
         return self._name
 
+    @name.setter
+    def name(self, value):
+        self._name = value
+
     def copy(self):
-        new_item = Item(self.uid, self._name, self._description, self.location, self.display)
+        new_item = Item(self.uid, self._name, self._description, self.display)
         return super().copy_to(new_item)
 

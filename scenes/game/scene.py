@@ -40,20 +40,36 @@ class GameScene(BaseScene):
         self.new_game()
 
     def handle_input(self, key_events):
+        if len(self.active_windows) > 1:
+            super().handle_input(key_events)
+            return
         super().handle_input(key_events)
+
         for key_event in key_events:
             if key_event.keychar == "i":
                 self.invoke_window(InventoryWindow(self.main_console, *self._get_all_player_items()))
 
-            if key_event.keychar == "e":
-                wielded_items, worn_items, inventory_items = self._get_all_player_items()
+            if key_event.keychar == "d":
                 self.invoke_window(
-                    ItemQueryWindow(
-                        main_console=self.main_console,
-                        callback_function=self._consume_item_callback,
-                        wielded_items=wielded_items,
-                        worn_items=worn_items,
-                        inventory_items=inventory_items))
+                    ItemQueryWindow(self.main_console, self._drop_item_callback, *self._get_all_player_items()))
+
+            if key_event.keychar == "e":
+                self.invoke_window(
+                    ItemQueryWindow(self.main_console, self._consume_item_callback, *self._get_all_player_items()))
+
+            if key_event.keychar == "g":
+                for item in self.game_context.player.location.level.spawned_items:
+                    if item.location.get_local_coords() == self.game_context.player.location.get_local_coords():
+                        actions.get(self.game_context.player, item)
+
+            if key_event.keychar == "r":
+                wielded_items, worn_items, _ = self._get_all_player_items()
+                self.invoke_window(
+                    ItemQueryWindow(self.main_console, self._remove_item_callback, wielded_items, worn_items, []))
+
+            if key_event.keychar == "w":
+                self.invoke_window(
+                    ItemQueryWindow(self.main_console, self._wear_wield_item_callback, *self._get_all_player_items()))
 
     def _get_all_player_items(self):
         player = self.game_context.player
@@ -71,6 +87,18 @@ class GameScene(BaseScene):
 
     def _consume_item_callback(self, chosen_item):
         actions.consume(self.game_context.player, chosen_item)
+        self.close_window()
+
+    def _drop_item_callback(self, chosen_item):
+        actions.drop(self.game_context.player, chosen_item)
+        self.close_window()
+
+    def _wear_wield_item_callback(self, chosen_item):
+        actions.wear_wield(self.game_context.player, chosen_item)
+        self.close_window()
+
+    def _remove_item_callback(self, chosen_item):
+        actions.remove_item(self.game_context.player, chosen_item)
         self.close_window()
 
     def new_game(self):

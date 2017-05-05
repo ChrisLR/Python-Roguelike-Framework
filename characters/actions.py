@@ -8,6 +8,8 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 import math
 
 from managers import combat_manager, echo
+from components.location import Location
+from components.messages import MessageType, QueryType
 
 
 # TODO One thing I want to change is the tile contains flag
@@ -24,9 +26,50 @@ def attack(attacker, target, console):
 
 def consume(actor, chosen_item):
     if chosen_item.consumable:
+        actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item)
         chosen_item.consumable.consume(actor)
     else:
         echo.EchoService.singleton.standard_context_echo("You can't eat that!")
+
+
+def drop(actor, chosen_item):
+    chosen_item.register_component(actor.location.copy())
+    if True in actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item):
+        actor.location.level.spawned_items.append(chosen_item)
+        echo.EchoService.singleton.standard_context_echo("{actor} drop {chosen_item}.", actor, chosen_item)
+
+
+def get(actor, chosen_item):
+    # TODO Inventories will have a maximum and this will need to prevent the drop.
+    actor.inventory.add_item(chosen_item)
+    actor.location.level.spawned_items.remove(chosen_item)
+    chosen_item.unregister_component_name(Location.NAME)
+    echo.EchoService.singleton.standard_context_echo("{actor} get {target_item}.", actor, chosen_item)
+
+
+def remove_item(actor, chosen_item):
+    if True in actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item):
+        actor.inventory.add_item(chosen_item)
+        echo.EchoService.singleton.standard_context_echo(
+            "{actor} remove {target_item}.", actor, chosen_item)
+
+
+def wear_wield(actor, chosen_item):
+    success = False
+    if chosen_item.armor and actor.equipment:
+        if actor.equipment.wear(chosen_item):
+            echo.EchoService.singleton.standard_context_echo(
+                "{actor} wear {target_item}.", actor, chosen_item)
+    elif actor.equipment:
+        if actor.equipment.wield(chosen_item):
+            echo.EchoService.singleton.standard_context_echo(
+                "{actor} wield {target_item}.", actor, chosen_item)
+            success = True
+
+    if success:
+        actor.inventory.remove_item(chosen_item)
+    else:
+        echo.EchoService.singleton.standard_context_echo("You can't wear/wield that!")
 
 
 def move(actor, dx, dy):
@@ -115,7 +158,3 @@ def monster_take_turn(monster, player, console):
             # close enough, attack! (if the player is still alive.)
             elif not player.is_dead():
                 attack(monster, player, console)
-
-
-def get_item(character, item, tile_x, tile_y):
-    character.inventory.add_item(item)
