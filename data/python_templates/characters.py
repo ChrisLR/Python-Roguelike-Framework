@@ -14,7 +14,7 @@ weak_orc = Character(
     character_class=warrior_class,
     character_race=orc_race,
     stats=make_character_stats(health=10),
-    display=Display(Colors.ORC_GREEN, Colors.BLACK_COLOR, "O"),
+    display=Display(Colors.DARK_OLIVE_GREEN, Colors.BLACK, "O"),
     body=humanoid_body.copy(),
 )
 strong_orc = Character(
@@ -23,7 +23,7 @@ strong_orc = Character(
     character_class=warrior_class,
     character_race=orc_race,
     stats=make_character_stats(health=16, strength=12, constitution=12),
-    display=Display(Colors.ORC_GREEN, Colors.BLACK_COLOR, "O"),
+    display=Display(Colors.DARK_OLIVE_GREEN, Colors.BLACK, "O"),
     body=humanoid_body.copy(),
 )
 weak_troll = Character(
@@ -32,7 +32,7 @@ weak_troll = Character(
     character_class=warrior_class,
     character_race=troll_race,
     stats=make_character_stats(health=24, strength=14, constitution=14),
-    display=Display(Colors.TROLL_GREEN, Colors.BLACK_COLOR, "O"),
+    display=Display(Colors.DARK_GREEN, Colors.BLACK, "O"),
     body=humanoid_body.copy(),
 )
 human_warrior = Character(
@@ -41,7 +41,7 @@ human_warrior = Character(
     character_class=warrior_class,
     character_race=human_race,
     stats=make_character_stats(health=10, strength=12, constitution=12, dexterity=10),
-    display=Display(Colors.WHITE_COLOR, Colors.BLACK_COLOR, "O"),
+    display=Display(Colors.WHITE, Colors.BLACK, "O"),
     body=humanoid_body.copy(),
 )
 human_warrior.register_component(Outfitter('starter_warrior'))
@@ -51,7 +51,7 @@ human_thief = Character(
     character_class=thief_class,
     character_race=human_race,
     stats=make_character_stats(health=6, constitution=10, dexterity=16),
-    display=Display(Colors.WHITE_COLOR, Colors.BLACK_COLOR, "O"),
+    display=Display(Colors.WHITE, Colors.BLACK, "O"),
     body=humanoid_body.copy(),
 )
 human_thief.register_component(Outfitter('starter_thief'))

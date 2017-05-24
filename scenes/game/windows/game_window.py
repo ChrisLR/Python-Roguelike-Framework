@@ -60,12 +60,8 @@ class GameWindow(SingleWindow):
     def render_map(self, current_level, viewer_fov):
         for x, y in viewer_fov:
             if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
-                if current_level.maze[x][y].is_blocked:
-                    self.main_console.drawChar(x, y, '#', fgcolor=COLORS['light_wall'])
-                    current_level.maze[x][y].is_explored = True
-                if current_level.maze[x][y].is_ground is True:
-                    self.main_console.drawChar(x, y, '.', fgcolor=COLORS['light_ground'])
-                    current_level.maze[x][y].is_explored = True
+                self.main_console.drawChar(x, y, **current_level.maze[x][y].display.get_draw_info())
+                current_level.maze[x][y].is_explored = True
 
     def render_items(self, player, level):
         for item in level.spawned_items:

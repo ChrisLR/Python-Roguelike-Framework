@@ -116,7 +116,7 @@ def move_or_attack(character, target_x, target_y, console):
 
     # try to find an attack-able object there
     if new_tile.contains_object:
-        tile_coords = (new_tile.x, new_tile.y)
+        tile_coords = new_tile.location.get_local_coords()
         monster = next((monster for monster in character.current_level.spawned_monsters
                         if monster.location.get_local_coords() == tile_coords), None)
         if monster:

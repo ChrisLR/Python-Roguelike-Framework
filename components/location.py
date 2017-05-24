@@ -4,11 +4,11 @@ from .component import Component
 class Location(Component):
     NAME = "location"
 
-    def __init__(self):
+    def __init__(self, local_x=0, local_y=0):
         super().__init__()
         # TODO THIS HOLDS ALL THE INFORMATION NEEDED TO LOCATE SOMETHING
-        self.local_x = 0
-        self.local_y = 0
+        self.local_x = local_x
+        self.local_y = local_y
         self.global_x = 0
         self.global_y = 0
         self.area = None
