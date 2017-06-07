@@ -26,19 +26,19 @@ class DungeonGenerator(object):
         # go through the tiles in the rectangle and make them passable
         for x in range(room.x1 + 1, room.x2):
             for y in range(room.y1 + 1, room.y2):
-                level.maze[x][y] = tiles.dirt_floor_tile.copy(x, y)
+                level.maze[x][y] = tiles.dirt_floor.copy(x, y)
 
     @staticmethod
     def _create_h_tunnel(level, x1, x2, y):
         # horizontal tunnel. min() and max() are used in case x1>x2
         for x in range(min(x1, x2), max(x1, x2) + 1):
-            level.maze[x][y] = tiles.dirt_floor_tile.copy(x, y)
+            level.maze[x][y] = tiles.dirt_floor.copy(x, y)
 
     @staticmethod
     def _create_v_tunnel(level, y1, y2, x):
         # vertical tunnel
         for y in range(min(y1, y2), max(y1, y2) + 1):
-            level.maze[x][y] = tiles.dirt_floor_tile.copy(x, y)
+            level.maze[x][y] = tiles.dirt_floor.copy(x, y)
 
     def generate(self, level):
         """
@@ -48,7 +48,7 @@ class DungeonGenerator(object):
         """
         # TODO The dungeon's instances are spawned and loaded here.
         # fill map with "blocked" tiles
-        level.maze = [[tiles.dirt_wall_tile.copy(x, y) for y in range(level.height)] for x in range(level.width)]
+        level.maze = [[tiles.dirt_wall.copy(x, y) for y in range(level.height)] for x in range(level.width)]
 
         for r in range(level.max_rooms):
             # random width and height
