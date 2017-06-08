@@ -8,6 +8,7 @@ class DesignPiece(object):
         self.theme_id = ""
         self.size_x = 1
         self.size_y = 1
+        # These are intended as arrays, so the id would be accessed with coordinates
         self.tile_ids = []
         self.item_ids = []
         self.character_ids = []

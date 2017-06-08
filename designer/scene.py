@@ -1,6 +1,6 @@
 import tdl
-from managers.console_manager import Menu
-from ui import controls
+from designer.windows import WindowDesignerMain
+from designer.design import DesignPiece
 
 
 class DesignScene(object):
@@ -8,14 +8,16 @@ class DesignScene(object):
 
     def __init__(self, main_console):
         super().__init__()
+        self.design_piece = DesignPiece()
         self.main_console = main_console
+        self.main_window = WindowDesignerMain(main_console, self)
+
         # TODO Add windows for rendering designs, another for selecting things to add
         # TODO We'll need a few buttons for Add/Select/Remove modes of clicking
         # TODO We'll also need a save/delete/reset button for design pieces.
 
     def render(self):
-        # TODO Render window here
-        self.main_console.blit(self.menu, 0, 0)
+        self.main_console.blit(self.main_window, 0, 0)
         tdl.flush()
 
     def handle_input(self, key_events):
