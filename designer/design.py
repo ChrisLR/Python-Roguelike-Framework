@@ -14,6 +14,21 @@ class DesignPiece(object):
         self.character_ids = []
         self.furniture_ids = []
 
+    @classmethod
+    def empty(cls, size_x, size_y):
+        new_design_piece = DesignPiece()
+        new_design_piece.uid = "empty"
+        new_design_piece.name = "Empty"
+        new_design_piece.size_x = 6
+        new_design_piece.size_y = 6
+        new_design_piece.tile_ids = [["stone_floor" for y in range(0, size_y)] for x in range(0, size_x)]
+        new_design_piece.item_ids = [[None for y in range(0, size_y)] for x in range(0, size_x)]
+        new_design_piece.character_ids = [[None for y in range(0, size_y)] for x in range(0, size_x)]
+        new_design_piece.furniture_ids = [[None for y in range(0, size_y)] for x in range(0, size_x)]
+
+        return new_design_piece
+
+
     def json(self):
         return json.dumps(
             {
