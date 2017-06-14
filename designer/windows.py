@@ -8,15 +8,15 @@ class WindowDesignerMain(MultipartWindow):
     def __init__(self, main_console, scene):
         windows = [
             WindowHeaderButtons(main_console, scene),
-            WindowRenderDesign(main_console, scene),
-            WindowSelectCreation(main_console, scene)
+            WindowRenderDesign(main_console, scene, 0, 1),
+            WindowSelectCreation(main_console, scene, 1, 0)
         ]
         super().__init__(main_console, windows)
 
 
 class WindowRenderDesign(SingleWindow):
-    def __init__(self, main_console, scene):
-        super().__init__(main_console)
+    def __init__(self, main_console, scene, x=0, y=0):
+        super().__init__(main_console, x, y)
         self.scene = scene
 
     def render(self):
@@ -30,21 +30,29 @@ class WindowRenderDesign(SingleWindow):
                 item = item_templates.get(design_piece.item_ids[x][y], None)
                 character = character_templates.get(design_piece.character_ids[x][y], None)
                 if tile:
-                    self.main_console.drawChar(x, y, **tile.display.get_draw_info())
+                    self.window.drawChar(x, y, **tile.display.get_draw_info())
                 if item:
-                    self.main_console.drawChar(x, y, **item.display.get_draw_info())
+                    self.window.drawChar(x, y, **item.display.get_draw_info())
                 if character:
-                    self.main_console.drawChar(x, y, **character.display.get_draw_info())
+                    self.window.drawChar(x, y, **character.display.get_draw_info())
                 # TODO Eventually furniture_ids
 
 
 class WindowHeaderButtons(SingleWindow):
-    def __init__(self, main_console, scene):
-        super().__init__(main_console)
+    def __init__(self, main_console, scene, x=0, y=0):
+        super().__init__(main_console, x, y)
         self.scene = scene
+
+    def render(self):
+        super().render()
+        self.window.drawStr(0, 0, 'HEADER')
 
 
 class WindowSelectCreation(SingleWindow):
-    def __init__(self, main_console, scene):
-        super().__init__(main_console)
+    def __init__(self, main_console, scene, x=0, y=0):
+        super().__init__(main_console, x, y)
         self.scene = scene
+
+    def render(self):
+        super().render()
+        self.window.drawStr(0, 0, 'SELECTER')

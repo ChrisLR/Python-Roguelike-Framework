@@ -1,4 +1,5 @@
 
+
 DEVELOPMENT = True
 
 DATABASE_NAME = 'roguelike.db'
@@ -50,4 +51,9 @@ KEY_MAPPINGS = {
 }
 
 
-
+class ControlColors(object):
+    # TODO This should be moved into a sort of UI Color Theme
+    ACTIVE_CONTROL_COLOR = (255, 255, 0)
+    INACTIVE_CONTROL_COLOR = (255, 255, 255)
+    CHOSEN_CONTROL_COLOR = (100, 255, 100)
+    BLACK_COLOR = (0, 0, 0)

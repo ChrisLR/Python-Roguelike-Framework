@@ -1,0 +1,19 @@
+import abc
+
+
+class BaseControl(object):
+    """Abstract class for all controls"""
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    @property
+    def text(self):
+        pass
+
+    @abc.abstractmethod
+    def render(self):
+        pass
+
+    @abc.abstractmethod
+    def handle_input(self, key_events):
+        pass

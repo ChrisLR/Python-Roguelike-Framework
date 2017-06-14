@@ -5,10 +5,10 @@ from base.window import BaseWindow
 
 
 class SingleWindow(BaseWindow):
-    def __init__(self, main_console):
+    def __init__(self, main_console, x=0, y=0):
         self.main_console = main_console
         self.window = tdl.Window(
-            self.main_console, 0, 0,
+            self.main_console, x, y,
             width=self.main_console.width,
             height=self.main_console.height
         )
