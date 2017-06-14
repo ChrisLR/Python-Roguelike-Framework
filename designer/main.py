@@ -34,6 +34,8 @@ class DesignerManager(object):
                     # Halt the script using SystemExit
                     raise SystemExit('The window has been closed.')
             key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
+            # TODO Do we want to handle mouse events too?
+            # mouse_events = [key_event for key_event in all_key_events if key_event.type == 'MOUSEDOWN']
 
             self.scene.handle_input(key_events=key_events)
             tdl.flush()
