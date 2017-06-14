@@ -11,7 +11,7 @@ class BaseControl(object):
         pass
 
     @abc.abstractmethod
-    def render(self):
+    def render(self, console, active):
         pass
 
     @abc.abstractmethod

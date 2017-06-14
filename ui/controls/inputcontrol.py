@@ -1,7 +1,8 @@
 from settings import ControlColors
+from ui.controls.base import BaseControl
 
 
-class InputControl(object):
+class InputControl(BaseControl):
     """
     This object is used to catch text input
     """

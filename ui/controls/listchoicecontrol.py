@@ -1,7 +1,8 @@
 from settings import ControlColors
+from ui.controls.base import BaseControl
 
 
-class ListChoiceControl(object):
+class ListChoiceControl(BaseControl):
     def __init__(self, question, options, root_console):
         self.letter_index = ord('a')
         self.question = question

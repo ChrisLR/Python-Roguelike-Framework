@@ -1,7 +1,8 @@
 from settings import ControlColors
+from ui.controls.base import BaseControl
 
 
-class PointDistributionControl(object):
+class PointDistributionControl(BaseControl):
     # TODO This works well for a point system, but modifiers aren't shown
     def __init__(self, question, options, root_console, initial_value, max_value, total_points, cost_calculator):
         self.question = question
