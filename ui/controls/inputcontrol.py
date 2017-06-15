@@ -11,7 +11,7 @@ class InputControl(BaseControl):
         self.answer = ""
         self.finished = False
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         for key_event in key_events:
             if key_event.keychar:
                 if key_event.key == "ENTER":

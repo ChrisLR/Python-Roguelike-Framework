@@ -26,10 +26,10 @@ class ItemQueryWindow(SingleWindow):
         self.callback_function = callback_function
         self.controls = [self.wielded_items_control, self.worn_items_control, self.inventory_items_control]
 
-    def handle_input(self, key_events):
-        super().handle_input(key_events)
+    def handle_input(self, key_events, mouse_events):
+        super().handle_input(key_events, mouse_events)
         active_control = self.controls[self.active_control_index]
         if active_control:
-            active_control.handle_input(key_events)
+            active_control.handle_input(key_events, mouse_events)
             if active_control.finished:
                 self.callback_function(active_control.answer)

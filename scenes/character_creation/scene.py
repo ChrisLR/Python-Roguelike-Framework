@@ -88,9 +88,9 @@ class CharacterCreationScene(BaseScene):
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         if self.active_control:
-            self.active_control.handle_input(key_events)
+            self.active_control.handle_input(key_events, mouse_events)
             if self.active_control.finished:
                 new_index = self.controls.index(self.active_control) + 1
                 if new_index < len(self.controls):

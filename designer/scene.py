@@ -16,10 +16,19 @@ class DesignScene(object):
         # TODO We'll need a few buttons for Add/Select/Remove modes of clicking
         # TODO We'll also need a save/delete/reset button for design pieces.
 
+    def new_design_piece(self):
+        self.design_piece = DesignPiece.empty(6, 6)
+
+    def save_design_piece(self):
+        pass
+
+    def load_design_piece(self):
+        pass
+
     def render(self):
         self.main_window.render()
         tdl.flush()
 
-    def handle_input(self, key_events):
-        # TODO This should mostly pass input to the windows.
-        pass
+    def handle_input(self, key_events, mouse_events):
+        self.main_window.handle_input(key_events, mouse_events)
+

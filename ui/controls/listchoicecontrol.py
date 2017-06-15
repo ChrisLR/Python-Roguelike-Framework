@@ -38,7 +38,7 @@ class ListChoiceControl(BaseControl):
 
         return self._formatted_options
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         for key_event in key_events:
             if key_event.keychar:
                 chosen_option = next((option for letter, option in self.options if letter == key_event.keychar), None)

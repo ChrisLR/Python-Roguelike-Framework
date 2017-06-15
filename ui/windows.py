@@ -23,7 +23,7 @@ class SingleWindow(BaseWindow):
             else:
                 control.render(console=self.window, active=False)
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         for key_event in key_events:
             if key_event.key == "TAB":
                 self.active_control_index += 1
@@ -33,7 +33,7 @@ class SingleWindow(BaseWindow):
         if self.controls:
             active_control = self.controls[self.active_control_index]
             if active_control:
-                active_control.handle_input(key_events)
+                active_control.handle_input(key_events, mouse_events)
 
 
 class MultipartWindow(BaseWindow):
@@ -46,7 +46,7 @@ class MultipartWindow(BaseWindow):
         for window in self.windows:
             window.render()
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events=None):
         for key_event in key_events:
             if key_event.key == "TAB":
                 self.active_window_index += 1
@@ -55,4 +55,4 @@ class MultipartWindow(BaseWindow):
 
         active_window = self.windows[self.active_window_index]
         if active_window:
-            active_window.handle_input(key_events)
+            active_window.handle_input(key_events, mouse_events)

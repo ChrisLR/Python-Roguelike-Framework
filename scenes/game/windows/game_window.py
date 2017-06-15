@@ -83,11 +83,11 @@ class GameWindow(SingleWindow):
             **player.display.get_draw_info()
         )
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         """
         Any keyboard interaction from the user occurs here
         """
-        super().handle_input(key_events)
+        super().handle_input(key_events, mouse_events)
         player = self.game_context.player
         current_level = player.location.level
         moved = False

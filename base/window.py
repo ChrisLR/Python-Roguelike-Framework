@@ -10,6 +10,6 @@ class BaseWindow(object):
         pass
 
     @abc.abstractmethod
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         pass
 

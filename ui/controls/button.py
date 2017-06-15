@@ -22,5 +22,7 @@ class Button(BaseControl):
         console.setColors(fg=color, bg=self.background_color)
         console.printStr(self.text)
 
-    def handle_input(self, key_events):
-        pass
+    def handle_input(self, key_events, mouse_events):
+        for key_event in key_events:
+            if key_event.key == "ENTER":
+                self.on_press_function()

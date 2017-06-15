@@ -23,7 +23,7 @@ class MainMenuScene(BaseScene):
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         for key_event in key_events:
             if key_event.keychar.upper() == 'A':
                 self.transition_to("CharacterCreationScene")

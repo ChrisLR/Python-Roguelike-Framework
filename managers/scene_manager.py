@@ -23,5 +23,5 @@ class SceneManager(object):
     def render_current_scene(self):
         self.current_scene.render()
 
-    def handle_input(self, key_events):
-        self.current_scene.handle_input(key_events)
+    def handle_input(self, key_events, mouse_events):
+        self.current_scene.handle_input(key_events, mouse_events)

@@ -1,7 +1,9 @@
+from ui.controls import Button
 from ui.windows import MultipartWindow, SingleWindow
 from data.python_templates.tiles import tiles
 from data.python_templates.items import item_templates
 from data.python_templates.characters import character_templates
+from util.colors import Colors
 
 
 class WindowDesignerMain(MultipartWindow):
@@ -9,7 +11,7 @@ class WindowDesignerMain(MultipartWindow):
         windows = [
             WindowHeaderButtons(main_console, scene),
             WindowRenderDesign(main_console, scene, 0, 1),
-            WindowSelectCreation(main_console, scene, 1, 0)
+            WindowSelectCreation(main_console, scene, 20, 0)
         ]
         super().__init__(main_console, windows)
 
@@ -42,10 +44,9 @@ class WindowHeaderButtons(SingleWindow):
     def __init__(self, main_console, scene, x=0, y=0):
         super().__init__(main_console, x, y)
         self.scene = scene
-
-    def render(self):
-        super().render()
-        self.window.drawStr(0, 0, 'HEADER')
+        self.controls.append(Button(" New ", self.scene.new_design_piece, Colors.BLACK, Colors.GRAY))
+        self.controls.append(Button(" Save ", self.scene.save_design_piece, Colors.BLACK, Colors.GRAY))
+        self.controls.append(Button(" Load ", self.scene.load_design_piece, Colors.BLACK, Colors.GRAY))
 
 
 class WindowSelectCreation(SingleWindow):

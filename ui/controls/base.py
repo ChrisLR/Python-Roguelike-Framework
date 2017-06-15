@@ -6,7 +6,6 @@ class BaseControl(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    @property
     def text(self):
         pass
 
@@ -15,5 +14,5 @@ class BaseControl(object):
         pass
 
     @abc.abstractmethod
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         pass

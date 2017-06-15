@@ -19,13 +19,13 @@ class BaseScene(object):
         if self.active_windows:
             self.active_windows[0].render()
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         for key_event in key_events:
             if key_event.keychar == "ESCAPE":
                 self.close_window()
 
         if self.active_windows:
-            self.active_windows[0].handle_input(key_events)
+            self.active_windows[0].handle_input(key_events, mouse_events)
 
     def invoke_window(self, window):
         self.active_windows.insert(0, window)
