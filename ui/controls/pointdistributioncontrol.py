@@ -5,6 +5,7 @@ from ui.controls.base import BaseControl
 class PointDistributionControl(BaseControl):
     # TODO This works well for a point system, but modifiers aren't shown
     def __init__(self, question, options, root_console, initial_value, max_value, total_points, cost_calculator):
+        super().__init__()
         self.question = question
         self.options = options
         self.initial_value = initial_value
@@ -65,6 +66,7 @@ class PointDistributionControl(BaseControl):
                         self.__cycle_next_option()
 
     def render(self, console, active):
+        self.set_position_before_render(console)
         console.printStr("Points Left {}\n".format(self.total_points - self.used_points))
         self._get_formatted_options()
         for option, text in self.list_formatted_options:
@@ -73,6 +75,7 @@ class PointDistributionControl(BaseControl):
             else:
                 console.setColors(fg=ControlColors.INACTIVE_CONTROL_COLOR, bg=ControlColors.BLACK_COLOR)
             console.printStr(text)
+        self.set_dimension_after_render(console)
 
     def __increase_value(self):
         point_cost = self.cost_calculator(self.assigned_points[self.active_option])

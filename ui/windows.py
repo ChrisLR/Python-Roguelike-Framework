@@ -30,6 +30,14 @@ class SingleWindow(BaseWindow):
                 if self.active_control_index >= len(self.controls):
                     self.active_control_index = 0
 
+        for mouse_event in mouse_events:
+            if mouse_event.type == 'MOUSEDOWN':
+                for index, control in enumerate(self.controls):
+                    mouse_x, mouse_y = mouse_event.cell
+                    if control.intersect((mouse_x, mouse_y), (1, 1)):
+                        control.on_press_function()
+                        self.active_control_index = index
+
         if self.controls:
             active_control = self.controls[self.active_control_index]
             if active_control:

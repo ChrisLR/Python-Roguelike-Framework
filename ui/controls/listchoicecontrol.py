@@ -4,6 +4,7 @@ from ui.controls.base import BaseControl
 
 class ListChoiceControl(BaseControl):
     def __init__(self, question, options, root_console):
+        super().__init__()
         self.letter_index = ord('a')
         self.question = question
         self.options = [(self.__assign_letter(), option) for option in options]
@@ -53,6 +54,7 @@ class ListChoiceControl(BaseControl):
             color = ControlColors.INACTIVE_CONTROL_COLOR
 
         width_char_count = 0
+        self.set_position_before_render(console)
         console.setColors(fg=color, bg=ControlColors.BLACK_COLOR)
         console.printStr(self.question + "\n")
         console.setColors(fg=ControlColors.INACTIVE_CONTROL_COLOR, bg=ControlColors.BLACK_COLOR)
@@ -69,3 +71,4 @@ class ListChoiceControl(BaseControl):
                 console.setColors(fg=ControlColors.INACTIVE_CONTROL_COLOR, bg=ControlColors.BLACK_COLOR)
             console.printStr(new_text)
         console.printStr("\n")
+        self.set_dimension_after_render(console)
