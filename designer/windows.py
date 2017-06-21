@@ -1,4 +1,4 @@
-from ui.controls import Button
+from ui.controls import Button, DockableList
 from ui.windows import MultipartWindow, SingleWindow
 from data.python_templates.tiles import tiles
 from data.python_templates.items import item_templates
@@ -53,7 +53,11 @@ class WindowSelectCreation(SingleWindow):
     def __init__(self, main_console, scene, x=0, y=0):
         super().__init__(main_console, x, y)
         self.scene = scene
+        self.controls.append(
+            DockableList("Tiles",
+                         [Button(tile.uid,
+                                 lambda: self.scene.select_tile(tile),Colors.BLACK, Colors.GRAY) for tile in tiles],
+                         Colors.BLACK, Colors.GRAY))
 
-    def render(self):
-        super().render()
-        self.window.drawStr(0, 0, 'SELECTER')
+
+

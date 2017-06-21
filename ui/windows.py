@@ -64,3 +64,6 @@ class MultipartWindow(BaseWindow):
         active_window = self.windows[self.active_window_index]
         if active_window:
             active_window.handle_input(key_events, mouse_events)
+        for window in self.windows:
+            if window is not active_window:
+                window.handle_input([], mouse_events)

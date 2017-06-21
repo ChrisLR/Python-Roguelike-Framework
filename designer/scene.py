@@ -25,6 +25,9 @@ class DesignScene(object):
     def load_design_piece(self):
         pass
 
+    def select_tile(self, tile):
+        pass
+
     def render(self):
         self.main_window.render()
         tdl.flush()
