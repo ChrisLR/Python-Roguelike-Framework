@@ -29,7 +29,7 @@ class DesignScene(object):
         pass
 
     def render(self):
-        self.main_window.render()
+        self.main_window.render(True)
         tdl.flush()
 
     def handle_input(self, key_events, mouse_events):

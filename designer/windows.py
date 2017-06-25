@@ -21,7 +21,7 @@ class WindowRenderDesign(SingleWindow):
         super().__init__(main_console, x, y)
         self.scene = scene
 
-    def render(self):
+    def render(self, active):
         self.window.move(0, 0)
         design_piece = self.scene.design_piece
 
@@ -44,20 +44,20 @@ class WindowHeaderButtons(SingleWindow):
     def __init__(self, main_console, scene, x=0, y=0):
         super().__init__(main_console, x, y)
         self.scene = scene
-        self.controls.append(Button(" New ", self.scene.new_design_piece, Colors.BLACK, Colors.GRAY))
-        self.controls.append(Button(" Save ", self.scene.save_design_piece, Colors.BLACK, Colors.GRAY))
-        self.controls.append(Button(" Load ", self.scene.load_design_piece, Colors.BLACK, Colors.GRAY))
+        self.controls.add_control(Button(" New ", self.scene.new_design_piece, Colors.BLACK, Colors.GRAY), x, y)
+        self.controls.add_control(Button(" Save ", self.scene.save_design_piece, Colors.BLACK, Colors.GRAY), x + 4, y)
+        self.controls.add_control(Button(" Load ", self.scene.load_design_piece, Colors.BLACK, Colors.GRAY), x + 9, y)
 
 
 class WindowSelectCreation(SingleWindow):
     def __init__(self, main_console, scene, x=0, y=0):
         super().__init__(main_console, x, y)
         self.scene = scene
-        self.controls.append(
+        self.controls.add_control(
             DockableList("Tiles",
                          [Button(tile.uid,
                                  lambda: self.scene.select_tile(tile),Colors.BLACK, Colors.GRAY) for tile in tiles],
-                         Colors.BLACK, Colors.GRAY))
+                         Colors.BLACK, Colors.GRAY), 0, 0)
 
 
 

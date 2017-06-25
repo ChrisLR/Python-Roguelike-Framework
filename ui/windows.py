@@ -1,7 +1,8 @@
-import math
 import tdl
 
 from base.window import BaseWindow
+from ui.controls.interface import ControlsInterface
+from util.operations import intersect
 
 
 class SingleWindow(BaseWindow):
@@ -12,36 +13,18 @@ class SingleWindow(BaseWindow):
             width=self.main_console.width,
             height=self.main_console.height
         )
-        self.controls = []
-        self.active_control_index = 0
+        self.controls = ControlsInterface(self)
 
-    def render(self):
+    def render(self, active):
         self.window.move(0, 0)
-        for index, control in enumerate(self.controls):
-            if index == self.active_control_index:
-                control.render(console=self.window, active=True)
-            else:
-                control.render(console=self.window, active=False)
+        self.controls.render(self.window, active)
 
     def handle_input(self, key_events, mouse_events):
-        for key_event in key_events:
-            if key_event.key == "TAB":
-                self.active_control_index += 1
-                if self.active_control_index >= len(self.controls):
-                    self.active_control_index = 0
+        self.controls.handle_input(key_events, mouse_events)
 
-        for mouse_event in mouse_events:
-            if mouse_event.type == 'MOUSEDOWN':
-                for index, control in enumerate(self.controls):
-                    mouse_x, mouse_y = mouse_event.cell
-                    if control.intersect((mouse_x, mouse_y), (1, 1)):
-                        control.on_press_function()
-                        self.active_control_index = index
-
-        if self.controls:
-            active_control = self.controls[self.active_control_index]
-            if active_control:
-                active_control.handle_input(key_events, mouse_events)
+    @property
+    def position(self):
+        return self.window.x, self.window.y
 
 
 class MultipartWindow(BaseWindow):
@@ -50,9 +33,12 @@ class MultipartWindow(BaseWindow):
         self.windows = windows
         self.active_window_index = 0
 
-    def render(self):
-        for window in self.windows:
-            window.render()
+    def render(self, active):
+        for index, window in enumerate(self.windows):
+            if index == self.active_window_index:
+                window.render(True)
+            else:
+                window.render(False)
 
     def handle_input(self, key_events, mouse_events=None):
         for key_event in key_events:
@@ -63,7 +49,11 @@ class MultipartWindow(BaseWindow):
 
         active_window = self.windows[self.active_window_index]
         if active_window:
-            active_window.handle_input(key_events, mouse_events)
-        for window in self.windows:
-            if window is not active_window:
-                window.handle_input([], mouse_events)
+            active_window.handle_input(key_events, [])
+        for mouse_event in mouse_events:
+            if mouse_event.type == 'MOUSEDOWN':
+                for index, window in enumerate(self.windows):
+                    if intersect((window.window.x, window.window.y), (window.window.width, window.window.height), mouse_event.cell, (1, 1)):
+                        self.active_window_index = index
+                        window.handle_input([], mouse_events)
+

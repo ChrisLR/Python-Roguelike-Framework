@@ -9,6 +9,7 @@ class Button(BaseControl):
         self.on_press_function = on_press_function
         self.foreground_color = foreground_color
         self.background_color = background_color
+        self.dimensions = (len(text), 1)
 
     @property
     def text(self):
@@ -20,10 +21,8 @@ class Button(BaseControl):
         else:
             color = self.foreground_color
 
-        console.setColors(fg=color, bg=self.background_color)
-        self.set_position_before_render(console)
-        console.printStr(self.text)
-        self.set_dimension_after_render(console)
+        x, y = self.position
+        console.drawStr(x, y, self.text, color, self.background_color)
 
     def handle_input(self, key_events, mouse_events):
         for key_event in key_events:

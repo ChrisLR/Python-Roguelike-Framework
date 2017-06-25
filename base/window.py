@@ -6,7 +6,7 @@ class BaseWindow(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def render(self):
+    def render(self, active):
         pass
 
     @abc.abstractmethod
