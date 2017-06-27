@@ -17,7 +17,7 @@ class BaseScene(object):
 
     def render(self):
         if self.active_windows:
-            self.active_windows[0].render()
+            self.active_windows[0].render(True)
 
     def handle_input(self, key_events, mouse_events):
         for key_event in key_events:

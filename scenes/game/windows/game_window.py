@@ -20,11 +20,11 @@ class GameWindow(SingleWindow):
         # TODO Eventually we want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
 
-    def render(self):
+    def render(self, active):
         """
         Render the areas, characters, items, etc..
         """
-        super().render()
+        super().render(active)
         player = self.game_context.player
         current_level = player.location.level
         self.render_gui(player)

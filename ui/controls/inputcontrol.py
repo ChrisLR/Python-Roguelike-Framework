@@ -34,6 +34,5 @@ class InputControl(BaseControl):
         else:
             color = ControlColors.INACTIVE_CONTROL_COLOR
         console.setColors(fg=color, bg=ControlColors.BLACK_COLOR)
-        self.set_position_before_render(console)
-        console.printStr(self.text)
-        self.set_dimension_after_render(console)
+        x, y = self.position
+        console.drawStr(x, y, self.text, color, ControlColors.BLACK_COLOR)

@@ -66,7 +66,8 @@ class PointDistributionControl(BaseControl):
                         self.__cycle_next_option()
 
     def render(self, console, active):
-        self.set_position_before_render(console)
+        x, y = self.position
+        console.move(x, y)
         console.printStr("Points Left {}\n".format(self.total_points - self.used_points))
         self._get_formatted_options()
         for option, text in self.list_formatted_options:
@@ -75,7 +76,6 @@ class PointDistributionControl(BaseControl):
             else:
                 console.setColors(fg=ControlColors.INACTIVE_CONTROL_COLOR, bg=ControlColors.BLACK_COLOR)
             console.printStr(text)
-        self.set_dimension_after_render(console)
 
     def __increase_value(self):
         point_cost = self.cost_calculator(self.assigned_points[self.active_option])

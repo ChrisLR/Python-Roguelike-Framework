@@ -54,8 +54,9 @@ class ListChoiceControl(BaseControl):
             color = ControlColors.INACTIVE_CONTROL_COLOR
 
         width_char_count = 0
-        self.set_position_before_render(console)
         console.setColors(fg=color, bg=ControlColors.BLACK_COLOR)
+        x, y = self.position
+        console.move(x, y)
         console.printStr(self.question + "\n")
         console.setColors(fg=ControlColors.INACTIVE_CONTROL_COLOR, bg=ControlColors.BLACK_COLOR)
         for letter, option in self.options:
@@ -71,4 +72,3 @@ class ListChoiceControl(BaseControl):
                 console.setColors(fg=ControlColors.INACTIVE_CONTROL_COLOR, bg=ControlColors.BLACK_COLOR)
             console.printStr(new_text)
         console.printStr("\n")
-        self.set_dimension_after_render(console)
