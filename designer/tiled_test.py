@@ -13,7 +13,7 @@ image_path = os.path.dirname(os.path.realpath(__file__)) + 'tileset.png'
 x = 0
 y = 0
 for tile in tiles:
-    #image_draw.rectangle(((x, y), (4, 4)), fill=tile.display.background_color)
+    image_draw.rectangle(((x, y), (x + 16, y + 16)), fill=tile.display.background_color)
     image_draw.text((x, y), tile.display.ascii_character, font=font, fill=tile.display.foreground_color)
     y += 16
     if y >= height:
