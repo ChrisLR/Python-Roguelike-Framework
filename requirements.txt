@@ -1,3 +1,4 @@
+pillow
 singledispatch
 jsonpickle
 cffi==1.9

@@ -16,10 +16,12 @@ json_path = os.path.join(folder_path, 'tileset.json')
 x = 0
 y = 0
 
-for tile in tiles:
+tile_types = {}
+for index, tile in enumerate(tiles):
     image_draw.rectangle(((x, y), (x + 16, y + 16)), fill=tile.display.background_color)
     image_draw.text((x, y), tile.display.ascii_character, font=font, fill=tile.display.foreground_color)
     y += 16
+    tile_types[index] = tile.uid
     if y >= height:
         if x >= width:
             break
@@ -29,7 +31,7 @@ for tile in tiles:
 image.save(image_path)
 
 new_data = {
-    "columns": 14,
+    "columns": y / 16 if y > 16 else 1,
     "image": "tileset.png",
     "imageheight": image.height,
     "imagewidth": image.width,
@@ -38,13 +40,7 @@ new_data = {
     "spacing": 0,
     "tilecount": len(tiles),
     "tileheight": 16,
-    "tiles":
-    {
-        "14":
-            {
-                "type": "t"
-            }
-    },
+    "tiles": tile_types,
      "tilewidth": 16,
      "type": "tileset"
 }
