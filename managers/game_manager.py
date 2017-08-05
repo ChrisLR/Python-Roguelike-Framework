@@ -22,7 +22,7 @@ class GameManager(object):
         # self.console_manager = ConsoleManager()
         # self.scene_manager = SceneManager(self.console_manager, game_context=self.game_context)
         # self.game_context.console_manager = self.console_manager
-        # self.load_game_data()
+        self.load_game_data()
 
     def start(self):
         director.run(MainMenuScene(self.game_context))
