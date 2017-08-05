@@ -91,7 +91,7 @@ def player_death(player, console):
 
     # for added effect, transform the player into a corpse!
     player.display.ascii_character = '%'
-    player.display.foreground_color = Colors.BLOOD_RED
+    player.display.foreground_color = Colors.CRIMSON
 
 
 def monster_death(monster, console):
@@ -100,7 +100,7 @@ def monster_death(monster, console):
     # attacked and doesn't move
     console.printStr('{} has died.\n\n'.format(monster.name))
     monster.display.ascii_character = '%'
-    monster.display.foreground_color = Colors.BLOOD_RED
+    monster.display.foreground_color = Colors.CRIMSON
     monster.blocks = False
     monster.name = 'remains of ' + monster.name
 

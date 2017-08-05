@@ -20,11 +20,11 @@ class GameWindow(SingleWindow):
         # TODO Eventually we want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
 
-    def render(self):
+    def render(self, active):
         """
         Render the areas, characters, items, etc..
         """
-        super().render()
+        super().render(active)
         player = self.game_context.player
         current_level = player.location.level
         self.render_gui(player)
@@ -60,12 +60,8 @@ class GameWindow(SingleWindow):
     def render_map(self, current_level, viewer_fov):
         for x, y in viewer_fov:
             if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
-                if current_level.maze[x][y].is_blocked:
-                    self.main_console.drawChar(x, y, '#', fgcolor=COLORS['light_wall'])
-                    current_level.maze[x][y].is_explored = True
-                if current_level.maze[x][y].is_ground is True:
-                    self.main_console.drawChar(x, y, '.', fgcolor=COLORS['light_ground'])
-                    current_level.maze[x][y].is_explored = True
+                self.main_console.drawChar(x, y, **current_level.maze[x][y].display.get_draw_info())
+                current_level.maze[x][y].is_explored = True
 
     def render_items(self, player, level):
         for item in level.spawned_items:
@@ -87,11 +83,11 @@ class GameWindow(SingleWindow):
             **player.display.get_draw_info()
         )
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         """
         Any keyboard interaction from the user occurs here
         """
-        super().handle_input(key_events)
+        super().handle_input(key_events, mouse_events)
         player = self.game_context.player
         current_level = player.location.level
         moved = False

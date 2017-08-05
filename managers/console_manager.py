@@ -77,3 +77,8 @@ class Menu(Console):
     def print_str(self, text, pos_x, pos_y):
         self.move(pos_x, pos_y)
         self.printStr(text)
+
+    @property
+    def parent(self):
+        # This is a bug where tdl tries to get cursor on this parent when this has no parent.
+        return self

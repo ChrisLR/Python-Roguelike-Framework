@@ -16,7 +16,7 @@ def build_short_sword():
         uid="short_sword",
         name="Short Sword",
         description="A short sword.",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _short_sword.register_component(data.python_templates.material.Iron.copy())
     _short_sword.register_component(Stats(health=1, size=Size.Medium))
@@ -33,7 +33,7 @@ def build_long_sword():
         uid="long_sword",
         name="Longsword",
         description="A longsword.",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _long_sword.register_component(data.python_templates.material.Iron.copy())
     _long_sword.register_component(Stats(health=1, size=Size.Medium))
@@ -50,7 +50,7 @@ def build_helmet():
         uid="helmet",
         name="Helmet",
         description="A helmet.",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _helmet.register_component(data.python_templates.material.Iron.copy())
     _helmet.register_component(Stats(health=10, size=Size.Medium, weight=2))
@@ -71,7 +71,7 @@ def build_leather_hood():
         uid="hood",
         name="hood",
         description="A leather hood.",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _item.register_component(data.python_templates.material.Leather.copy())
     _item.register_component(Stats(health=10, size=Size.Medium, weight=2))
@@ -92,7 +92,7 @@ def build_breastplate():
         uid="breastplate",
         name="Breastplate",
         description="An iron breastplate..",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _breastplate.register_component(data.python_templates.material.Iron.copy())
     _breastplate.register_component(Stats(health=10, size=Size.Medium, weight=4))
@@ -113,7 +113,7 @@ def build_leather_cuirass():
         uid="cuirass",
         name="Cuirass",
         description="A leather cuirass",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _item.register_component(data.python_templates.material.Leather.copy())
     _item.register_component(Stats(health=10, size=Size.Medium, weight=4))
@@ -134,7 +134,7 @@ def build_bracer():
         uid="bracer",
         name="Bracer",
         description="An iron bracer",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _bracers.register_component(data.python_templates.material.Iron.copy())
     _bracers.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
@@ -155,7 +155,7 @@ def build_gauntlet():
         uid="gauntlet",
         name="Gauntlet",
         description="An iron gauntlet",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _gauntlet.register_component(data.python_templates.material.Iron.copy())
     _gauntlet.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
@@ -176,7 +176,7 @@ def build_greave():
         uid="greave",
         name="Greave",
         description="An iron greave",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _greave.register_component(data.python_templates.material.Iron.copy())
     _greave.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
@@ -198,7 +198,7 @@ def build_leather_pants():
         uid="pants",
         name="pants",
         description="Leather pants",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     item.register_component(data.python_templates.material.Leather.copy())
     item.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
@@ -219,7 +219,7 @@ def build_boot():
         uid="boot",
         name="Boot",
         description="An iron boot",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
     )
     _boot.register_component(data.python_templates.material.Iron.copy())
     _boot.register_component(Stats(health=10, size=Size.Medium, weight=0.5))

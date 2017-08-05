@@ -8,14 +8,12 @@ from data.python_templates.races import race_templates
 from data.python_templates.needs import hunger, thirst
 from managers.console_manager import Menu
 from ui import controls
+from ui.controls.interface import ControlsInterface
 
 
 class CharacterCreationScene(BaseScene):
     ID = "CharacterCreation"
-
-    # TODO We need a sort of cursor to print every control in its place.
-    # TODO For that we need to have a render func passing the cursor
-    # TODO and each control needs a menu to render on.
+    # TODO Remake this properly using the new style controls interface.
     
     def __init__(self, console_manager, scene_manager, game_context):
         super().__init__(console_manager, scene_manager, game_context)
@@ -41,13 +39,6 @@ class CharacterCreationScene(BaseScene):
             max_value=15,
             cost_calculator=lambda current: 1 if current < 13 else 2
         )
-
-        self.controls = [
-            self.control_name,
-            self.control_class,
-            self.control_race,
-            self.control_stats
-        ]
         self.menu = Menu('Character Creation',
                          """
                          Create your adventure!
@@ -55,6 +46,13 @@ class CharacterCreationScene(BaseScene):
                          self.options,
                          self.main_console.width,
                          self.main_console.height)
+        self.controls = ControlsInterface(self.menu)
+        self.menu.position = (0, 0)
+        self.controls.add_control(self.control_name, 0, 0)
+        self.controls.add_control(self.control_class, 0, 1)
+        self.controls.add_control(self.control_race, 0, 4)
+        self.controls.add_control(self.control_stats, 0, 8)
+
         self.active_control = self.control_name
 
         # TODO THIS should be in the menu itself.
@@ -74,9 +72,9 @@ class CharacterCreationScene(BaseScene):
     def render(self):
         self.menu.clear()
         self.menu.move(0, 0)
-        for control in self.controls:
+        for control in self.controls.controls:
             if self.active_control is None \
-                    or self.controls.index(self.active_control) >= self.controls.index(control):
+                    or self.controls.controls.index(self.active_control) >= self.controls.controls.index(control):
                 if control == self.active_control:
                     control.render(self.menu, True)
                 else:
@@ -88,13 +86,13 @@ class CharacterCreationScene(BaseScene):
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         if self.active_control:
-            self.active_control.handle_input(key_events)
+            self.active_control.handle_input(key_events, mouse_events)
             if self.active_control.finished:
-                new_index = self.controls.index(self.active_control) + 1
-                if new_index < len(self.controls):
-                    self.active_control = self.controls[new_index]
+                new_index = self.controls.controls.index(self.active_control) + 1
+                if new_index < len(self.controls.controls):
+                    self.active_control = self.controls.controls[new_index]
                 else:
                     self.active_control = None
         else:

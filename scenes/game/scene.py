@@ -39,11 +39,11 @@ class GameScene(BaseScene):
         logger.info("Starting new game.")
         self.new_game()
 
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         if len(self.active_windows) > 1:
-            super().handle_input(key_events)
+            super().handle_input(key_events, mouse_events)
             return
-        super().handle_input(key_events)
+        super().handle_input(key_events, mouse_events)
 
         for key_event in key_events:
             if key_event.keychar == "i":
@@ -211,8 +211,7 @@ class Forerunner(object):
     def _place_monster(level, tile):
         # TODO This kind of spawning has a few issues, it should use a service to spawn monsters.
         monster = level.monster_spawn_list.pop(0)
-        monster.location.local_x = tile.x
-        monster.location.local_y = tile.y
+        monster.location = tile.location.copy()
         monster.location.level = level
         level.spawned_monsters.append(monster)
         tile.contains_object = True
@@ -222,8 +221,7 @@ class Forerunner(object):
         """
         Place the player in the maze.
         """
-        player.location.local_x = tile.x
-        player.location.local_y = tile.y
+        player.location = tile.location.copy()
         player.location.level = level
         tile.contains_object = True
 

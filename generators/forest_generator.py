@@ -14,12 +14,20 @@ World Generator, Dungeon Generator, Wilderness Generator.
 """
 
 
-class DungeonGenerator(object):
+class ForestGenerator(object):
     """
         Takes a level config and outputs a new areas maze.
     """
     def __init__(self, factory_service):
         self.factory_service = factory_service
+
+    def fill_with_grass(self, level):
+        level.maze = [[tiles.forest_grass_floor.copy(x, y) for y in range(level.height)] for x in range(level.width)]
+
+    def grow_big_trees(self, level):
+        # We want about one big tree per 9 tile
+        for x in range(0,)
+
 
     @staticmethod
     def _create_room(level, room):

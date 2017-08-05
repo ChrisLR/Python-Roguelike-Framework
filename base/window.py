@@ -6,10 +6,10 @@ class BaseWindow(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def render(self):
+    def render(self, active):
         pass
 
     @abc.abstractmethod
-    def handle_input(self, key_events):
+    def handle_input(self, key_events, mouse_events):
         pass
 
