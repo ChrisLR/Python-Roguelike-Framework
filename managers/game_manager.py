@@ -1,4 +1,4 @@
-import tdl
+from cocos.director import director
 
 from managers.console_manager import ConsoleManager
 from managers.scene_manager import SceneManager
@@ -7,6 +7,7 @@ from factories.body_factory import BodyFactory
 from factories.character_factory import CharacterFactory
 from factories.factory_service import FactoryService
 from factories.item_factory import ItemFactory
+from scenes.main_menu.scene import MainMenuScene
 
 
 class GameManager(object):
@@ -17,27 +18,14 @@ class GameManager(object):
     def __init__(self):
         # Pre-load levels into database
         self.game_context = GameContext()
-
-        self.console_manager = ConsoleManager()
-        self.scene_manager = SceneManager(self.console_manager, game_context=self.game_context)
-        self.game_context.console_manager = self.console_manager
-        self.load_game_data()
+        director.init()
+        # self.console_manager = ConsoleManager()
+        # self.scene_manager = SceneManager(self.console_manager, game_context=self.game_context)
+        # self.game_context.console_manager = self.console_manager
+        # self.load_game_data()
 
     def start(self):
-        tdl.setTitle("Roguelike Framework")
-        while True:  # Continue in an infinite game loop.
-            self.console_manager.main_console.clear()  # Blank the console
-            self.scene_manager.render_current_scene()
-            all_key_events = list(tdl.event.get())
-            for key_event in all_key_events:
-                if key_event.type == 'QUIT':
-                    # Halt the script using SystemExit
-                    raise SystemExit('The window has been closed.')
-            key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
-            mouse_events = [key_event for key_event in all_key_events if key_event.type in ['MOUSEDOWN', 'MOUSEUP']]
-
-            self.scene_manager.handle_input(key_events=key_events, mouse_events=mouse_events)
-            tdl.flush()
+        director.run(MainMenuScene(self.game_context))
 
     def load_game_data(self):
         """
