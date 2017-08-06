@@ -7,5 +7,5 @@ class MainMenuScene(cocos.scene.Scene):
     ID = "MainMenu"
 
     def __init__(self, game_context):
-        self.layer = MainMenuUILayer()
+        self.layer = MainMenuUILayer(game_context)
         super().__init__(self.layer)

@@ -3,9 +3,9 @@ from scenes.main_menu.menu import MainMenu
 
 
 class MainMenuUILayer(cocos.layer.Layer):
-    def __init__(self):
+    def __init__(self, game_context):
         super().__init__()
-        self.menu = MainMenu(title=self.get_description())
+        self.menu = MainMenu(self.get_description(), game_context)
         self.add(self.menu)
 
     def get_description(self):

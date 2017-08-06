@@ -34,3 +34,6 @@ class CharacterClass(Component):
             modifiers = self.level_tree.get_stat_modifiers(self.get_level())
             if stat in modifiers:
                 return modifiers[stat]
+
+    def __str__(self):
+        return self.name

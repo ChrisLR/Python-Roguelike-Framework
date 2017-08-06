@@ -1,7 +1,5 @@
 from cocos.director import director
 
-from managers.console_manager import ConsoleManager
-from managers.scene_manager import SceneManager
 from managers.game_context import GameContext
 from factories.body_factory import BodyFactory
 from factories.character_factory import CharacterFactory
@@ -20,12 +18,11 @@ class GameManager(object):
         self.game_context = GameContext()
         director.init()
         # self.console_manager = ConsoleManager()
-        # self.scene_manager = SceneManager(self.console_manager, game_context=self.game_context)
         # self.game_context.console_manager = self.console_manager
         self.load_game_data()
 
     def start(self):
-        director.run(MainMenuScene(self.game_context))
+        director.run(MainMenuScene(self.game_context, self.scene_manager))
 
     def load_game_data(self):
         """

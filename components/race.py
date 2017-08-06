@@ -38,6 +38,9 @@ class Race(Component):
             if stat in modifiers:
                 return modifiers[stat]
 
+    def __str__(self):
+        return self.name
+
 
 class MetaRace(Race):
     """

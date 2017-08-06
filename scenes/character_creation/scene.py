@@ -18,11 +18,7 @@ class CharacterCreationScene(cocos.scene.Scene):
     # TODO Remake this properly using the new style controls interface.
     
     def __init__(self, game_context):
-        self.character_factory = game_context.character_factory
-        self.body_factory = game_context.body_factory
-        sorted_class_templates = sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
-        sorted_race_templates = sorted(race_templates.values(), key=lambda race: race.name)
-        self.layer = CharacterCreationUILayer(sorted_class_templates, sorted_race_templates)
+        self.layer = CharacterCreationUILayer(game_context)
         super().__init__(self.layer)
     #
     #     self.options = ["Finish"]
