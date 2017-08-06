@@ -1,22 +1,19 @@
+import cocos
+from cocos.director import director
+import pyglet
 from enum import Enum
 
 import settings
-import tdl
 from settings import DUNGEON_COLORS as COLORS
 from stats.enums import StatsEnum
 from ui.windows import SingleWindow
 
 
-class GameConsoles(Enum):
-    ActionLog = 0
-    Status = 1
-
-
-class GameWindow(SingleWindow):
-    def __init__(self, main_console, consoles, game_context):
-        super().__init__(main_console)
+class GameLayer(cocos.tiles.RectMapLayer):
+    def __init__(self, game_context):
+        current_level = game_context.player.location.level
+        super().__init__(current_level.name, current_level.width, current_level.height, cells=current_level.tiles)
         self.game_context = game_context
-        self.consoles = consoles
         # TODO Eventually we want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
 
@@ -146,3 +143,50 @@ class GameWindow(SingleWindow):
                 return True
         except IndexError:
             return False
+
+    def _update_sprite_set(self):
+        # update the sprites set
+        keep = set()
+        for cell in self.get_visible_cells():
+            cx, cy = key = cell.origin[:2]
+            keep.add(key)
+            if cell.tile is None:
+                continue
+            if key in self._sprites:
+                s = self._sprites[key]
+            else:
+                image = cell.tile.image
+                if isinstance(image, str):
+                    s = pyglet.text.Label(image, x=cx, y=cy, batch=self.batch, font_size=10)
+                else:
+                    s = pyglet.sprite.Sprite(cell.tile.image,
+                                             x=cx, y=cy, batch=self.batch)
+                if 'color4' in cell.properties:
+                    r, g, b, a = cell.properties['color4']
+                    s.color = (r, g, b)
+                    s.opacity = a
+                self._sprites[key] = s
+
+            if self.debug:
+                if getattr(s, '_label', None):
+                    continue
+                label = [
+                    'cell=%d,%d' % (cell.i, cell.j),
+                    'origin=%d,%d px' % (cx, cy),
+                ]
+                for p in cell.properties:
+                    label.append('%s=%r' % (p, cell.properties[p]))
+                if cell.tile is not None:
+                    for p in cell.tile.properties:
+                        label.append('%s=%r' % (p, cell.tile.properties[p]))
+                lx, ly = cell.topleft
+                s._label = pyglet.text.Label(
+                    '\n'.join(label), multiline=True, x=lx, y=ly,
+                    bold=True, font_size=8, width=cell.width,
+                    batch=self.batch)
+            else:
+                s._label = None
+        for k in list(self._sprites):
+            if k not in keep and k in self._sprites:
+                self._sprites[k]._label = None
+                del self._sprites[k]

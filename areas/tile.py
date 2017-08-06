@@ -1,10 +1,12 @@
+import cocos
 from components.game_object import GameObject
 from components.location import Location
 
 
-class Tile(GameObject):
+class Tile(GameObject, cocos.tiles.Tile):
     def __init__(self, uid, x=0, y=0, display=None, is_blocked=False):
-        super().__init__()
+        GameObject.__init__(self)
+        cocos.tiles.Tile.__init__(self, uid, {}, display.ascii_character if display else '%')
         self.uid = uid
         self.register_component(Location(x, y))
         if display:

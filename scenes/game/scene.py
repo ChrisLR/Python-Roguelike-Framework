@@ -9,8 +9,7 @@ from generators.dungeon_generator import DungeonGenerator
 from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
-from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow
-from scenes.game.windows.game_window import GameConsoles
+from scenes.game.layers import GameLayer, ItemQueryWindow, InventoryWindow
 
 
 class GameScene(cocos.scene.Scene):
@@ -20,15 +19,19 @@ class GameScene(cocos.scene.Scene):
     ID = "Game"
 
     def __init__(self, game_context):
-        super().__init__()
+        self.scroll_manager = cocos.layer.ScrollingManager()
         self.game_context = game_context
+        self.new_game()
+        self.game_layer = GameLayer(game_context)
+        self.scroll_manager.add(self.game_layer)
+        super().__init__(self.scroll_manager)
         self.loaded_levels = []
 
-        game_context.action_manager = ActionManager(consoles[GameConsoles.ActionLog])
-        game_context.echo_service = EchoService(consoles[GameConsoles.ActionLog], game_context)
+        # game_context.action_manager = ActionManager(consoles[GameConsoles.ActionLog])
+        # game_context.echo_service = EchoService(consoles[GameConsoles.ActionLog], game_context)
+        #
+        # game_window = GameWindow(console_manager.main_console, consoles, game_context)
 
-        game_window = GameWindow(console_manager.main_console, consoles, game_context)
-        self.new_game()
 
     # def handle_input(self, key_events, mouse_events):
     #     if len(self.active_windows) > 1:

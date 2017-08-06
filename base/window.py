@@ -2,7 +2,7 @@ import abc
 
 
 class BaseWindow(object):
-    """Abstract class for all windows"""
+    """Abstract class for all layers"""
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod

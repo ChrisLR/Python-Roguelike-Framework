@@ -14,15 +14,13 @@ class GameManager(object):
     Admittedly this is a bit of a mess and will need to be cleaned up.
     """
     def __init__(self):
-        # Pre-load levels into database
         self.game_context = GameContext()
-        director.init()
         # self.console_manager = ConsoleManager()
         # self.game_context.console_manager = self.console_manager
         self.load_game_data()
 
     def start(self):
-        director.run(MainMenuScene(self.game_context, self.scene_manager))
+        director.run(MainMenuScene(self.game_context))
 
     def load_game_data(self):
         """

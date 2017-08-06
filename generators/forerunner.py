@@ -1,3 +1,6 @@
+import random
+
+
 class Forerunner(object):
     """
     The Forerunner will traverse the dungeon and place dungeon objects such as monsters and items
@@ -17,7 +20,7 @@ class Forerunner(object):
         # place the player in the center of the first room
         first_room = self.level.rooms[0]
         x, y = first_room.center()
-        tile = self.level.maze[x][y]
+        tile = self.level.tiles[x][y]
         self._place_player(self.level, tile, self.player)
 
         self._place_monsters_in_rooms()
@@ -42,14 +45,13 @@ class Forerunner(object):
         else:
             y = room.y1 + 1
 
-        tile = level.maze[x][y]
+        cell = level.tiles[x][y]
 
-        if not tile.contains_object:
-            return tile
+        if not cell.tile.contains_object:
+            return cell
 
         if depth > 50:
-            logger.debug("Could not find appropriate tile to spawn items.")
-            return tile
+            return cell
 
         # if we didn't find an empty tile, try again
         return self._get_random_room_tile(level, room, depth=depth + 1)
@@ -76,22 +78,22 @@ class Forerunner(object):
             self._place_item(self.level, tile, item)
 
     @staticmethod
-    def _place_monster(level, tile):
+    def _place_monster(level, cell):
         # TODO This kind of spawning has a few issues, it should use a service to spawn monsters.
         monster = level.monster_spawn_list.pop(0)
-        monster.location = tile.location.copy()
+        monster.location = cell.tile.location.copy()
         monster.location.level = level
         level.spawned_monsters.append(monster)
-        tile.contains_object = True
+        cell.tile.contains_object = True
 
     @staticmethod
-    def _place_player(level, tile, player):
+    def _place_player(level, cell, player):
         """
-        Place the player in the maze.
+        Place the player in the tiles.
         """
-        player.location = tile.location.copy()
+        player.location = cell.tile.location.copy()
         player.location.level = level
-        tile.contains_object = True
+        cell.tile.contains_object = True
 
     @staticmethod
     def _place_item(level, tile, item):
@@ -103,4 +105,3 @@ class Forerunner(object):
     def _place_stairs(self, tile):
         # TODO Stairs should not be an item but a passable tile.
         pass
-

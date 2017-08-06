@@ -57,9 +57,9 @@ class CharacterCreationMenu(cocos.menu.Menu):
             cocos.menu.MenuItem('Back', callback_func=lambda: director.pop())
         ])
         self.name = None
-        self.race = None
-        self.class_template = None
-        self.stats = {}
+        self.race = sorted_race_templates[0]
+        self.class_template = sorted_class_templates[0]
+        self.stats = point_distribution.assigned_points.copy()
 
     def set_name(self, value):
         self.name = value
@@ -84,7 +84,7 @@ class CharacterCreationMenu(cocos.menu.Menu):
             class_uid=self.class_template.uid,
             race_uid=self.race.uid,
             stats=make_character_stats(
-                **{uid.lower(): value for uid, value in self.stats.items()}),
+                **{uid.value.lower(): value for uid, value in self.stats.items()}),
             body_uid="humanoid"
         )
         player = self.game_context.player
@@ -94,4 +94,4 @@ class CharacterCreationMenu(cocos.menu.Menu):
             starter_thief.apply(player)
         else:
             starter_warrior.apply(player)
-        director.push(GameScene())
+        director.push(GameScene(self.game_context))

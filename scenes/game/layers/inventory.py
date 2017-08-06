@@ -3,7 +3,7 @@ import math
 import tdl
 from ui import controls
 from ui.windows import SingleWindow, MultipartWindow
-from scenes.game.windows.item_query_window import ItemQueryWindow
+from scenes.game.layers.itemquery import ItemQueryWindow
 
 
 class InventoryWindow(MultipartWindow):
