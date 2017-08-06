@@ -12,6 +12,7 @@ from managers.echo import EchoService
 from scenes.game.layers import GameLayer, ItemQueryWindow, InventoryWindow
 
 
+
 class GameScene(cocos.scene.Scene):
     """
     This handles everything relating to the UI in the game window.
@@ -26,6 +27,9 @@ class GameScene(cocos.scene.Scene):
         self.scroll_manager.add(self.game_layer)
         super().__init__(self.scroll_manager)
         self.loaded_levels = []
+        coords = game_context.player.location.get_local_coords()
+        self.add(cocos.text.Label('@', x=coords[0], y=coords[1]))
+        self.scroll_manager.set_focus(*coords)
 
         # game_context.action_manager = ActionManager(consoles[GameConsoles.ActionLog])
         # game_context.echo_service = EchoService(consoles[GameConsoles.ActionLog], game_context)

@@ -23,5 +23,6 @@ class Tile(GameObject, cocos.tiles.Tile):
         self.copy_to(new_tile)
         new_tile.location.local_x = x
         new_tile.location.local_y = y
+        new_tile.image = self.display.ascii_character
 
         return new_tile

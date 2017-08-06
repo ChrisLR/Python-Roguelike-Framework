@@ -12,7 +12,7 @@ from ui.windows import SingleWindow
 class GameLayer(cocos.tiles.RectMapLayer):
     def __init__(self, game_context):
         current_level = game_context.player.location.level
-        super().__init__(current_level.name, current_level.width, current_level.height, cells=current_level.tiles)
+        super().__init__(current_level.name, 1, 1, cells=current_level.tiles)
         self.game_context = game_context
         # TODO Eventually we want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
@@ -157,7 +157,7 @@ class GameLayer(cocos.tiles.RectMapLayer):
             else:
                 image = cell.tile.image
                 if isinstance(image, str):
-                    s = pyglet.text.Label(image, x=cx, y=cy, batch=self.batch, font_size=10)
+                    s = pyglet.text.Label(image, x=cx, y=cy, batch=self.batch, font_size=10, align='center', anchor_x='center', anchor_y='center')
                 else:
                     s = pyglet.sprite.Sprite(cell.tile.image,
                                              x=cx, y=cy, batch=self.batch)
