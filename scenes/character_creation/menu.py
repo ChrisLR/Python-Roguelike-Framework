@@ -1,15 +1,16 @@
 import cocos
 from cocos.director import director
+
+from components.needs import Needs
 from components.stats import StatsEnum
-from util.pointdistribution import PointDistribution
-from ui.controls.pointdistributioncontrol import PointDistributionMenuItem
+from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
-from data.python_templates.races import race_templates
 from data.python_templates.needs import hunger, thirst
 from data.python_templates.outfits import starter_thief, starter_warrior
-from components.stats import make_character_stats
-from components.needs import Needs
+from data.python_templates.races import race_templates
 from scenes.game.scene import GameScene
+from ui.controls.pointdistributioncontrol import PointDistributionMenuItem
+from util.pointdistribution import PointDistribution
 
 
 class CharacterCreationMenu(cocos.menu.Menu):
@@ -94,4 +95,3 @@ class CharacterCreationMenu(cocos.menu.Menu):
         else:
             starter_warrior.apply(player)
         director.push(GameScene())
-
