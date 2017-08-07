@@ -157,7 +157,8 @@ class GameLayer(cocos.tiles.RectMapLayer):
             else:
                 image = cell.tile.image
                 if isinstance(image, str):
-                    s = pyglet.text.Label(image, x=cx, y=cy, batch=self.batch, font_size=10, align='center', anchor_x='center', anchor_y='center')
+                    r, g, b = cell.tile.display.foreground_color
+                    s = pyglet.text.Label(image, x=cx, y=cy, batch=self.batch, font_size=10, align='center', anchor_x='center', anchor_y='center', color=(r, g, b, 255))
                 else:
                     s = pyglet.sprite.Sprite(cell.tile.image,
                                              x=cx, y=cy, batch=self.batch)
