@@ -7,6 +7,11 @@ class GameObject(object):
         self.observers = {}
         self.responders = {}
 
+    @property
+    def image(self):
+        # TODO If we have a tile we allow showing it, else this redirects to the display.
+        return self.display.ascii_character
+
     def copy_to(self, new_game_object):
         for component in self.components.values():
             new_game_object.register_component(component.copy())

@@ -9,7 +9,8 @@ from stats.enums import StatsEnum
 from ui.windows import SingleWindow
 
 
-class GameLayer(cocos.tiles.RectMapLayer):
+class TilesLayer(cocos.tiles.RectMapLayer):
+    is_event_handler = True
     def __init__(self, game_context):
         current_level = game_context.player.location.level
         super().__init__(current_level.name, 1, 1, cells=current_level.tiles)
@@ -191,3 +192,9 @@ class GameLayer(cocos.tiles.RectMapLayer):
             if k not in keep and k in self._sprites:
                 self._sprites[k]._label = None
                 del self._sprites[k]
+
+    def on_key_press(self, key, modifiers):
+        if key == pyglet.window.key.RIGHT:
+            self.set_view(self.view_x+10, self.view_y, self.view_w, self.view_h)
+        elif key == pyglet.window.key.UP:
+            self.set_view(self.view_x, self.view_y + 10, self.view_w, self.view_h)

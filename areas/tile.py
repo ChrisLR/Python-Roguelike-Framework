@@ -3,10 +3,10 @@ from components.game_object import GameObject
 from components.location import Location
 
 
-class Tile(GameObject, cocos.tiles.Tile):
+class Tile(GameObject):
     def __init__(self, uid, x=0, y=0, display=None, is_blocked=False):
         GameObject.__init__(self)
-        cocos.tiles.Tile.__init__(self, uid, {}, display.ascii_character if display else '%')
+        #cocos.tiles.Tile.__init__(self, uid, {}, display.ascii_character if display else '%')
         self.uid = uid
         self.register_component(Location(x, y))
         if display:
@@ -23,6 +23,5 @@ class Tile(GameObject, cocos.tiles.Tile):
         self.copy_to(new_tile)
         new_tile.location.local_x = x
         new_tile.location.local_y = y
-        new_tile.image = self.display.ascii_character
 
         return new_tile

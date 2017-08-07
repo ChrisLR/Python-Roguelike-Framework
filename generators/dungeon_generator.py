@@ -49,7 +49,8 @@ class DungeonGenerator(object):
         """
         # TODO The dungeon's instances are spawned and loaded here.
         # fill map with "blocked" tiles
-        level.tiles = [[cocos.tiles.RectCell(x, y, 10, 10, properties={}, tile=tiles.dirt_wall.copy(x, y)) for y in range(level.height)] for x in range(level.width)]
+        level.tiles = [[cocos.tiles.RectCell(x, y, 10, 10, properties={}, tile=tiles.dirt_wall.copy(x, y))
+                        for y in range(level.height)] for x in range(level.width)]
 
         for r in range(level.max_rooms):
             # random width and height

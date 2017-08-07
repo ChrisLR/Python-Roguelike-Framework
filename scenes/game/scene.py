@@ -9,7 +9,7 @@ from generators.dungeon_generator import DungeonGenerator
 from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
-from scenes.game.layers import GameLayer, ItemQueryWindow, InventoryWindow
+from scenes.game.layers import TilesLayer, ItemQueryWindow, InventoryWindow,ObjectLayer
 
 
 
@@ -18,18 +18,16 @@ class GameScene(cocos.scene.Scene):
     This handles everything relating to the UI in the game window.
     """
     ID = "Game"
-
     def __init__(self, game_context):
         self.scroll_manager = cocos.layer.ScrollingManager()
         self.game_context = game_context
         self.new_game()
-        self.game_layer = GameLayer(game_context)
-        self.scroll_manager.add(self.game_layer)
+        self.tiles_layer = TilesLayer(game_context)
+        self.object_layer = ObjectLayer(game_context)
+        self.scroll_manager.add(self.tiles_layer)
+        self.scroll_manager.add(self.object_layer)
         super().__init__(self.scroll_manager)
         self.loaded_levels = []
-        coords = game_context.player.location.get_local_coords()
-        self.add(cocos.text.Label('@', x=coords[0], y=coords[1]))
-        self.scroll_manager.set_focus(*coords)
 
         # game_context.action_manager = ActionManager(consoles[GameConsoles.ActionLog])
         # game_context.echo_service = EchoService(consoles[GameConsoles.ActionLog], game_context)
@@ -97,13 +95,11 @@ class GameScene(cocos.scene.Scene):
 
     def new_game(self):
         # TODO This should prepare the first level
-        level = Level()
+        level = Level(width=80, height=45)
         level.name = "DEFAULT"
         level.min_room_size = 1
         level.max_room_size = 10
         level.max_rooms = 10
-        level.width = 80
-        level.height = 45
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
