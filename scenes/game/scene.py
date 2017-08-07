@@ -10,6 +10,7 @@ from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from scenes.game.layers import TilesLayer, ItemQueryWindow, InventoryWindow,ObjectLayer
+import pyglet
 
 
 
@@ -22,7 +23,7 @@ class GameScene(cocos.scene.Scene):
         self.scroll_manager = cocos.layer.ScrollingManager()
         self.game_context = game_context
         self.new_game()
-        self.tiles_layer = TilesLayer(game_context)
+        self.tiles_layer = TilesLayer(game_context, self.scroll_manager)
         self.object_layer = ObjectLayer(game_context)
         self.scroll_manager.add(self.tiles_layer)
         self.scroll_manager.add(self.object_layer)

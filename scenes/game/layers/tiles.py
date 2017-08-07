@@ -11,12 +11,14 @@ from ui.windows import SingleWindow
 
 class TilesLayer(cocos.tiles.RectMapLayer):
     is_event_handler = True
-    def __init__(self, game_context):
+
+    def __init__(self, game_context, scrolling_manager):
         current_level = game_context.player.location.level
         super().__init__(current_level.name, 1, 1, cells=current_level.tiles)
         self.game_context = game_context
         # TODO Eventually we want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
+        self.scrolling_manager = scrolling_manager
 
     def render(self, active):
         """
@@ -195,6 +197,10 @@ class TilesLayer(cocos.tiles.RectMapLayer):
 
     def on_key_press(self, key, modifiers):
         if key == pyglet.window.key.RIGHT:
-            self.set_view(self.view_x+10, self.view_y, self.view_w, self.view_h)
+            self.scrolling_manager.force_focus(self.scrolling_manager.fx + 10, self.scrolling_manager.fy)
         elif key == pyglet.window.key.UP:
-            self.set_view(self.view_x, self.view_y + 10, self.view_w, self.view_h)
+            self.scrolling_manager.force_focus(self.scrolling_manager.fx, self.scrolling_manager.fy + 10)
+        elif key == pyglet.window.key.LEFT:
+            self.scrolling_manager.force_focus(self.scrolling_manager.fx - 10, self.scrolling_manager.fy)
+        elif key == pyglet.window.key.DOWN:
+            self.scrolling_manager.force_focus(self.scrolling_manager.fx, self.scrolling_manager.fy - 10)

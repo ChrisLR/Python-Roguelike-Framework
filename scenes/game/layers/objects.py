@@ -10,7 +10,7 @@ from ui.windows import SingleWindow
 
 
 class ObjectLayer(cocos.tiles.RectMapLayer):
-    is_event_handler = False
+    is_event_handler = True
 
     def __init__(self, game_context):
         current_level = game_context.player.location.level
@@ -203,11 +203,11 @@ class ObjectLayer(cocos.tiles.RectMapLayer):
             player = self.game_context.player
             level = self.game_context.player.location.level
             x, y = player.location.get_local_coords()
-            level.object_cell_grid.move_to(player, x, y - 10)
-            self.set_dirty()
+            level.object_cell_grid.move_to(player, x, y - 1)
+            self._update_sprite_set()
         elif key == pyglet.window.key.NUM_8:
             player = self.game_context.player
             level = self.game_context.player.location.level
             x, y = player.location.get_local_coords()
-            level.object_cell_grid.move_to(player, x, y + 10)
-            self.set_dirty()
+            level.object_cell_grid.move_to(player, x, y + 1)
+            self._update_sprite_set()
