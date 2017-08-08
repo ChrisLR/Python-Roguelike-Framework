@@ -1,12 +1,11 @@
+from itertools import chain
+
 import cocos
-from cocos.director import director
 import pyglet
-from enum import Enum
 
 import settings
 from settings import DUNGEON_COLORS as COLORS
 from stats.enums import StatsEnum
-from ui.windows import SingleWindow
 
 
 class TilesLayer(cocos.tiles.RectMapLayer):
@@ -19,6 +18,16 @@ class TilesLayer(cocos.tiles.RectMapLayer):
         # TODO Eventually we want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
         self.scrolling_manager = scrolling_manager
+        for game_object in chain(current_level.spawned_monsters, (game_context.player,)):
+            r, g, b = game_object.display.foreground_color
+            x, y = game_object.location.get_local_coords()
+            game_object.display.cocosnode = cocos.text.Label(
+                game_object.display.ascii_character, x=x * 10, y=y * 10,
+                font_name='terminal', font_size=10,
+                align='center', anchor_x='center', anchor_y='center',
+                color=(r, g, b, 255)
+            )
+            self.add(game_object.display.cocosnode)
 
     def render(self, active):
         """
@@ -204,3 +213,16 @@ class TilesLayer(cocos.tiles.RectMapLayer):
             self.scrolling_manager.force_focus(self.scrolling_manager.fx - 10, self.scrolling_manager.fy)
         elif key == pyglet.window.key.DOWN:
             self.scrolling_manager.force_focus(self.scrolling_manager.fx, self.scrolling_manager.fy - 10)
+        elif key == pyglet.window.key.NUM_2:
+            player = self.game_context.player
+            level = self.game_context.player.location.level
+            x, y = player.location.get_local_coords()
+            player.display.cocosnode.do(cocos.actions.MoveBy((0, -10), duration=0.1))
+
+        elif key == pyglet.window.key.NUM_8:
+            player = self.game_context.player
+            level = self.game_context.player.location.level
+            x, y = player.location.get_local_coords()
+            level.object_cell_grid.move_to(player, x, y - 1)
+            player.location.local_y -= 1
+            player.display.cocosnode.do(cocos.actions.MoveBy((0, 10), duration=0.1))

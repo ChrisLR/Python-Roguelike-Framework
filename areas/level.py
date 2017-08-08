@@ -1,6 +1,3 @@
-from util.grid import Grid
-
-
 class Level(object):
     def __init__(self, width, height):
         # Permanent variables
@@ -20,8 +17,6 @@ class Level(object):
         self.rooms = []
         self.spawned_monsters = []
         self.spawned_items = []
-
-        self.object_cell_grid = Grid(width, height)
 
 
 

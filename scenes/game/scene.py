@@ -9,7 +9,7 @@ from generators.dungeon_generator import DungeonGenerator
 from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
-from scenes.game.layers import TilesLayer, ItemQueryWindow, InventoryWindow,ObjectLayer
+from scenes.game.layers import TilesLayer, ItemQueryWindow, InventoryWindow
 import pyglet
 
 
@@ -24,9 +24,7 @@ class GameScene(cocos.scene.Scene):
         self.game_context = game_context
         self.new_game()
         self.tiles_layer = TilesLayer(game_context, self.scroll_manager)
-        self.object_layer = ObjectLayer(game_context)
         self.scroll_manager.add(self.tiles_layer)
-        self.scroll_manager.add(self.object_layer)
         super().__init__(self.scroll_manager)
         self.loaded_levels = []
 
