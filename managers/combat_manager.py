@@ -7,11 +7,6 @@ from managers import echo
 from util.colors import Colors
 
 
-# TODO We are going the D&D 5E SRD route.
-# TODO It still means we can have several attack flavors and defense flavors
-# TODO But we should streamline the actual attacks.
-
-
 def choose_attack(attacker):
     attacks = attacker.get_attacks()
 
@@ -31,7 +26,7 @@ def choose_defense(attacker, defender, hit_roll):
     return random.choice(defenses)
 
 
-def execute_combat_round(attacker, defender):
+def execute_combat_round(attacker, defender, game_context):
     """
     This is meant to be the "round" when you walk into someone.
     """
@@ -48,13 +43,13 @@ def execute_combat_round(attacker, defender):
         # TODO Leaving it in the defender object could have them behave differently
         # TODO but at the same time having it centralized in one location will keep the other classes smaller.
         # TODO Maybe this should be extracted to a component?
-        take_damage(defender, attack_result)
+        take_damage(defender, attack_result, game_context)
     else:
-        choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
-    echo.EchoService.singleton.console.printStr(str(attack_result) + "\n")
+        choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender, game_context)
+    game_context.echo_service.standard_context_echo(str(attack_result) + "\n")
 
 
-def take_damage(actor, attack_result):
+def take_damage(actor, attack_result, game_context):
     # TODO Here we take each damage dealt, apply resistance
     # TODO Determine threat level for total damage
     if attack_result.total_damage <= 0:
@@ -70,35 +65,35 @@ def take_damage(actor, attack_result):
     damage_string += ",".join(wound_strings)
     damage_string += " {} {} for {} damage!".format(
         echo.his_her_it(actor), attack_result.body_part_hit.name, attack_result.total_damage)
-    echo.EchoService.singleton.console.printStr(damage_string + "\n")
+    game_context.echo_service.standard_context_echo(damage_string + "\n")
 
     # TODO THIS MUST BE EXTRACTED
     # check for death. if there's a death function, call it
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
         if actor.is_player:
-            player_death(actor, echo.EchoService.singleton.console)
+            player_death(actor, game_context)
         else:
-            monster_death(actor, echo.EchoService.singleton.console)
+            monster_death(actor, game_context)
 
         x, y = actor.location.get_local_coords()
         actor.current_level.tiles[x][y].contains_object = False
 
 
-def player_death(player, console):
+def player_death(player, game_context):
     # TODO This should not be here
     # the game ended!
-    console.printStr('You have died... Game Over\n\n')
+    game_context.echo_service.standard_context_echo('You have died... Game Over\n\n')
 
     # for added effect, transform the player into a corpse!
     player.display.ascii_character = '%'
     player.display.foreground_color = Colors.CRIMSON
 
 
-def monster_death(monster, console):
+def monster_death(monster, game_context):
     # TODO This should not be here
     # transform it into a nasty corpse! it doesn't block, can't be
     # attacked and doesn't move
-    console.printStr('{} has died.\n\n'.format(monster.name))
+    game_context.echo_service.standard_context_echo('{} has died.\n\n'.format(monster.name))
     monster.display.ascii_character = '%'
     monster.display.foreground_color = Colors.CRIMSON
     monster.blocks = False

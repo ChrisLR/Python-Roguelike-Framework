@@ -9,7 +9,7 @@ from generators.dungeon_generator import DungeonGenerator
 from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
-from scenes.game.layers import TilesLayer, ItemQueryWindow, InventoryWindow
+from scenes.game.layers import TilesLayer, HUDLayer
 import pyglet
 
 
@@ -22,11 +22,14 @@ class GameScene(cocos.scene.Scene):
     def __init__(self, game_context):
         self.scroll_manager = cocos.layer.ScrollingManager()
         self.game_context = game_context
-        game_context.action_manager = ActionManager()
+        self.hud_layer = HUDLayer()
+        game_context.echo_service = EchoService(self.hud_layer.console, game_context)
+        game_context.action_manager = ActionManager(game_context)
         self.new_game()
         self.tiles_layer = TilesLayer(game_context, self.scroll_manager)
         self.scroll_manager.add(self.tiles_layer)
-        super().__init__(self.scroll_manager)
+
+        super().__init__(self.scroll_manager, self.hud_layer)
         self.loaded_levels = []
 
         # game_context.action_manager = ActionManager(consoles[GameConsoles.ActionLog])

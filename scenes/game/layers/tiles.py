@@ -195,14 +195,14 @@ class TilesLayer(cocos.tiles.RectMapLayer):
             if key in self.movement_keys:
                 key_x, key_y = self.movement_keys[key]
                 # TODO MANAGERS SHOULD BE IN THE GAME CONTEXT AND ACCESSED FROM IT, NOT GAME SCENE
-                self.game_context.action_manager.move_or_attack(player, key_x, key_y)
+                self.game_context.action_manager.move_or_attack(player, key_x, key_y, self.game_context)
                 moved = True
 
             if moved:
                 player.update()
                 for monster in current_level.spawned_monsters:
                     monster.update()
-                    self.game_context.action_manager.monster_take_turn(monster, player)
+                    self.game_context.action_manager.monster_take_turn(monster, player, self.game_context)
                 moved = False
 
                 self.scrolling_manager.force_focus(x * 10, y * 10)

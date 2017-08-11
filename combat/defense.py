@@ -19,8 +19,8 @@ class DefenseTemplate(object):
             return True
         return False
 
-    def make_defense(self, attacker, defender, **kwargs):
-        echo.EchoService.singleton.combat_context_echo(
+    def make_defense(self, attacker, defender, game_context, **kwargs):
+        game_context.echo_service.combat_context_echo(
             message="..." + self.message,
             attacker=attacker,
             defender=defender,
@@ -61,9 +61,9 @@ class ParryTemplate(DefenseTemplate):
         maximum_ac = minimum_ac + defender.get_effective_dex_modifier()
         return self._evaluate(hit_roll, minimum_ac, maximum_ac)
 
-    def make_defense(self, attacker, defender, **kwargs):
+    def make_defense(self, attacker, defender, game_context, **kwargs):
         defender_weapon = self.get_used_weapon(defender)
-        super().make_defense(attacker, defender, defender_weapon=defender_weapon)
+        super().make_defense(attacker, defender, game_context, defender_weapon=defender_weapon)
 
 
 class BlockTemplate(DefenseTemplate):

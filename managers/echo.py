@@ -5,14 +5,9 @@ from components.game_object import NoneVoid
 
 
 class EchoService(object):
-    # TODO This makes me cry, lets refactor this.
-    singleton = None
-
     def __init__(self, console, game_context):
         self.console = console
         self.game_context = game_context
-        if not EchoService.singleton:
-            EchoService.singleton = self
 
     def _context_echo(self, message, **kwargs):
         context_variables = defaultdict(lambda: "N/A")
@@ -31,7 +26,7 @@ class EchoService(object):
                 context_variables[variable.name] = message_router[variable.name](**context_variables)
 
         formatted_message = message.format(**context_variables)
-        self.console.printStr(formatted_message + "\n")
+        self.console.element.text += formatted_message + "\n"
 
     def standard_context_echo(self, message, actor=None, target_item=None):
         self._context_echo(message, actor=actor, target_item=target_item)
