@@ -81,7 +81,7 @@ def take_damage(actor, attack_result):
             monster_death(actor, echo.EchoService.singleton.console)
 
         x, y = actor.location.get_local_coords()
-        actor.current_level.maze[x][y].contains_object = False
+        actor.current_level.tiles[x][y].contains_object = False
 
 
 def player_death(player, console):

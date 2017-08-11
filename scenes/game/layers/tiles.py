@@ -2,10 +2,12 @@ from itertools import chain
 
 import cocos
 import pyglet
+import tdl
 
 import settings
 from settings import DUNGEON_COLORS as COLORS
 from stats.enums import StatsEnum
+from components.cocos import CocosLabelComponent
 
 
 class TilesLayer(cocos.tiles.RectMapLayer):
@@ -21,13 +23,17 @@ class TilesLayer(cocos.tiles.RectMapLayer):
         for game_object in chain(current_level.spawned_monsters, (game_context.player,)):
             r, g, b = game_object.display.foreground_color
             x, y = game_object.location.get_local_coords()
-            game_object.display.cocosnode = cocos.text.Label(
+            cocos_node = CocosLabelComponent(
                 game_object.display.ascii_character, x=x * 10, y=y * 10,
                 font_name='terminal', font_size=10,
                 align='center', anchor_x='center', anchor_y='center',
                 color=(r, g, b, 255)
             )
-            self.add(game_object.display.cocosnode)
+            game_object.register_component(cocos_node)
+            self.add(game_object.cocos)
+            self.pressed = False
+            self.scrolling_manager.force_focus(x * 10, y * 10)
+
 
     def render(self, active):
         """
@@ -39,15 +45,9 @@ class TilesLayer(cocos.tiles.RectMapLayer):
         self.render_gui(player)
         self.set_tiles_background_color(current_level)
 
-        player_x = player.location.local_x
-        player_y = player.location.local_y
 
-        def is_transparent_callback(x, y):
-            if x <= 0 or y <= 0:
-                return False
-            return self.is_transparent(current_level, x, y)
 
-        player.fov = tdl.map.quickFOV(player_x, player_y, is_transparent_callback, 'basic')
+
         # NB: Order in which things are render is important
         self.render_map(current_level, player.fov)
         self.render_items(player, current_level)
@@ -68,9 +68,9 @@ class TilesLayer(cocos.tiles.RectMapLayer):
 
     def render_map(self, current_level, viewer_fov):
         for x, y in viewer_fov:
-            if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
-                self.main_console.drawChar(x, y, **current_level.maze[x][y].display.get_draw_info())
-                current_level.maze[x][y].is_explored = True
+            if not x >= len(current_level.tiles) and not y >= len(current_level.tiles[x]):
+                self.main_console.drawChar(x, y, **current_level.tiles[x][y].display.get_draw_info())
+                current_level.tiles[x][y].is_explored = True
 
     def render_items(self, player, level):
         for item in level.spawned_items:
@@ -92,45 +92,13 @@ class TilesLayer(cocos.tiles.RectMapLayer):
             **player.display.get_draw_info()
         )
 
-    def handle_input(self, key_events, mouse_events):
-        """
-        Any keyboard interaction from the user occurs here
-        """
-        super().handle_input(key_events, mouse_events)
-        player = self.game_context.player
-        current_level = player.location.level
-        moved = False
-
-        for key_event in key_events:
-            if key_event.type == 'KEYDOWN':
-                # TODO Make stairs system to go up or down
-                # TODO Add Action to pick up items
-                # TODO We will need to implement an action mapping
-
-                # We mix special keys with normal characters so we use keychar.
-                if not player.is_dead():
-                    if key_event.key == 'KP5' or key_event.key == '.':
-                        moved = True
-
-                    if key_event.keychar.upper() in self.movement_keys:
-                        key_x, key_y = self.movement_keys[key_event.keychar.upper()]
-                        # TODO MANAGERS SHOULD BE IN THE GAME CONTEXT AND ACCESSED FROM IT, NOT GAME SCENE
-                        self.game_context.action_manager.move_or_attack(player, key_x, key_y)
-                        moved = True
-
-                    if moved:
-                        player.update()
-                        for monster in current_level.spawned_monsters:
-                            monster.update()
-                            self.game_context.action_manager.monster_take_turn(monster, player)
-                        moved = False
 
     def set_tiles_background_color(self, current_level):
         # TODO Instead of using a different color, we should darken whatever color it is.
         # TODO Allowing us to use many colors as walls and tiles to create levels with different looks.
         for y in range(current_level.height):
             for x in range(current_level.width):
-                tile = current_level.maze[x][y]
+                tile = current_level.tiles[x][y]
                 wall = tile.block_sight
                 ground = tile.is_ground
 
@@ -147,8 +115,8 @@ class TilesLayer(cocos.tiles.RectMapLayer):
         """
         try:
             # Pass on IndexErrors raised for when a player gets near the edge of the screen
-            # and tile within the field of view fall out side the bounds of the maze.
-            tile = current_level.maze[x][y]
+            # and tile within the field of view fall out side the bounds of the.tiles.
+            tile = current_level.tiles[x][y].tile
             if tile.block_sight and tile.is_blocked:
                 return False
             else:
@@ -205,24 +173,41 @@ class TilesLayer(cocos.tiles.RectMapLayer):
                 del self._sprites[k]
 
     def on_key_press(self, key, modifiers):
-        if key == pyglet.window.key.RIGHT:
-            self.scrolling_manager.force_focus(self.scrolling_manager.fx + 10, self.scrolling_manager.fy)
-        elif key == pyglet.window.key.UP:
-            self.scrolling_manager.force_focus(self.scrolling_manager.fx, self.scrolling_manager.fy + 10)
-        elif key == pyglet.window.key.LEFT:
-            self.scrolling_manager.force_focus(self.scrolling_manager.fx - 10, self.scrolling_manager.fy)
-        elif key == pyglet.window.key.DOWN:
-            self.scrolling_manager.force_focus(self.scrolling_manager.fx, self.scrolling_manager.fy - 10)
-        elif key == pyglet.window.key.NUM_2:
-            player = self.game_context.player
-            level = self.game_context.player.location.level
-            x, y = player.location.get_local_coords()
-            player.display.cocosnode.do(cocos.actions.MoveBy((0, -10), duration=0.1))
+        player = self.game_context.player
+        current_level = player.location.level
+        moved = False
+        if self.pressed:
+            return
 
-        elif key == pyglet.window.key.NUM_8:
-            player = self.game_context.player
-            level = self.game_context.player.location.level
-            x, y = player.location.get_local_coords()
-            level.object_cell_grid.move_to(player, x, y - 1)
-            player.location.local_y -= 1
-            player.display.cocosnode.do(cocos.actions.MoveBy((0, 10), duration=0.1))
+        x, y = player.location.get_local_coords()
+
+        def is_transparent_callback(x, y):
+            if x <= 0 or y <= 0:
+                return False
+            return self.is_transparent(current_level, x, y)
+        player.fov = tdl.map.quickFOV(x, y, is_transparent_callback, 'basic')
+
+        # We mix special keys with normal characters so we use keychar.
+        if not player.is_dead():
+            if key in (pyglet.window.key.NUM_5, pyglet.window.key.PERIOD):
+                moved = True
+
+            if key in self.movement_keys:
+                key_x, key_y = self.movement_keys[key]
+                # TODO MANAGERS SHOULD BE IN THE GAME CONTEXT AND ACCESSED FROM IT, NOT GAME SCENE
+                self.game_context.action_manager.move_or_attack(player, key_x, key_y)
+                moved = True
+
+            if moved:
+                player.update()
+                for monster in current_level.spawned_monsters:
+                    monster.update()
+                    self.game_context.action_manager.monster_take_turn(monster, player)
+                moved = False
+
+                self.scrolling_manager.force_focus(x * 10, y * 10)
+        self.pressed = True
+
+    def on_key_release(self, symbol, modifiers):
+        self.pressed = False
+

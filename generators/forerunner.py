@@ -85,7 +85,6 @@ class Forerunner(object):
         monster.location.level = level
         level.spawned_monsters.append(monster)
         cell.tile.contains_object = True
-        level.object_cell_grid.place(monster, cell.i, cell.j)
 
     @staticmethod
     def _place_player(level, cell, player):
@@ -95,7 +94,6 @@ class Forerunner(object):
         player.location = cell.tile.location.copy()
         player.location.level = level
         cell.tile.contains_object = True
-        level.object_cell_grid.place(player, cell.i, cell.j)
 
     @staticmethod
     def _place_item(level, tile, item):
@@ -103,7 +101,6 @@ class Forerunner(object):
         item.location.local_x = tile.x
         item.location.local_y = tile.y
         item.level = level
-        level.object_cell_grid.place(item, tile.x, tile.y)
 
     def _place_stairs(self, tile):
         # TODO Stairs should not be an item but a passable tile.

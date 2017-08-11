@@ -10,6 +10,7 @@ import math
 from managers import combat_manager, echo
 from components.location import Location
 from components.messages import MessageType, QueryType
+from cocos import actions
 
 
 # TODO One thing I want to change is the tile contains flag
@@ -78,8 +79,8 @@ def move(actor, dx, dy):
     new_x = x + dx
     new_y = y + dy
 
-    old_tile = actor.current_level.maze[x][y]
-    new_tile = actor.current_level.maze[new_x][new_y]
+    old_tile = actor.current_level.tiles[x][y].tile
+    new_tile = actor.current_level.tiles[new_x][new_y].tile
 
     # move by the given amount, if the destination is not blocked
     if not new_tile.is_blocked:
@@ -89,6 +90,8 @@ def move(actor, dx, dy):
         actor.location.local_y = new_y
         old_tile.contains_object = False
         new_tile.contains_object = True
+        if actor.cocos:
+            actor.cocos.do(actions.MoveTo((new_x, new_y), duration=0.1))
 
 
 def distance_to(actor, target):
@@ -112,7 +115,7 @@ def move_or_attack(character, target_x, target_y, console):
     y = character.location.local_y
     new_x = x + target_x
     new_y = y + target_y
-    new_tile = character.current_level.maze[new_x][new_y]
+    new_tile = character.current_level.tiles[new_x][new_y].tile
 
     # try to find an attack-able object there
     if new_tile.contains_object:

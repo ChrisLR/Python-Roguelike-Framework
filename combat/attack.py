@@ -49,12 +49,12 @@ class AttackTemplate(object):
             self.make_damage_roll(attacker, attack_result, **kwargs)
 
         # TODO Probably a good idea to remove this from the attack and into the manager.
-        echo.EchoService.singleton.combat_context_echo(
-            message=self.message + "...",
-            attacker=attacker,
-            defender=defender,
-            **kwargs
-        )
+        # echo.EchoService.singleton.combat_context_echo(
+        #     message=self.message + "...",
+        #     attacker=attacker,
+        #     defender=defender,
+        #     **kwargs
+        # )
         return attack_result
 
     def make_hit_roll(self, attacker, defender, **kwargs):

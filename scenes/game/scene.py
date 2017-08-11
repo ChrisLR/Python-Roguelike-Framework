@@ -22,6 +22,7 @@ class GameScene(cocos.scene.Scene):
     def __init__(self, game_context):
         self.scroll_manager = cocos.layer.ScrollingManager()
         self.game_context = game_context
+        game_context.action_manager = ActionManager()
         self.new_game()
         self.tiles_layer = TilesLayer(game_context, self.scroll_manager)
         self.scroll_manager.add(self.tiles_layer)

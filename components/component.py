@@ -2,7 +2,7 @@ class Component(object):
     """Base class for components"""
     NAME = "base_component"
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.host = None
         if self.NAME not in valid_components:
             valid_components[self.NAME] = self
