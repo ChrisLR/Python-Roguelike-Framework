@@ -7,6 +7,7 @@ from data.python_templates.outfits import starter_warrior, starter_thief
 from data.python_templates.races import race_templates
 from data.python_templates.needs import hunger, thirst
 from managers.console_manager import Menu
+from scenes.game.scene import GameScene
 from ui import controls
 from ui.controls.interface import ControlsInterface
 
@@ -15,8 +16,8 @@ class CharacterCreationScene(BaseScene):
     ID = "CharacterCreation"
     # TODO Remake this properly using the new style controls interface.
     
-    def __init__(self, console_manager, scene_manager, game_context):
-        super().__init__(console_manager, scene_manager, game_context)
+    def __init__(self, console_manager, game_context):
+        super().__init__(console_manager, game_context)
         self.character_factory = self.game_context.character_factory
         self.body_factory = self.game_context.body_factory
         self.options = ["Finish"]
@@ -69,7 +70,7 @@ class CharacterCreationScene(BaseScene):
         for text in self.menu_draws:
             self.menu.printStr(text)
 
-    def render(self):
+    def render(self, is_active):
         self.menu.clear()
         self.menu.move(0, 0)
         for control in self.controls.controls:
@@ -114,4 +115,4 @@ class CharacterCreationScene(BaseScene):
                         starter_thief.apply(player)
                     else:
                         starter_warrior.apply(player)
-                    self.transition_to("GameScene")
+                    self.transition_to(GameScene(self.console_manager, self.game_context))

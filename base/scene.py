@@ -9,15 +9,14 @@ class BaseScene(Scene):
     """Abstract class for all scenes"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, console_manager, scene_manager, game_context):
+    def __init__(self, console_manager, game_context):
         super().__init__()
         self.console_manager = console_manager
         self.main_console = console_manager.main_console
-        self.scene_manager = scene_manager
         self.game_context = game_context
         self.active_windows = []
 
-    def render(self):
+    def render(self, active):
         if self.active_windows:
             self.active_windows[0].render(True)
 
@@ -37,5 +36,13 @@ class BaseScene(Scene):
             self.active_windows.pop(0)
             return
 
-    def transition_to(self, scene_name):
-        self.scene_manager.transition_to(scene_name)
+    def transition_to(self, scene):
+        self.director.replace_scene(scene)
+
+    def terminal_read(self, char):
+        self.handle_input((char,), (None,))
+        super().terminal_read(char)
+
+    def terminal_update(self, is_active=False):
+        self.render(is_active)
+        super().terminal_update(is_active)

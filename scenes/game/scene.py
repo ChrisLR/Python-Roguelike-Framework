@@ -23,8 +23,8 @@ class GameScene(BaseScene):
     """
     ID = "Game"
 
-    def __init__(self, console_manager, scene_manager, game_context):
-        super().__init__(console_manager, scene_manager, game_context)
+    def __init__(self, console_manager, game_context):
+        super().__init__(console_manager, game_context)
         self.loaded_levels = []
         consoles = {
             GameConsoles.ActionLog: self.console_manager.create_new_console(80, 15),
