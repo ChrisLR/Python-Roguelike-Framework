@@ -1,4 +1,5 @@
-import tdl
+from clubsandwich.director import DirectorLoop
+from scenes.main_menu.scene import MainMenuScene
 
 from managers.console_manager import ConsoleManager
 from managers.scene_manager import SceneManager
@@ -24,20 +25,20 @@ class GameManager(object):
         self.load_game_data()
 
     def start(self):
-        tdl.setTitle("Roguelike Framework")
-        while True:  # Continue in an infinite game loop.
-            self.console_manager.main_console.clear()  # Blank the console
-            self.scene_manager.render_current_scene()
-            all_key_events = list(tdl.event.get())
-            for key_event in all_key_events:
-                if key_event.type == 'QUIT':
-                    # Halt the script using SystemExit
-                    raise SystemExit('The window has been closed.')
-            key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
-            mouse_events = [key_event for key_event in all_key_events if key_event.type in ['MOUSEDOWN', 'MOUSEUP']]
-
-            self.scene_manager.handle_input(key_events=key_events, mouse_events=mouse_events)
-            tdl.flush()
+        loop = MainLoop(MainMenuScene(self.console_manager, self.game_context))
+        # while True:  # Continue in an infinite game loop.
+        #     self.console_manager.main_console.clear()  # Blank the console
+        #     self.scene_manager.render_current_scene()
+        #     all_key_events = list(tdl.event.get())
+        #     for key_event in all_key_events:
+        #         if key_event.type == 'QUIT':
+        #             # Halt the script using SystemExit
+        #             raise SystemExit('The window has been closed.')
+        #     key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
+        #     mouse_events = [key_event for key_event in all_key_events if key_event.type in ['MOUSEDOWN', 'MOUSEUP']]
+        #
+        #     self.scene_manager.handle_input(key_events=key_events, mouse_events=mouse_events)
+        #     tdl.flush()
 
     def load_game_data(self):
         """
@@ -50,3 +51,12 @@ class GameManager(object):
         self.game_context.character_factory = character_factory
         self.game_context.body_factory = factory_service.body_factory
         self.game_context.item_factory = ItemFactory()
+
+
+class MainLoop(DirectorLoop):
+    def __init__(self, scene):
+        super().__init__()
+        self.scene = scene
+
+    def get_initial_scene(self):
+        return self.scene

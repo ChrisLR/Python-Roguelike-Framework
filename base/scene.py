@@ -2,13 +2,15 @@
 This is the scene module. 
 """
 import abc
+from clubsandwich.director import Scene
 
 
-class BaseScene(object):
+class BaseScene(Scene):
     """Abstract class for all scenes"""
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, console_manager, scene_manager, game_context):
+        super().__init__()
         self.console_manager = console_manager
         self.main_console = console_manager.main_console
         self.scene_manager = scene_manager
