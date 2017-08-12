@@ -1,28 +1,37 @@
-from base.scene import BaseScene
-from managers.console_manager import Menu
+from clubsandwich.ui.misc_views import LabelView, ButtonView
+from clubsandwich.ui.ui_scene import UIScene
+from clubsandwich.ui import LayoutOptions
+
+from scenes.character_creation.scene import CharacterCreationScene
 from ui.flavor_text import MAIN_MENU
 
 
-class MainMenuScene(BaseScene):
+class MainMenuScene(UIScene):
     ID = "MainMenu"
 
-    def __init__(self, console_manager, game_context):
-        super().__init__(console_manager, game_context)
-        self.menu = Menu(MAIN_MENU['name'],
-                         MAIN_MENU['text'],
-                         MAIN_MENU['options'],
-                         self.main_console.width,
-                         self.main_console.height)
-        self.current_x = 20
-        self.current_y = 20.
-        self.menu.create_menu(self.current_x, self.current_y)
+    def __init__(self, game_context):
+        views = [
+            LabelView(
+                text=MAIN_MENU["name"],
+                align_vert='top',
+                layout_options=LayoutOptions.row_top(5),
+            ),
+            LabelView(
+                text=MAIN_MENU["text"],
+                layout_options=LayoutOptions.row_top(10)
+            ),
+            ButtonView(
+                text="Play",
+                callback=lambda: self.director.replace_scene(CharacterCreationScene(game_context)),
+                layout_options=LayoutOptions.row_bottom(0.5).with_updates(
+                    left=0, width=0.5, right=None)
+            ),
+            ButtonView(
+                text="Quit",
+                callback=lambda: self.director.quit(),
+                layout_options=LayoutOptions.row_bottom(0.5).with_updates(
+                    left=0.2, width=0.5, right=None),
+            )
+        ]
+        super().__init__(views)
 
-    def render(self, is_active):
-        self.main_console.blit(self.menu, 0, 0)
-
-    def handle_input(self, char, mouse_events):
-        if char.upper() == 'A':
-            self.transition_to("CharacterCreationScene")
-        elif char.upper() == 'B':
-            # Halt the script using SystemExit
-            raise SystemExit('The window has been closed.')

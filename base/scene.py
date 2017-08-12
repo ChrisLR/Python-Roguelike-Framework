@@ -9,10 +9,8 @@ class BaseScene(Scene):
     """Abstract class for all scenes"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, console_manager, game_context):
+    def __init__(self, game_context):
         super().__init__()
-        self.console_manager = console_manager
-        self.main_console = console_manager.main_console
         self.game_context = game_context
         self.active_windows = []
 
