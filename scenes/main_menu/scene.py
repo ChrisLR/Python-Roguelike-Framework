@@ -23,7 +23,7 @@ class MainMenuScene(UIScene):
             ),
             ButtonView(
                 text="Play",
-                callback=lambda: self.director.push_scene(CharacterCreationScene(game_context)),
+                callback=lambda: self.director.replace_scene(CharacterCreationScene(game_context)),
                 layout_options=LayoutOptions.row_bottom(0.5).with_updates(
                     left=0, width=0.5, right=None)
             ),

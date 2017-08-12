@@ -8,7 +8,7 @@ from data.python_templates.races import race_templates
 from data.python_templates.needs import hunger, thirst
 from scenes.game.scene import GameScene
 from ui import controls
-from ui.controls.interface import ControlsInterface
+from ui.controls.validatedintstepperview import ValidatedIntStepperView
 from clubsandwich.ui import (
     UIScene,
     SingleLineTextInputView,
@@ -35,75 +35,87 @@ class CharacterCreationScene(UIScene):
 
         views = [
             WindowView(title='Character Creation', subviews=[
-                LabelView("Name:", layout_options=LayoutOptions(width=0.1, left=0.3, top=0.1, height=0.1, bottom=None, right=None)),
-                SingleLineTextInputView(callback=self.set_name, layout_options=LayoutOptions(width=0.2, left=None, top=0.1, height=0.1, bottom=None, right=0.4)),
-
+                LabelView("Name:", layout_options=LayoutOptions(**get_left_layout(0.1))),
+                SingleLineTextInputView(
+                    callback=self.set_name,
+                    layout_options=LayoutOptions(**get_right_layout(0.1, width=0.2))
+                ),
+                LabelView("Class:", layout_options=LayoutOptions(**get_left_layout(0.2))),
+                CyclingButtonView(
+                    options=sorted_classes_names,
+                    initial_value=sorted_classes_names[0],
+                    callback=self.set_character_class,
+                    layout_options=LayoutOptions(**get_right_layout(0.2))
+                ),
+                LabelView("Race:", layout_options=LayoutOptions(**get_left_layout(0.3))),
+                CyclingButtonView(
+                    options=sorted_races_names,
+                    initial_value=sorted_races_names[0],
+                    callback=self.set_race,
+                    layout_options=LayoutOptions(**get_right_layout(0.3))
+                ),
+                LabelView("Strength:", layout_options=LayoutOptions(**get_left_layout(0.35))),
+                ValidatedIntStepperView(
+                    validation_callback=self.validate_points,
+                    value=8, callback=lambda value: self.set_stat("Strength", value),
+                    min_value=8, max_value=15,
+                    layout_options=LayoutOptions(**get_right_layout(0.35)),
+                ),
+                LabelView("Dexterity:", layout_options=LayoutOptions(**get_left_layout(0.4))),
+                ValidatedIntStepperView(
+                    validation_callback=self.validate_points,
+                    value=8, callback=lambda value: self.set_stat("Dexterity", value),
+                    min_value=8, max_value=15,
+                    layout_options=LayoutOptions(**get_right_layout(0.4)),
+                ),
+                LabelView("Constitution:", layout_options=LayoutOptions(**get_left_layout(0.45))),
+                ValidatedIntStepperView(
+                    validation_callback=self.validate_points,
+                    value=8, callback=lambda value: self.set_stat("Constitution", value),
+                    min_value=8, max_value=15,
+                    layout_options=LayoutOptions(**get_right_layout(0.45)),
+                ),
+                LabelView("Intelligence:", layout_options=LayoutOptions(**get_left_layout(0.50))),
+                ValidatedIntStepperView(
+                    validation_callback=self.validate_points,
+                    value=8, callback=lambda value: self.set_stat("Intelligence", value),
+                    min_value=8, max_value=15,
+                    layout_options=LayoutOptions(**get_right_layout(0.50)),
+                ),
+                LabelView("Charisma:", layout_options=LayoutOptions(**get_left_layout(0.55))),
+                ValidatedIntStepperView(
+                    validation_callback=self.validate_points,
+                    value=8, callback=lambda value: self.set_stat("Charisma", value),
+                    min_value=8, max_value=15,
+                    layout_options=LayoutOptions(**get_right_layout(0.55)),
+                ),
+                LabelView("Wisdom:", layout_options=LayoutOptions(**get_left_layout(0.60))),
+                ValidatedIntStepperView(
+                    validation_callback=self.validate_points,
+                    value=8, callback=lambda value: self.set_stat("Wisdom", value),
+                    min_value=8, max_value=15,
+                    layout_options=LayoutOptions(**get_right_layout(0.60))
+                ),
+                ButtonView('Finish', self.finish,
+                           layout_options=LayoutOptions(**get_left_layout(0.70, left=0.45)))
             ])
-            # LabelView("Class:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=2, left=None, width=0.2, right=40)),
-            # CyclingButtonView(
-            #     options=sorted_classes_names,
-            #     initial_value=sorted_classes_names[0],
-            #     callback=self.set_character_class,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=2),
-            # ),
-            # LabelView("Race:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=5),),
-            # CyclingButtonView(
-            #     options=sorted_races_names,
-            #     initial_value=sorted_races_names[0],
-            #     callback=self.set_race,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=6),
-            # ),
-            # LabelView("Strength:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=7),),
-            # IntStepperView(
-            #     value=8, callback=lambda value: self.set_stat("Strength", value),
-            #     min_value=8, max_value=15,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=8),
-            # ),
-            # LabelView("Dexterity:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=9)),
-            # IntStepperView(
-            #     value=8, callback=lambda value: self.set_stat("Dexterity", value),
-            #     min_value=8, max_value=15,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=10),
-            # ),
-            # LabelView("Constitution:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=11)),
-            # IntStepperView(
-            #     value=8, callback=lambda value: self.set_stat("Constitution", value),
-            #     min_value=8, max_value=15,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=12),
-            # ),
-            # LabelView("Intelligence:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=13)),
-            # IntStepperView(
-            #     value=8, callback=lambda value: self.set_stat("Intelligence", value),
-            #     min_value=8, max_value=15,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=14),
-            # ),
-            # LabelView("Charisma:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=15)),
-            # IntStepperView(
-            #     value=8, callback=lambda value: self.set_stat("Charisma", value),
-            #     min_value=8, max_value=15,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=16),
-            # ),
-            # LabelView("Wisdom:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=17)),
-            # IntStepperView(
-            #     value=8, callback=lambda value: self.set_stat("Wisdom", value),
-            #     min_value=8, max_value=15,
-            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=18),
-            # ),
-            # ButtonView('Finish', lambda: print("Yay"),
-            #            layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=19))
-            # ])
         ]
         super().__init__(views)
         self.character_factory = self.game_context.character_factory
         self.body_factory = self.game_context.body_factory
-        self.options = ["Finish"]
 
-        self.name = None
-        self.character_class = None
-        self.race = None
-        self.stats = {}
-
-        #cost_calculator=lambda current: 1 if current < 13 else 2
+        self.name = ""
+        self.character_class = self.sorted_classes[0]
+        self.race = self.sorted_races[0]
+        self.stats = {
+            "Strength": 8,
+            "Dexterity": 8,
+            "Constitution": 8,
+            "Intelligence": 8,
+            "Charisma": 8,
+            "Wisdom": 8
+        }
+        self.points_left = 27
 
     def set_name(self, value):
         self.name = value
@@ -118,6 +130,19 @@ class CharacterCreationScene(UIScene):
 
     def set_stat(self, name, value):
         self.stats[name] = value
+
+    def validate_points(self, old_value, new_value):
+        if new_value > old_value:
+            point_cost = 1 if old_value < 13 else 2
+            if self.points_left >= point_cost:
+                self.points_left -= point_cost
+                return True
+        if new_value < old_value:
+            point_cost = 1 if new_value < 13 else 2
+            if new_value >= 8:
+                self.points_left += point_cost
+                return True
+        return False
 
     def finish(self):
         self.game_context.player = self.character_factory.create(
@@ -136,4 +161,21 @@ class CharacterCreationScene(UIScene):
             starter_thief.apply(player)
         else:
             starter_warrior.apply(player)
-        self.director.transition_to(GameScene(self.game_context))
+        self.director.replace_scene(GameScene(self.game_context))
+
+
+def get_left_layout(top, **kwargs):
+    layout_options = dict(width=0.1, left=0.3, top=top, height=0.1, bottom=None, right=None)
+    if kwargs:
+        layout_options.update(kwargs)
+
+    return layout_options
+
+
+def get_right_layout(top, **kwargs):
+    layout_options = dict(width=0.1, left=None, top=top, height=0.1, bottom=None, right=0.4)
+    if kwargs:
+        layout_options.update(kwargs)
+
+    return layout_options
+
