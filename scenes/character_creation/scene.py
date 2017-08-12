@@ -9,109 +9,131 @@ from data.python_templates.needs import hunger, thirst
 from scenes.game.scene import GameScene
 from ui import controls
 from ui.controls.interface import ControlsInterface
+from clubsandwich.ui import (
+    UIScene,
+    SingleLineTextInputView,
+    LabelView,
+    CyclingButtonView,
+    IntStepperView,
+    ButtonView,
+    LayoutOptions,
+    WindowView
+)
 
 
-class CharacterCreationScene(BaseScene):
+class CharacterCreationScene(UIScene):
     ID = "CharacterCreation"
     # TODO Remake this properly using the new style controls interface.
     
     def __init__(self, game_context):
-        super().__init__(game_context)
+        self.covers_screen = True
+        self.game_context = game_context
+        self.sorted_classes = sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
+        sorted_classes_names = [character_class.name for character_class in self.sorted_classes]
+        self.sorted_races = sorted(race_templates.values(), key=lambda race: race.name)
+        sorted_races_names = [race.name for race in self.sorted_races]
+
+        views = [
+            WindowView(title='Character Creation', subviews=[
+
+            LabelView("Name:", layout_options=LayoutOptions.centered(width=0.5, height=0.9)),
+            SingleLineTextInputView(callback=self.set_name, layout_options=LayoutOptions.centered(width=0.5, height=0.9)),
+            ])
+            # LabelView("Class:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=2, left=None, width=0.2, right=40)),
+            # CyclingButtonView(
+            #     options=sorted_classes_names,
+            #     initial_value=sorted_classes_names[0],
+            #     callback=self.set_character_class,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=2),
+            # ),
+            # LabelView("Race:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=5),),
+            # CyclingButtonView(
+            #     options=sorted_races_names,
+            #     initial_value=sorted_races_names[0],
+            #     callback=self.set_race,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=6),
+            # ),
+            # LabelView("Strength:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=7),),
+            # IntStepperView(
+            #     value=8, callback=lambda value: self.set_stat("Strength", value),
+            #     min_value=8, max_value=15,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=8),
+            # ),
+            # LabelView("Dexterity:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=9)),
+            # IntStepperView(
+            #     value=8, callback=lambda value: self.set_stat("Dexterity", value),
+            #     min_value=8, max_value=15,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=10),
+            # ),
+            # LabelView("Constitution:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=11)),
+            # IntStepperView(
+            #     value=8, callback=lambda value: self.set_stat("Constitution", value),
+            #     min_value=8, max_value=15,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=12),
+            # ),
+            # LabelView("Intelligence:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=13)),
+            # IntStepperView(
+            #     value=8, callback=lambda value: self.set_stat("Intelligence", value),
+            #     min_value=8, max_value=15,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=14),
+            # ),
+            # LabelView("Charisma:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=15)),
+            # IntStepperView(
+            #     value=8, callback=lambda value: self.set_stat("Charisma", value),
+            #     min_value=8, max_value=15,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=16),
+            # ),
+            # LabelView("Wisdom:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=17)),
+            # IntStepperView(
+            #     value=8, callback=lambda value: self.set_stat("Wisdom", value),
+            #     min_value=8, max_value=15,
+            #     layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=18),
+            # ),
+            # ButtonView('Finish', lambda: print("Yay"),
+            #            layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=19))
+            # ])
+        ]
+        super().__init__(views)
         self.character_factory = self.game_context.character_factory
         self.body_factory = self.game_context.body_factory
         self.options = ["Finish"]
 
-        self.control_name = controls.InputControl("Name:")
-        self.control_class = controls.ListChoiceControl(
-            "Class:", root_console=self.main_console,
-            options=sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
+        self.name = None
+        self.character_class = None
+        self.race = None
+        self.stats = {}
+
+        #cost_calculator=lambda current: 1 if current < 13 else 2
+
+    def set_name(self, value):
+        self.name = value
+
+    def set_character_class(self, value):
+        self.character_class = next((character_class for character_class in self.sorted_classes
+                                     if character_class.name == value), None)
+
+    def set_race(self, value):
+        self.race = next((race for race in self.sorted_races
+                          if race.name == value), None)
+
+    def set_stat(self, name, value):
+        self.stats[name] = value
+
+    def finish(self):
+        self.game_context.player = self.character_factory.create(
+            uid="player",
+            name=self.name,
+            class_uid=self.character_class.uid,
+            race_uid=self.race.uid,
+            stats=make_character_stats(
+                **{uid.lower(): value for uid, value in self.stats.items()}),
+            body_uid="humanoid"
         )
-        self.control_race = controls.ListChoiceControl(
-            question="Race:", root_console=self.main_console,
-            options=sorted(race_templates.values(), key=lambda race: race.name)
-        )
-        self.control_stats = controls.PointDistributionControl(
-            question="Stats:",
-            options=["Strength", "Dexterity", "Constitution", "Intelligence", "Charisma", "Wisdom"],
-            root_console=self.main_console,
-            total_points=27,
-            initial_value=8,
-            max_value=15,
-            cost_calculator=lambda current: 1 if current < 13 else 2
-        )
-        self.menu = Menu('Character Creation',
-                         """
-                         Create your adventure!
-                         """,
-                         self.options,
-                         self.main_console.width,
-                         self.main_console.height)
-        self.controls = ControlsInterface(self.menu)
-        self.menu.position = (0, 0)
-        self.controls.add_control(self.control_name, 0, 0)
-        self.controls.add_control(self.control_class, 0, 1)
-        self.controls.add_control(self.control_race, 0, 4)
-        self.controls.add_control(self.control_stats, 0, 8)
-
-        self.active_control = self.control_name
-
-        # TODO THIS should be in the menu itself.
-        self.menu_draws = []
-        self.create_menu()
-
-    def create_menu(self):
-        for option_text in self.options:
-            text = '(' + chr(self.menu.letter_index) + ') ' + option_text + '   '
-            self.menu.letter_index += 1
-            self.menu_draws.append(text)
-
-    def render_menu(self):
-        for text in self.menu_draws:
-            self.menu.printStr(text)
-
-    def render(self, is_active):
-        self.menu.clear()
-        self.menu.move(0, 0)
-        for control in self.controls.controls:
-            if self.active_control is None \
-                    or self.controls.controls.index(self.active_control) >= self.controls.controls.index(control):
-                if control == self.active_control:
-                    control.render(self.menu, True)
-                else:
-                    control.render(self.menu, False)
-            self.menu.printStr("\n")
-
-        if not self.active_control:
-            self.render_menu()
-        self.main_console.blit(self.menu, 0, 0)
-        tdl.flush()
-
-    def handle_input(self, key_events, mouse_events):
-        if self.active_control:
-            self.active_control.handle_input(key_events, mouse_events)
-            if self.active_control.finished:
-                new_index = self.controls.controls.index(self.active_control) + 1
-                if new_index < len(self.controls.controls):
-                    self.active_control = self.controls.controls[new_index]
-                else:
-                    self.active_control = None
+        player = self.game_context.player
+        player.register_component(Needs.create_standard(1, 100, hunger, thirst))
+        # TODO We will need a much better way to assign outfits.
+        if self.character_class.uid.lower() == "thief":
+            starter_thief.apply(player)
         else:
-            for key_event in key_events:
-                if key_event.keychar.upper() == 'A':
-                    self.game_context.player = self.character_factory.create(
-                        uid="player",
-                        name=self.control_name.answer,
-                        class_uid=self.control_class.answer.uid,
-                        race_uid=self.control_race.answer.uid,
-                        stats=make_character_stats(
-                            **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
-                        body_uid="humanoid"
-                    )
-                    player = self.game_context.player
-                    player.register_component(Needs.create_standard(1, 100, hunger, thirst))
-                    # TODO We will need a much better way to assign outfits.
-                    if self.control_class.answer.uid.lower() == "thief":
-                        starter_thief.apply(player)
-                    else:
-                        starter_warrior.apply(player)
-                    self.transition_to(GameScene(self.console_manager, self.game_context))
+            starter_warrior.apply(player)
+        self.director.transition_to(GameScene(self.game_context))
