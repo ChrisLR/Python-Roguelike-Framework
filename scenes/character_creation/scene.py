@@ -35,9 +35,9 @@ class CharacterCreationScene(UIScene):
 
         views = [
             WindowView(title='Character Creation', subviews=[
+                LabelView("Name:", layout_options=LayoutOptions(width=0.1, left=0.3, top=0.1, height=0.1, bottom=None, right=None)),
+                SingleLineTextInputView(callback=self.set_name, layout_options=LayoutOptions(width=0.2, left=None, top=0.1, height=0.1, bottom=None, right=0.4)),
 
-            LabelView("Name:", layout_options=LayoutOptions.centered(width=0.5, height=0.9)),
-            SingleLineTextInputView(callback=self.set_name, layout_options=LayoutOptions.centered(width=0.5, height=0.9)),
             ])
             # LabelView("Class:", layout_options=LayoutOptions.centered('intrinsic', 'intrinsic').with_updates(top=2, left=None, width=0.2, right=40)),
             # CyclingButtonView(
