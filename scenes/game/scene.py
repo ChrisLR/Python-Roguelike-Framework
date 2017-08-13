@@ -1,6 +1,8 @@
 import logging
+import settings
 
 from clubsandwich.ui import UIScene, ScrollingTextView, WindowView
+from bearlibterminal import terminal
 
 from areas.level import Level
 from characters import actions
@@ -25,8 +27,8 @@ class GameScene(UIScene):
     ID = "Game"
 
     def __init__(self, game_context):
-        self.console = ScrollingTextView(5, 70, layout_options=LayoutOptions(top=None, height=0.3, bottom=0.1, left=0, right=None, width=0.5))
-        game_context.echo_service = EchoService(self.console, game_context)
+        self.console = ScrollingTextView(5, 70, layout_options=LayoutOptions(top=None, height=0.3, bottom=0, left=0, right=None, width=0.99))
+        EchoService(self.console, game_context)
         game_context.action_manager = ActionManager(game_context)
         self.game_view = GameWindow(game_context, layout_options=LayoutOptions(top=0, height=0.7, bottom=None, left=0, right=None, width=1))
         self.game_context = game_context
@@ -37,6 +39,28 @@ class GameScene(UIScene):
         logger.info("Initialized GameScene")
         logger.info("Starting new game.")
         self.new_game()
+        self.movement_keys = settings.KEY_MAPPINGS
+
+    def terminal_read(self, val):
+        player = self.game_context.player
+        moved = False
+        if player.is_dead():
+            return
+
+        if val == terminal.TK_KP_5 or terminal.TK_PERIOD:
+            moved = True
+
+        if val in self.movement_keys:
+            key_x, key_y = self.movement_keys[val]
+            self.game_context.action_manager.move_or_attack(player, key_x, key_y)
+            moved = True
+
+        if moved:
+            player.update()
+            for monster in player.location.level.spawned_monsters:
+                monster.update()
+                self.game_context.action_manager.monster_take_turn(monster, player)
+            moved = False
 
     # def handle_input(self, key_events, mouse_events):
     #     if len(self.active_windows) > 1:

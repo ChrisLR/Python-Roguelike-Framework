@@ -7,7 +7,8 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 """
 import math
 
-from managers import combat_manager, echo
+from managers import combat_manager
+from managers.echo import EchoService
 from components.location import Location
 from components.messages import MessageType, QueryType
 
@@ -19,17 +20,17 @@ from components.messages import MessageType, QueryType
 # TODO also because it only take one forgotten line to make difficult to track bugs.
 
 
-def attack(attacker, target, game_context):
+def attack(attacker, target):
     # a simple formula for attack damage
-    combat_manager.execute_combat_round(attacker, target, game_context)
+    combat_manager.execute_combat_round(attacker, target)
 
 
-def consume(actor, chosen_item, game_context):
+def consume(actor, chosen_item):
     if chosen_item.consumable:
         actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item)
         chosen_item.consumable.consume(actor)
     else:
-        game_context.echo_service.standard_context_echo("You can't eat that!")
+        EchoService.singleton.standard_context_echo("You can't eat that!")
 
 
 def drop(actor, chosen_item, game_context):
@@ -102,7 +103,7 @@ def distance_to(actor, target):
     return math.sqrt(distance_x ** 2 + distance_y ** 2)
 
 
-def move_or_attack(character, target_x, target_y, game_context):
+def move_or_attack(character, target_x, target_y):
     """
     Either move to a new tile or attack
     whatever is in your way.
@@ -120,7 +121,7 @@ def move_or_attack(character, target_x, target_y, game_context):
         monster = next((monster for monster in character.current_level.spawned_monsters
                         if monster.location.get_local_coords() == tile_coords), None)
         if monster:
-            attack(character, monster, game_context)
+            attack(character, monster)
     else:
         move(character, target_x, target_y)
 
@@ -143,7 +144,7 @@ def move_towards(actor, target):
     move(actor, distance_x, distance_y)
 
 
-def monster_take_turn(monster, player, game_context):
+def monster_take_turn(monster, player):
     # TODO This should not be here, it should be in an AI component which uses actions from here
     """
     A basic monster takes its turn.9
@@ -157,4 +158,4 @@ def monster_take_turn(monster, player, game_context):
                 move_towards(monster, player)
             # close enough, attack! (if the player is still alive.)
             elif not player.is_dead():
-                attack(monster, player, game_context)
+                attack(monster, player)

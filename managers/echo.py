@@ -5,9 +5,12 @@ from components.game_object import NoneVoid
 
 
 class EchoService(object):
+    singleton = None
+
     def __init__(self, console, game_context):
         self.console = console
         self.game_context = game_context
+        EchoService.singleton = self
 
     def _context_echo(self, message, **kwargs):
         context_variables = defaultdict(lambda: "N/A")
@@ -118,3 +121,5 @@ message_router = {
     MessageVariables.actor.name: lambda **kwargs: kwargs.get("actor").name,
     MessageVariables.target_item.name: lambda **kwargs: kwargs.get("target_item").name,
 }
+
+echo_service = None
