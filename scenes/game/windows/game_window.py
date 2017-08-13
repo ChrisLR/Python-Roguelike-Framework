@@ -38,8 +38,6 @@ class GameWindow(RectView):
         self.draw_items(player, current_level, ctx)
         self.draw_characters(player, current_level, ctx)
         self.draw_player(player, ctx)
-        if player.is_dead():
-            EchoService.singleton.standard_context_echo(0, 4, 'You have died!')
 
     @staticmethod
     def draw_gui(player, ctx):

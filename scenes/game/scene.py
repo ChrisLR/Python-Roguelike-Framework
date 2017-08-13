@@ -60,7 +60,7 @@ class GameScene(UIScene):
             for monster in player.location.level.spawned_monsters:
                 monster.update()
                 self.game_context.action_manager.monster_take_turn(monster, player)
-            moved = False
+
 
     # def handle_input(self, key_events, mouse_events):
     #     if len(self.active_windows) > 1:

@@ -108,19 +108,19 @@ def name_or_you(target, **kwargs):
 none_void = NoneVoid()
 # noinspection PyProtectedMember
 message_router = {
-    MessageVariables.attacker_his._name_: lambda **kwargs: his_her_it(target=kwargs["attacker"], **kwargs),
-    MessageVariables.attacker_him._name_: lambda **kwargs: him_her_it(target=kwargs["attacker"], **kwargs),
-    MessageVariables.attacker._name_: lambda **kwargs: name_or_you(target=kwargs["attacker"], **kwargs),
-    MessageVariables.attacker_weapon._name_: lambda **kwargs: get_name_or_string(kwargs.get("attacker_weapon")),
-    MessageVariables.attacker_he._name_: lambda **kwargs: he_her_it(target=kwargs.get("attacker")),
-    MessageVariables.defender_his._name_: lambda **kwargs: his_her_it(target=kwargs["defender"], **kwargs),
-    MessageVariables.defender_him._name_: lambda **kwargs: him_her_it(target=kwargs["defender"], **kwargs),
-    MessageVariables.defender_he._name_: lambda **kwargs: he_her_it(target=kwargs.get("defender")),
-    MessageVariables.defender._name_: lambda **kwargs: name_or_you(target=kwargs["defender"], **kwargs),
-    MessageVariables.defender_weapon._name_: lambda **kwargs: get_name_or_string(kwargs.get("defender_weapon")),
-    MessageVariables.defender_bodypart._name_: lambda **kwargs: get_name_or_string(kwargs.get("defender_bodypart")),
-    MessageVariables.actor._name_: lambda **kwargs: get_name_or_string(kwargs.get("actor")),
-    MessageVariables.target_item._name_: lambda **kwargs: get_name_or_string(kwargs.get("target_item")),
+    MessageVariables.attacker_his.name: lambda **kwargs: his_her_it(target=kwargs["attacker"], **kwargs),
+    MessageVariables.attacker_him.name: lambda **kwargs: him_her_it(target=kwargs["attacker"], **kwargs),
+    MessageVariables.attacker.name: lambda **kwargs: name_or_you(target=kwargs["attacker"], **kwargs),
+    MessageVariables.attacker_weapon.name: lambda **kwargs: get_name_or_string(kwargs.get("attacker_weapon")),
+    MessageVariables.attacker_he.name: lambda **kwargs: he_her_it(target=kwargs.get("attacker")),
+    MessageVariables.defender_his.name: lambda **kwargs: his_her_it(target=kwargs["defender"], **kwargs),
+    MessageVariables.defender_him.name: lambda **kwargs: him_her_it(target=kwargs["defender"], **kwargs),
+    MessageVariables.defender_he.name: lambda **kwargs: he_her_it(target=kwargs.get("defender")),
+    MessageVariables.defender.name: lambda **kwargs: name_or_you(target=kwargs["defender"], **kwargs),
+    MessageVariables.defender_weapon.name: lambda **kwargs: get_name_or_string(kwargs.get("defender_weapon")),
+    MessageVariables.defender_bodypart.name: lambda **kwargs: get_name_or_string(kwargs.get("defender_bodypart")),
+    MessageVariables.actor.name: lambda **kwargs: get_name_or_string(kwargs.get("actor")),
+    MessageVariables.target_item.name: lambda **kwargs: get_name_or_string(kwargs.get("target_item")),
 }
 
 
