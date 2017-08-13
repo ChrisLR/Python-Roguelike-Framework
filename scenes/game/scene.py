@@ -27,7 +27,7 @@ class GameScene(UIScene):
     ID = "Game"
 
     def __init__(self, game_context):
-        self.console = ScrollingTextView(5, 70, layout_options=LayoutOptions(top=None, height=0.3, bottom=0, left=0, right=None, width=0.99))
+        self.console = ScrollingTextView(6, 70, layout_options=LayoutOptions(top=None, height=0.3, bottom=0, left=0, right=None, width=0.99))
         EchoService(self.console, game_context)
         game_context.action_manager = ActionManager(game_context)
         self.game_view = GameWindow(game_context, layout_options=LayoutOptions(top=0, height=0.7, bottom=None, left=0, right=None, width=1))
