@@ -4,10 +4,15 @@ import tdl
 from ui import controls
 from ui.windows import SingleWindow, MultipartWindow
 from scenes.game.windows.item_query_window import ItemQueryWindow
+from clubsandwich.ui import UIScene, WindowView, LayoutOptions
 
 
-class InventoryWindow(MultipartWindow):
+class InventoryWindow(UIScene):
     def __init__(self, main_console, wielded_items, worn_items, inventory_items):
+        view = WindowView(
+            'Settings',
+            layout_options=LayoutOptions.centered(60, 20),
+        )
         self.item_query_window = ItemQueryWindow(
             main_console, self.build_item_detail_window,
             wielded_items, worn_items, inventory_items
