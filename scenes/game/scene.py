@@ -55,6 +55,9 @@ class GameScene(UIScene):
             self.game_context.action_manager.move_or_attack(player, key_x, key_y)
             moved = True
 
+        if val == terminal.TK_I:
+            self.director.push_scene(InventoryWindow(*self._get_all_player_items()))
+
         if moved:
             player.update()
             for monster in player.location.level.spawned_monsters:
@@ -70,7 +73,7 @@ class GameScene(UIScene):
     #
     #     for key_event in key_events:
     #         if key_event.keychar == "i":
-    #             self.invoke_window(InventoryWindow(self.main_console, *self._get_all_player_items()))
+    #             self.invoke_window(InventoryWindow(self.main_console, ))
     #
     #         if key_event.keychar == "d":
     #             self.invoke_window(

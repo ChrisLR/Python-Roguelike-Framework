@@ -1,37 +1,50 @@
-import math
-
-import tdl
-from ui import controls
-from ui.windows import SingleWindow, MultipartWindow
-from scenes.game.windows.item_query_window import ItemQueryWindow
-from clubsandwich.ui import UIScene, WindowView, LayoutOptions
+from clubsandwich.ui import UIScene, WindowView, LayoutOptions, KeyAssignedListView, ButtonView, Scene
 
 
 class InventoryWindow(UIScene):
-    def __init__(self, main_console, wielded_items, worn_items, inventory_items):
-        view = WindowView(
-            'Settings',
+    def __init__(self, wielded_items, worn_items, inventory_items):
+        wielded_button_generator = (
+            ButtonView(item.name, lambda: self.describe_item(item))
+            for item in wielded_items
+        )
+        worn_button_generator = (
+            ButtonView(item.name, lambda: self.describe_item(item))
+            for item in worn_items
+        )
+        inventory_button_generator = (
+            ButtonView(item.name, lambda: self.describe_item(item))
+            for item in inventory_items
+        )
+        wielded_view = WindowView(
+            'Wielded Items',
             layout_options=LayoutOptions.centered(60, 20),
+            subviews=[KeyAssignedListView(wielded_button_generator)]
         )
-        self.item_query_window = ItemQueryWindow(
-            main_console, self.build_item_detail_window,
-            wielded_items, worn_items, inventory_items
+        worn_view = WindowView(
+            'Worn Items',
+            layout_options=LayoutOptions.centered(60, 20),
+            subviews=[KeyAssignedListView(worn_button_generator)]
         )
-        super().__init__(main_console, [self.item_query_window])
-
-    def build_item_detail_window(self, chosen_item):
-        self.windows = [self.item_query_window, ItemDetailWindow(self.main_console, chosen_item)]
-
-
-class ItemDetailWindow(SingleWindow):
-    def __init__(self, main_console, chosen_item):
-        super().__init__(main_console)
-        self.window = tdl.Window(
-            self.main_console, int(math.floor(self.main_console.width / 2)) + 1, 0,
-            width=int(math.floor(self.main_console.width / 2)),
-            height=self.main_console.height
+        inventory_view = WindowView(
+            'Inventory',
+            layout_options=LayoutOptions.centered(60, 20),
+            subviews=[KeyAssignedListView(inventory_button_generator)]
         )
-        # TODO This window should show details on whatever Item was selected.
-        self.control = None
-        self.chosen_item = chosen_item
+        super().__init__([wielded_view, worn_view, inventory_view])
+
+    def describe_item(self, item):
+        self.director.push_scene(ItemDetailWindow(item))
+
+
+class ItemDetailWindow(WindowView):
+    def __init__(self, chosen_item):
+        self.covers_screen = False
+        view = WindowView(
+            chosen_item.name
+        )
+        super().__init__()
+
+    def terminal_read(self, val):
+        self.director.pop_scene()
+
 
