@@ -13,25 +13,18 @@ class MainMenuScene(UIScene):
         self.covers_screen = True
         views = [
             LabelView(
-                text=MAIN_MENU["name"],
-                align_vert='top',
-                layout_options=LayoutOptions.row_top(5),
-            ),
-            LabelView(
                 text=MAIN_MENU["text"],
-                layout_options=LayoutOptions.row_top(10)
+                layout_options=LayoutOptions(top=0.4, height=0.1, bottom=None)
             ),
             ButtonView(
                 text="Play",
                 callback=lambda: self.director.replace_scene(CharacterCreationScene(game_context)),
-                layout_options=LayoutOptions.row_bottom(0.5).with_updates(
-                    left=0, width=0.5, right=None)
+                layout_options=LayoutOptions(top=0.5, height=0.2, left=0.4, right=None, bottom=None, width=0.1),
             ),
             ButtonView(
                 text="Quit",
                 callback=lambda: self.director.quit(),
-                layout_options=LayoutOptions.row_bottom(0.5).with_updates(
-                    left=0.2, width=0.5, right=None),
+                layout_options=LayoutOptions(top=0.5, height=0.2, left=0.5, right=None, bottom=None, width=0.1)
             )
         ]
         super().__init__(views)

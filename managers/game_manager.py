@@ -1,4 +1,5 @@
 from clubsandwich.director import DirectorLoop
+from bearlibterminal import terminal
 from scenes.main_menu.scene import MainMenuScene
 
 from managers.game_context import GameContext
@@ -14,6 +15,7 @@ class GameManager(object):
     Admittedly this is a bit of a mess and will need to be cleaned up.
     """
     def __init__(self):
+
         # Pre-load levels into database
         self.game_context = GameContext()
         self.load_game_data()
@@ -55,3 +57,8 @@ class MainLoop(DirectorLoop):
 
     def get_initial_scene(self):
         return self.scene
+
+    def terminal_init(self):
+        super().terminal_init()
+        terminal.set("window: title='Python Roguelike Framework', size=120x50;")
+

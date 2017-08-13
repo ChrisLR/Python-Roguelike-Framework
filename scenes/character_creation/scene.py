@@ -17,7 +17,8 @@ from clubsandwich.ui import (
     IntStepperView,
     ButtonView,
     LayoutOptions,
-    WindowView
+    WindowView,
+    View
 )
 
 
@@ -35,69 +36,69 @@ class CharacterCreationScene(UIScene):
 
         views = [
             WindowView(title='Character Creation', subviews=[
-                LabelView("Name:", layout_options=LayoutOptions(**get_left_layout(0.1))),
+                LabelView("Name:", layout_options=LayoutOptions(**get_left_layout(2))),
                 SingleLineTextInputView(
                     callback=self.set_name,
-                    layout_options=LayoutOptions(**get_right_layout(0.1, width=0.2))
+                    layout_options=LayoutOptions(**get_right_layout(3, width=0.2, right=0.4))
                 ),
-                LabelView("Class:", layout_options=LayoutOptions(**get_left_layout(0.2))),
+                LabelView("Class:", layout_options=LayoutOptions(**get_left_layout(3))),
                 CyclingButtonView(
                     options=sorted_classes_names,
                     initial_value=sorted_classes_names[0],
                     callback=self.set_character_class,
-                    layout_options=LayoutOptions(**get_right_layout(0.2))
+                    layout_options=LayoutOptions(**get_right_layout(3))
                 ),
-                LabelView("Race:", layout_options=LayoutOptions(**get_left_layout(0.3))),
+                LabelView("Race:", layout_options=LayoutOptions(**get_left_layout(4))),
                 CyclingButtonView(
                     options=sorted_races_names,
                     initial_value=sorted_races_names[0],
                     callback=self.set_race,
-                    layout_options=LayoutOptions(**get_right_layout(0.3))
+                    layout_options=LayoutOptions(**get_right_layout(4))
                 ),
-                LabelView("Strength:", layout_options=LayoutOptions(**get_left_layout(0.35))),
+                LabelView("Strength:", layout_options=LayoutOptions(**get_left_layout(6))),
                 ValidatedIntStepperView(
                     validation_callback=self.validate_points,
                     value=8, callback=lambda value: self.set_stat("Strength", value),
                     min_value=8, max_value=15,
-                    layout_options=LayoutOptions(**get_right_layout(0.35)),
+                    layout_options=LayoutOptions(**get_right_layout(7, width=5)),
                 ),
-                LabelView("Dexterity:", layout_options=LayoutOptions(**get_left_layout(0.4))),
+                LabelView("Dexterity:", layout_options=LayoutOptions(**get_left_layout(7))),
                 ValidatedIntStepperView(
                     validation_callback=self.validate_points,
                     value=8, callback=lambda value: self.set_stat("Dexterity", value),
                     min_value=8, max_value=15,
-                    layout_options=LayoutOptions(**get_right_layout(0.4)),
+                    layout_options=LayoutOptions(**get_right_layout(8, width=5)),
                 ),
-                LabelView("Constitution:", layout_options=LayoutOptions(**get_left_layout(0.45))),
+                LabelView("Constitution:", layout_options=LayoutOptions(**get_left_layout(8))),
                 ValidatedIntStepperView(
                     validation_callback=self.validate_points,
                     value=8, callback=lambda value: self.set_stat("Constitution", value),
                     min_value=8, max_value=15,
-                    layout_options=LayoutOptions(**get_right_layout(0.45)),
+                    layout_options=LayoutOptions(**get_right_layout(9, width=5)),
                 ),
-                LabelView("Intelligence:", layout_options=LayoutOptions(**get_left_layout(0.50))),
+                LabelView("Intelligence:", layout_options=LayoutOptions(**get_left_layout(9))),
                 ValidatedIntStepperView(
                     validation_callback=self.validate_points,
                     value=8, callback=lambda value: self.set_stat("Intelligence", value),
                     min_value=8, max_value=15,
-                    layout_options=LayoutOptions(**get_right_layout(0.50)),
+                    layout_options=LayoutOptions(**get_right_layout(10, width=5)),
                 ),
-                LabelView("Charisma:", layout_options=LayoutOptions(**get_left_layout(0.55))),
+                LabelView("Charisma:", layout_options=LayoutOptions(**get_left_layout(10))),
                 ValidatedIntStepperView(
                     validation_callback=self.validate_points,
                     value=8, callback=lambda value: self.set_stat("Charisma", value),
                     min_value=8, max_value=15,
-                    layout_options=LayoutOptions(**get_right_layout(0.55)),
+                    layout_options=LayoutOptions(**get_right_layout(11, width=5)),
                 ),
-                LabelView("Wisdom:", layout_options=LayoutOptions(**get_left_layout(0.60))),
+                LabelView("Wisdom:", layout_options=LayoutOptions(**get_left_layout(11))),
                 ValidatedIntStepperView(
                     validation_callback=self.validate_points,
                     value=8, callback=lambda value: self.set_stat("Wisdom", value),
                     min_value=8, max_value=15,
-                    layout_options=LayoutOptions(**get_right_layout(0.60))
+                    layout_options=LayoutOptions(**get_right_layout(12, width=5))
                 ),
                 ButtonView('Finish', self.finish,
-                           layout_options=LayoutOptions(**get_left_layout(0.70, left=0.45)))
+                           layout_options=LayoutOptions(**get_left_layout(13, left=0.45)))
             ])
         ]
         super().__init__(views)
@@ -173,7 +174,7 @@ def get_left_layout(top, **kwargs):
 
 
 def get_right_layout(top, **kwargs):
-    layout_options = dict(width=0.1, left=None, top=top, height=0.1, bottom=None, right=0.4)
+    layout_options = dict(width=0.1, left=None, top=top, height=0.1, bottom=None, right=0.5)
     if kwargs:
         layout_options.update(kwargs)
 
