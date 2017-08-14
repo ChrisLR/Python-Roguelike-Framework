@@ -42,12 +42,14 @@ class GameScene(UIScene):
         self.movement_keys = settings.KEY_MAPPINGS
 
     def terminal_read(self, val):
+        # TODO It would be nice to only set moved=True if the action succeeded.
         player = self.game_context.player
         moved = False
+
         if player.is_dead():
             return
 
-        if val == terminal.TK_KP_5 or terminal.TK_PERIOD:
+        if val is terminal.TK_KP_5 or val is terminal.TK_PERIOD:
             moved = True
 
         if val in self.movement_keys:
@@ -55,8 +57,31 @@ class GameScene(UIScene):
             self.game_context.action_manager.move_or_attack(player, key_x, key_y)
             moved = True
 
-        if val == terminal.TK_I:
+        if val is terminal.TK_I:
             self.director.push_scene(InventoryWindow(*self._get_all_player_items()))
+            return
+
+        if val is terminal.TK_D:
+            self.director.push_scene(ItemQueryWindow(self._drop_item_callback, *self._get_all_player_items()))
+            return
+
+        if val is terminal.TK_E:
+            self.director.push_scene(ItemQueryWindow(self._consume_item_callback, *self._get_all_player_items()))
+            return
+
+        if val is terminal.TK_G:
+            for item in self.game_context.player.location.level.spawned_items:
+                if item.location.get_local_coords() == self.game_context.player.location.get_local_coords():
+                    actions.get(self.game_context.player, item)
+            moved = True
+
+        if val is terminal.TK_R:
+            wielded_items, worn_items, _ = self._get_all_player_items()
+            self.director.push_scene(ItemQueryWindow(self._remove_item_callback, wielded_items, worn_items, []))
+            return
+
+        if val is terminal.TK_W:
+            self.director.push_scene(ItemQueryWindow(self._wear_wield_item_callback, *self._get_all_player_items()))
             return
 
         if moved:
@@ -64,39 +89,6 @@ class GameScene(UIScene):
             for monster in player.location.level.spawned_monsters:
                 monster.update()
                 self.game_context.action_manager.monster_take_turn(monster, player)
-
-
-    # def handle_input(self, key_events, mouse_events):
-    #     if len(self.active_windows) > 1:
-    #         super().handle_input(key_events, mouse_events)
-    #         return
-    #     super().handle_input(key_events, mouse_events)
-    #
-    #     for key_event in key_events:
-    #         if key_event.keychar == "i":
-    #             self.invoke_window(InventoryWindow(self.main_console, ))
-    #
-    #         if key_event.keychar == "d":
-    #             self.invoke_window(
-    #                 ItemQueryWindow(self.main_console, self._drop_item_callback, *self._get_all_player_items()))
-    #
-    #         if key_event.keychar == "e":
-    #             self.invoke_window(
-    #                 ItemQueryWindow(self.main_console, self._consume_item_callback, *self._get_all_player_items()))
-    #
-    #         if key_event.keychar == "g":
-    #             for item in self.game_context.player.location.level.spawned_items:
-    #                 if item.location.get_local_coords() == self.game_context.player.location.get_local_coords():
-    #                     actions.get(self.game_context.player, item)
-    #
-    #         if key_event.keychar == "r":
-    #             wielded_items, worn_items, _ = self._get_all_player_items()
-    #             self.invoke_window(
-    #                 ItemQueryWindow(self.main_console, self._remove_item_callback, wielded_items, worn_items, []))
-    #
-    #         if key_event.keychar == "w":
-    #             self.invoke_window(
-    #                 ItemQueryWindow(self.main_console, self._wear_wield_item_callback, *self._get_all_player_items()))
 
     def _get_all_player_items(self):
         player = self.game_context.player
@@ -113,20 +105,32 @@ class GameScene(UIScene):
         return wielded_items, worn_items, inventory_items
 
     def _consume_item_callback(self, chosen_item):
-        actions.consume(self.game_context.player, chosen_item, self.game_context)
-        # self.close_window()
+        player = self.game_context.player
+        actions.consume(self.game_context.player, chosen_item)
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _drop_item_callback(self, chosen_item):
-        actions.drop(self.game_context.player, chosen_item, self.game_context)
-        # self.close_window()
+        player = self.game_context.player
+        actions.drop(self.game_context.player, chosen_item)
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _wear_wield_item_callback(self, chosen_item):
-        actions.wear_wield(self.game_context.player, chosen_item, self.game_context)
-        # self.close_window()
+        player = self.game_context.player
+        actions.wear_wield(self.game_context.player, chosen_item)
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _remove_item_callback(self, chosen_item):
-        actions.remove_item(self.game_context.player, chosen_item, self.game_context)
-        # self.close_window()
+        player = self.game_context.player
+        actions.remove_item(self.game_context.player, chosen_item)
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def new_game(self):
         # TODO This should prepare the first level

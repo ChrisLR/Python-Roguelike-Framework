@@ -53,6 +53,7 @@ class InventoryWindow(UIScene):
         self.director.push_scene(ItemDetailWindow(item))
 
     def terminal_read(self, val):
+        super().terminal_read(val)
         if val == terminal.TK_ESCAPE:
             self.director.pop_scene()
 

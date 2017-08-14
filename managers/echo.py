@@ -7,13 +7,8 @@ class EchoService(object):
         EchoService.singleton = self
 
     def echo(self, message, context=None):
-        if "{attacker_his}" in message:
-            print("Hm")
         if context:
             replaced_message = context.replace(message)
             self.console.add_lines(replaced_message + "\n")
         else:
-            # DEBUG REMOVE THIS
-            if "{" in message:
-                raise ValueError("PROVIDED NO CONTEXT BUT SHOULD.")
             self.console.add_lines(message + "\n")

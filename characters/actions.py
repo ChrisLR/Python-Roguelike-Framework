@@ -9,6 +9,7 @@ import math
 
 from managers import combat_manager
 from managers.echo import EchoService
+from echo.contexts import Context
 from components.location import Location
 from components.messages import MessageType, QueryType
 
@@ -33,44 +34,46 @@ def consume(actor, chosen_item):
         EchoService.singleton.echo("You can't eat that!")
 
 
-def drop(actor, chosen_item, game_context):
+def drop(actor, chosen_item):
     chosen_item.register_component(actor.location.copy())
     if True in actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item):
         actor.location.level.spawned_items.append(chosen_item)
-        game_context.echo_service.standard_context_echo("{actor} drop {chosen_item}.", actor, chosen_item)
+        EchoService.singleton.echo("{actor} drop {target_item}.", context=Context.standard(actor, chosen_item))
 
 
-def get(actor, chosen_item, game_context):
+def get(actor, chosen_item):
     # TODO Inventories will have a maximum and this will need to prevent the drop.
     actor.inventory.add_item(chosen_item)
     actor.location.level.spawned_items.remove(chosen_item)
     chosen_item.unregister_component_name(Location.NAME)
-    game_context.echo_service.standard_context_echo("{actor} get {target_item}.", actor, chosen_item)
+    EchoService.singleton.echo("{actor} get {target_item}.", context=Context.standard(actor, chosen_item))
 
 
-def remove_item(actor, chosen_item, game_context):
+def remove_item(actor, chosen_item):
     if True in actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item):
         actor.inventory.add_item(chosen_item)
-        game_context.echo_service.standard_context_echo(
-            "{actor} remove {target_item}.", actor, chosen_item)
+        EchoService.singleton.echo(
+            "{actor} remove {target_item}.", context=Context.standard(actor, chosen_item))
 
 
-def wear_wield(actor, chosen_item, game_context):
+def wear_wield(actor, chosen_item):
     success = False
     if chosen_item.armor and actor.equipment:
         if actor.equipment.wear(chosen_item):
-            game_context.echo_service.standard_context_echo(
-                "{actor} wear {target_item}.", actor, chosen_item)
+            EchoService.singleton.echo(
+                "{actor} wear {target_item}.", context=Context.standard(actor, chosen_item))
+            success = True
+
     elif actor.equipment:
         if actor.equipment.wield(chosen_item):
-            game_context.echo_service.standard_context_echo(
-                "{actor} wield {target_item}.", actor, chosen_item)
+            EchoService.singleton.echo(
+                "{actor} wield {target_item}.", context=Context.standard(actor, chosen_item))
             success = True
 
     if success:
         actor.inventory.remove_item(chosen_item)
     else:
-        game_context.echo_service.standard_context_echo("You can't wear/wield that!")
+        EchoService.singleton.echo("You can't wear/wield that!")
 
 
 def move(actor, dx, dy):
