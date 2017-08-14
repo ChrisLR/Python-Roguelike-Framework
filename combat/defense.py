@@ -1,6 +1,7 @@
 import abc
 
 from managers import echo
+from echo.contexts import Context
 
 
 class DefenseTemplate(object):
@@ -20,15 +21,13 @@ class DefenseTemplate(object):
         return False
 
     def make_defense(self, attacker, defender, **kwargs):
-        echo.EchoService.singleton.combat_context_echo(
+        echo.EchoService.singleton.echo(
             message="..." + self.message,
-            attacker=attacker,
-            defender=defender,
-            **kwargs
+            context=Context.combat(attacker=attacker, defender=defender, **kwargs)
         )
 
     def get_used_weapon(self, defender):
-        return next((weapon for weapon in defender.equipment.get_wielded_items()))
+        return next((weapon for weapon in defender.equipment.get_wielded_items()), None)
 
 
 class MissTemplate(DefenseTemplate):
@@ -57,9 +56,11 @@ class ParryTemplate(DefenseTemplate):
 
     def evaluate(self, defender, hit_roll):
         # TODO A parry should have a different condition than a dodge.
-        minimum_ac = 10
-        maximum_ac = minimum_ac + defender.get_effective_dex_modifier()
-        return self._evaluate(hit_roll, minimum_ac, maximum_ac)
+        if self.get_used_weapon(defender):
+            minimum_ac = 10
+            maximum_ac = minimum_ac + defender.get_effective_dex_modifier()
+            return self._evaluate(hit_roll, minimum_ac, maximum_ac)
+        return False
 
     def make_defense(self, attacker, defender, **kwargs):
         defender_weapon = self.get_used_weapon(defender)

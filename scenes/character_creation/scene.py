@@ -162,6 +162,7 @@ class CharacterCreationScene(UIScene):
             starter_thief.apply(player)
         else:
             starter_warrior.apply(player)
+        player.is_player = True
         self.director.replace_scene(GameScene(self.game_context))
 
 

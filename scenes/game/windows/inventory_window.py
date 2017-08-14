@@ -1,6 +1,14 @@
 from functools import partial
 
-from clubsandwich.ui import UIScene, WindowView, LayoutOptions, KeyAssignedListView, ButtonView
+from bearlibterminal import terminal
+from clubsandwich.ui import (
+    UIScene,
+    WindowView,
+    LayoutOptions,
+    KeyAssignedListView,
+    ButtonView,
+    LabelView
+)
 
 
 class InventoryWindow(UIScene):
@@ -44,13 +52,20 @@ class InventoryWindow(UIScene):
     def describe_item(self, item):
         self.director.push_scene(ItemDetailWindow(item))
 
+    def terminal_read(self, val):
+        if val == terminal.TK_ESCAPE:
+            self.director.pop_scene()
+
 
 class ItemDetailWindow(UIScene):
     def __init__(self, chosen_item):
         self.covers_screen = False
         view = WindowView(
             chosen_item.name,
-            layout_options=LayoutOptions(left=None, width=0.3, height=0.7, top=0.05, right=0.25, bottom=None)
+            layout_options=LayoutOptions(left=None, width=0.3, height=0.7, top=0.05, right=0.25, bottom=None),
+            subviews=[
+                LabelView(chosen_item.description)
+            ]
         )
         super().__init__(view)
 

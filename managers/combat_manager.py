@@ -3,8 +3,8 @@ import random
 from combat import enums as combat_enums
 from combat.attack import MeleeAttackTemplate
 from stats.enums import StatsEnum
-from managers import echo
 from managers.echo import EchoService
+import echo.functions
 from util.colors import Colors
 
 
@@ -52,7 +52,7 @@ def execute_combat_round(attacker, defender):
         take_damage(defender, attack_result)
     else:
         choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
-    EchoService.singleton.standard_context_echo(str(attack_result) + "\n")
+    EchoService.singleton.echo(str(attack_result) + "\n")
 
 
 def take_damage(actor, attack_result):
@@ -70,8 +70,11 @@ def take_damage(actor, attack_result):
 
     damage_string += ",".join(wound_strings)
     damage_string += " {} {} for {} damage!".format(
-        echo.his_her_it(actor), attack_result.body_part_hit.name, attack_result.total_damage)
-    EchoService.singleton.standard_context_echo(damage_string + "\n")
+        echo.functions.his_her_it(actor),
+        attack_result.body_part_hit.name,
+        attack_result.total_damage
+    )
+    EchoService.singleton.echo(damage_string + "\n")
 
     # TODO THIS MUST BE EXTRACTED
     # check for death. if there's a death function, call it
@@ -88,7 +91,7 @@ def take_damage(actor, attack_result):
 def player_death(player):
     # TODO This should not be here
     # the game ended!
-    EchoService.singleton.standard_context_echo('You have died... Game Over\n\n')
+    EchoService.singleton.echo('You have died... Game Over\n\n')
 
     # for added effect, transform the player into a corpse!
     player.display.ascii_character = '%'
@@ -99,7 +102,7 @@ def monster_death(monster):
     # TODO This should not be here
     # transform it into a nasty corpse! it doesn't block, can't be
     # attacked and doesn't move
-    EchoService.singleton.standard_context_echo('{} has died.\n\n'.format(monster.name))
+    EchoService.singleton.echo('{} has died.\n\n'.format(monster.name))
     monster.display.ascii_character = '%'
     monster.display.foreground_color = Colors.CRIMSON
     monster.blocks = False

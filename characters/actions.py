@@ -30,7 +30,7 @@ def consume(actor, chosen_item):
         actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item)
         chosen_item.consumable.consume(actor)
     else:
-        EchoService.singleton.standard_context_echo("You can't eat that!")
+        EchoService.singleton.echo("You can't eat that!")
 
 
 def drop(actor, chosen_item, game_context):

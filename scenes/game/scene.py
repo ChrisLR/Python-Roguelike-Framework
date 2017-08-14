@@ -57,6 +57,7 @@ class GameScene(UIScene):
 
         if val == terminal.TK_I:
             self.director.push_scene(InventoryWindow(*self._get_all_player_items()))
+            return
 
         if moved:
             player.update()
