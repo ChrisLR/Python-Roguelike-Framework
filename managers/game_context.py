@@ -11,8 +11,6 @@ class GameContext(object):
         self.character_factory = None
         self.json_template_loader = None
         self.item_factory = None
-        self.echo_service = None
         self.current_level = None
         self.action_manager = None
         self.console_manager = None
-

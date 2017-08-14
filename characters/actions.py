@@ -7,7 +7,9 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 """
 import math
 
-from managers import combat_manager, echo
+from managers import combat_manager
+from managers.echo import EchoService
+from echo.contexts import Context
 from components.location import Location
 from components.messages import MessageType, QueryType
 
@@ -19,7 +21,7 @@ from components.messages import MessageType, QueryType
 # TODO also because it only take one forgotten line to make difficult to track bugs.
 
 
-def attack(attacker, target, console):
+def attack(attacker, target):
     # a simple formula for attack damage
     combat_manager.execute_combat_round(attacker, target)
 
@@ -29,14 +31,14 @@ def consume(actor, chosen_item):
         actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item)
         chosen_item.consumable.consume(actor)
     else:
-        echo.EchoService.singleton.standard_context_echo("You can't eat that!")
+        EchoService.singleton.echo("You can't eat that!")
 
 
 def drop(actor, chosen_item):
     chosen_item.register_component(actor.location.copy())
     if True in actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item):
         actor.location.level.spawned_items.append(chosen_item)
-        echo.EchoService.singleton.standard_context_echo("{actor} drop {chosen_item}.", actor, chosen_item)
+        EchoService.singleton.echo("{actor} drop {target_item}.", context=Context.standard(actor, chosen_item))
 
 
 def get(actor, chosen_item):
@@ -44,32 +46,34 @@ def get(actor, chosen_item):
     actor.inventory.add_item(chosen_item)
     actor.location.level.spawned_items.remove(chosen_item)
     chosen_item.unregister_component_name(Location.NAME)
-    echo.EchoService.singleton.standard_context_echo("{actor} get {target_item}.", actor, chosen_item)
+    EchoService.singleton.echo("{actor} get {target_item}.", context=Context.standard(actor, chosen_item))
 
 
 def remove_item(actor, chosen_item):
     if True in actor.transmit_query(None, QueryType.RemoveObject, item=chosen_item):
         actor.inventory.add_item(chosen_item)
-        echo.EchoService.singleton.standard_context_echo(
-            "{actor} remove {target_item}.", actor, chosen_item)
+        EchoService.singleton.echo(
+            "{actor} remove {target_item}.", context=Context.standard(actor, chosen_item))
 
 
 def wear_wield(actor, chosen_item):
     success = False
     if chosen_item.armor and actor.equipment:
         if actor.equipment.wear(chosen_item):
-            echo.EchoService.singleton.standard_context_echo(
-                "{actor} wear {target_item}.", actor, chosen_item)
+            EchoService.singleton.echo(
+                "{actor} wear {target_item}.", context=Context.standard(actor, chosen_item))
+            success = True
+
     elif actor.equipment:
         if actor.equipment.wield(chosen_item):
-            echo.EchoService.singleton.standard_context_echo(
-                "{actor} wield {target_item}.", actor, chosen_item)
+            EchoService.singleton.echo(
+                "{actor} wield {target_item}.", context=Context.standard(actor, chosen_item))
             success = True
 
     if success:
         actor.inventory.remove_item(chosen_item)
     else:
-        echo.EchoService.singleton.standard_context_echo("You can't wear/wield that!")
+        EchoService.singleton.echo("You can't wear/wield that!")
 
 
 def move(actor, dx, dy):
@@ -102,7 +106,7 @@ def distance_to(actor, target):
     return math.sqrt(distance_x ** 2 + distance_y ** 2)
 
 
-def move_or_attack(character, target_x, target_y, console):
+def move_or_attack(character, target_x, target_y):
     """
     Either move to a new tile or attack
     whatever is in your way.
@@ -120,7 +124,7 @@ def move_or_attack(character, target_x, target_y, console):
         monster = next((monster for monster in character.current_level.spawned_monsters
                         if monster.location.get_local_coords() == tile_coords), None)
         if monster:
-            attack(character, monster, console)
+            attack(character, monster)
     else:
         move(character, target_x, target_y)
 
@@ -143,7 +147,7 @@ def move_towards(actor, target):
     move(actor, distance_x, distance_y)
 
 
-def monster_take_turn(monster, player, console):
+def monster_take_turn(monster, player):
     # TODO This should not be here, it should be in an AI component which uses actions from here
     """
     A basic monster takes its turn.9
@@ -157,4 +161,4 @@ def monster_take_turn(monster, player, console):
                 move_towards(monster, player)
             # close enough, attack! (if the player is still alive.)
             elif not player.is_dead():
-                attack(monster, player, console)
+                attack(monster, player)

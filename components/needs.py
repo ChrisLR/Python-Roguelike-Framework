@@ -39,7 +39,7 @@ class Needs(Component):
         current_percent = self._get_threshold_percent(need)
         for threshold, message in need.positive_threshold_messages.items():
             if self.last_threshold[need] <= threshold <= current_percent:
-                EchoService.singleton.standard_context_echo(message=message)
+                EchoService.singleton.echo(message=message)
                 self.last_threshold[need] = threshold
                 break
 
@@ -47,7 +47,7 @@ class Needs(Component):
         current_percent = self._get_threshold_percent(need)
         for threshold, message in need.negative_threshold_messages.items():
             if self.last_threshold[need] > threshold >= current_percent:
-                EchoService.singleton.standard_context_echo(message=message)
+                EchoService.singleton.echo(message=message)
                 self.last_threshold[need] = threshold
                 break
 

@@ -56,7 +56,7 @@ class Inventory(Component):
 
 class KeyBoundInventory(Inventory):
     # noinspection SpellCheckingInspection
-    CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789°!\"#$%?&*()_+^:'.|{}[]@"
+    CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%?&*()_+^:'.|{}[]@"
     """
     This inventory keeps ascii bindings to added items.
     Used for the player.

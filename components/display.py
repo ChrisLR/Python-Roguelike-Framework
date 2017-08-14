@@ -1,4 +1,6 @@
 from .component import Component
+from util.colors import Colors
+from bearlibterminal import terminal
 
 
 class Display(Component):
@@ -11,7 +13,8 @@ class Display(Component):
         self.ascii_character = ascii_character
 
     def get_draw_info(self):
-        return dict(char=str(self.ascii_character), fgcolor=self.foreground_color, bgcolor=self.background_color)
+        color = terminal.color_from_argb(255, *self.foreground_color)
+        return "[color={}]{}".format(color, self.ascii_character)
 
     def copy(self):
         new_instance = Display(self.foreground_color, self.background_color, self.ascii_character)

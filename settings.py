@@ -1,9 +1,7 @@
+from bearlibterminal import terminal
 
 
 DEVELOPMENT = True
-
-DATABASE_NAME = 'roguelike.db'
-
 
 DUNGEON_COLORS = {
     'dark_blue_wall': (0, 0, 100),
@@ -20,18 +18,10 @@ DUNGEON_COLORS = {
 KEY_MAPPINGS = {
 
     # standard arrow keys
-    'UP': [0, -1],
-    'DOWN': [0, 1],
-    'LEFT': [-1, 0],
-    'RIGHT': [1, 0],
-
-    # diagonal keys
-    # keep in mind that the keypad won't use these keys even if
-    # num-lock is off
-    'HOME': [-1, -1],
-    'PAGEUP': [1, -1],
-    'PAGEDOWN': [1, 1],
-    'END': [-1, 1],
+    terminal.TK_UP: [0, -1],
+    terminal.TK_DOWN: [0, 1],
+    terminal.TK_LEFT: [-1, 0],
+    terminal.TK_RIGHT: [1, 0],
 
     # number-pad keys
     # These keys will always show as KPx regardless if num-lock
@@ -40,14 +30,14 @@ KEY_MAPPINGS = {
     # 7 8 9
     # 4   6
     # 1 2 3
-    'KP1': [-1, 1],
-    'KP2': [0, 1],
-    'KP3': [1, 1],
-    'KP4': [-1, 0],
-    'KP6': [1, 0],
-    'KP7': [-1, -1],
-    'KP8': [0, -1],
-    'KP9': [1, -1],
+    terminal.TK_KP_1: [-1, 1],
+    terminal.TK_KP_2: [0, 1],
+    terminal.TK_KP_3: [1, 1],
+    terminal.TK_KP_4: [-1, 0],
+    terminal.TK_KP_6: [1, 0],
+    terminal.TK_KP_7: [-1, -1],
+    terminal.TK_KP_8: [0, -1],
+    terminal.TK_KP_9: [1, -1],
 }
 
 

@@ -2,7 +2,8 @@ import abc
 
 from combat.enums import DamageType
 from stats.enums import StatsEnum
-from managers import echo
+from managers.echo import EchoService
+from echo.contexts import Context
 from util import check_roller
 from util.dice import DiceStack, Dice
 from . import enums
@@ -49,11 +50,9 @@ class AttackTemplate(object):
             self.make_damage_roll(attacker, attack_result, **kwargs)
 
         # TODO Probably a good idea to remove this from the attack and into the manager.
-        echo.EchoService.singleton.combat_context_echo(
+        EchoService.singleton.echo(
             message=self.message + "...",
-            attacker=attacker,
-            defender=defender,
-            **kwargs
+            context=Context.combat(attacker=attacker, defender=defender, **kwargs)
         )
         return attack_result
 

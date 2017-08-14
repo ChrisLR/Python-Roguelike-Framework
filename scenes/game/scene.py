@@ -1,75 +1,94 @@
 import logging
-import random
+import settings
+
+from clubsandwich.ui import UIScene, ScrollingTextView, WindowView
+from bearlibterminal import terminal
 
 from areas.level import Level
-from base.scene import BaseScene
 from characters import actions
 from data.python_templates.characters import character_templates
 from data.python_templates.items import item_templates
 from generators.dungeon_generator import DungeonGenerator
+from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow
-from scenes.game.windows.game_window import GameConsoles
+from clubsandwich.ui import LayoutOptions
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-class GameScene(BaseScene):
+class GameScene(UIScene):
     """
     This handles everything relating to the UI in the game window.
     """
     ID = "Game"
 
-    def __init__(self, console_manager, scene_manager, game_context):
-        super().__init__(console_manager, scene_manager, game_context)
+    def __init__(self, game_context):
+        self.console = ScrollingTextView(6, 70, layout_options=LayoutOptions(top=None, height=0.3, bottom=0, left=0, right=None, width=0.99))
+        EchoService(self.console, game_context)
+        game_context.action_manager = ActionManager(game_context)
+        self.game_view = GameWindow(game_context, layout_options=LayoutOptions(top=0, height=0.7, bottom=None, left=0, right=None, width=1))
+        self.game_context = game_context
+        super().__init__(WindowView("", subviews=[self.game_view, self.console]))
         self.loaded_levels = []
-        consoles = {
-            GameConsoles.ActionLog: self.console_manager.create_new_console(80, 15),
-            GameConsoles.Status: self.console_manager.create_new_console(20, 15)
-        }
-        game_context.action_manager = ActionManager(consoles[GameConsoles.ActionLog])
-        game_context.echo_service = EchoService(consoles[GameConsoles.ActionLog], game_context)
 
-        game_window = GameWindow(console_manager.main_console, consoles, game_context)
-        self.invoke_window(game_window)
+        # self.invoke_window(game_window)
         logger.info("Initialized GameScene")
         logger.info("Starting new game.")
         self.new_game()
+        self.movement_keys = settings.KEY_MAPPINGS
 
-    def handle_input(self, key_events, mouse_events):
-        if len(self.active_windows) > 1:
-            super().handle_input(key_events, mouse_events)
+    def terminal_read(self, val):
+        # TODO It would be nice to only set moved=True if the action succeeded.
+        player = self.game_context.player
+        moved = False
+
+        if player.is_dead():
             return
-        super().handle_input(key_events, mouse_events)
 
-        for key_event in key_events:
-            if key_event.keychar == "i":
-                self.invoke_window(InventoryWindow(self.main_console, *self._get_all_player_items()))
+        if val is terminal.TK_KP_5 or val is terminal.TK_PERIOD:
+            moved = True
 
-            if key_event.keychar == "d":
-                self.invoke_window(
-                    ItemQueryWindow(self.main_console, self._drop_item_callback, *self._get_all_player_items()))
+        if val in self.movement_keys:
+            key_x, key_y = self.movement_keys[val]
+            self.game_context.action_manager.move_or_attack(player, key_x, key_y)
+            moved = True
 
-            if key_event.keychar == "e":
-                self.invoke_window(
-                    ItemQueryWindow(self.main_console, self._consume_item_callback, *self._get_all_player_items()))
+        if val is terminal.TK_I:
+            self.director.push_scene(InventoryWindow(*self._get_all_player_items()))
+            return
 
-            if key_event.keychar == "g":
-                for item in self.game_context.player.location.level.spawned_items:
-                    if item.location.get_local_coords() == self.game_context.player.location.get_local_coords():
-                        actions.get(self.game_context.player, item)
+        if val is terminal.TK_D:
+            self.director.push_scene(ItemQueryWindow(self._drop_item_callback, *self._get_all_player_items()))
+            return
 
-            if key_event.keychar == "r":
-                wielded_items, worn_items, _ = self._get_all_player_items()
-                self.invoke_window(
-                    ItemQueryWindow(self.main_console, self._remove_item_callback, wielded_items, worn_items, []))
+        if val is terminal.TK_E:
+            self.director.push_scene(ItemQueryWindow(self._consume_item_callback, *self._get_all_player_items()))
+            return
 
-            if key_event.keychar == "w":
-                self.invoke_window(
-                    ItemQueryWindow(self.main_console, self._wear_wield_item_callback, *self._get_all_player_items()))
+        if val is terminal.TK_G:
+            for item in self.game_context.player.location.level.spawned_items:
+                if item.location.get_local_coords() == self.game_context.player.location.get_local_coords():
+                    actions.get(self.game_context.player, item)
+            moved = True
+
+        if val is terminal.TK_R:
+            wielded_items, worn_items, _ = self._get_all_player_items()
+            self.director.push_scene(ItemQueryWindow(self._remove_item_callback, wielded_items, worn_items, []))
+            return
+
+        if val is terminal.TK_W:
+            self.director.push_scene(ItemQueryWindow(self._wear_wield_item_callback, *self._get_all_player_items()))
+            return
+
+        if moved:
+            player.update()
+            for monster in player.location.level.spawned_monsters:
+                monster.update()
+                self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _get_all_player_items(self):
         player = self.game_context.player
@@ -86,20 +105,32 @@ class GameScene(BaseScene):
         return wielded_items, worn_items, inventory_items
 
     def _consume_item_callback(self, chosen_item):
+        player = self.game_context.player
         actions.consume(self.game_context.player, chosen_item)
-        self.close_window()
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _drop_item_callback(self, chosen_item):
+        player = self.game_context.player
         actions.drop(self.game_context.player, chosen_item)
-        self.close_window()
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _wear_wield_item_callback(self, chosen_item):
+        player = self.game_context.player
         actions.wear_wield(self.game_context.player, chosen_item)
-        self.close_window()
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _remove_item_callback(self, chosen_item):
+        player = self.game_context.player
         actions.remove_item(self.game_context.player, chosen_item)
-        self.close_window()
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def new_game(self):
         # TODO This should prepare the first level
@@ -127,112 +158,3 @@ class GameScene(BaseScene):
 
         forerunner = Forerunner(level, player)
         forerunner.run()
-
-
-
-
-class Forerunner(object):
-    """ 
-    The Forerunner will traverse the dungeon and place dungeon objects such as monsters and items
-    
-    Usage:
-        forerunner = Forefunner(level, player)
-        forerunner.run()
-    """
-    # TODO: figure out someplace besides scene.py where this should live
-
-    def __init__(self, level, player):
-        self.level = level
-        self.player = player
-
-    def run(self):
-        # place the player in the center of the first room
-        first_room = self.level.rooms[0]
-        x, y = first_room.center()
-        tile = self.level.maze[x][y]
-        self._place_player(self.level, tile, self.player)
-
-        self._place_monsters_in_rooms()
-        # self.place_items_in_rooms()  # TODO
-        # self.place_stairs(self.level.rooms)  # TODO
-
-    def _get_random_room_tile(self, level, room, depth=0):
-        """
-        Get a random ground tile that does not already contain a object
-        @param level: Level being generated.
-        @param depth: This prevents crash by infinite recursion.
-        @param room:
-        @return:
-        """
-        if room.x1 + 1 < room.x2 - 1:
-            x = random.randint(room.x1 + 1, room.x2 - 1)
-        else:
-            x = room.x1 + 1
-
-        if room.y1 + 1 < room.y2 - 1:
-            y = random.randint(room.y1 + 1, room.y2 - 1)
-        else:
-            y = room.y1 + 1
-
-        tile = level.maze[x][y]
-
-        if not tile.contains_object:
-            return tile
-
-        if depth > 50:
-            logger.debug("Could not find appropriate tile to spawn items.")
-            return tile
-
-        # if we didn't find an empty tile, try again
-        return self._get_random_room_tile(level, room, depth=depth + 1)
-
-    def _place_monsters_in_rooms(self):
-        """
-        Go through each room (thats not the first one) and drop a monster in it. Keep
-        going until there are no more monsters to place.
-        """
-        for room in self.level.rooms[1:]:
-            if not self.level.monster_spawn_list:
-                break
-            tile = self._get_random_room_tile(self.level, room)
-            self._place_monster(self.level, tile)
-
-    def _place_items_in_rooms(self):
-        """
-        Go through each room (thats not the first one) and drop an items in it. Keep
-        going until there are no more items to place.
-        """
-        for item in self.level.item_spawn_list:
-            random_room = random.choice(self.level.rooms[1:])
-            tile = self._get_random_room_tile(self.level, random_room)
-            self._place_item(self.level, tile, item)
-
-    @staticmethod
-    def _place_monster(level, tile):
-        # TODO This kind of spawning has a few issues, it should use a service to spawn monsters.
-        monster = level.monster_spawn_list.pop(0)
-        monster.location = tile.location.copy()
-        monster.location.level = level
-        level.spawned_monsters.append(monster)
-        tile.contains_object = True
-
-    @staticmethod
-    def _place_player(level, tile, player):
-        """
-        Place the player in the maze.
-        """
-        player.location = tile.location.copy()
-        player.location.level = level
-        tile.contains_object = True
-
-    @staticmethod
-    def _place_item(level, tile, item):
-        # TODO This sort of assignment should use a method and set all required things like global x, area, etc
-        item.location.local_x = tile.x
-        item.location.local_y = tile.y
-        item.level = level
-
-    def _place_stairs(self, tile):
-        # TODO Stairs should not be an item but a passable tile.
-        pass
-

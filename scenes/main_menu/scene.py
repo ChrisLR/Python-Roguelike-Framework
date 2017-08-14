@@ -1,32 +1,31 @@
-import tdl
+from clubsandwich.ui.misc_views import LabelView, ButtonView
+from clubsandwich.ui.ui_scene import UIScene
+from clubsandwich.ui import LayoutOptions
 
-from base.scene import BaseScene
-from managers.console_manager import Menu
-from ui.flavor_text import MAIN_MENU
+from scenes.character_creation.scene import CharacterCreationScene
+from flavor_text import MAIN_MENU
 
 
-class MainMenuScene(BaseScene):
+class MainMenuScene(UIScene):
     ID = "MainMenu"
 
-    def __init__(self, console_manager, scene_manager, game_context):
-        super().__init__(console_manager, scene_manager, game_context)
-        self.menu = Menu(MAIN_MENU['name'],
-                         MAIN_MENU['text'],
-                         MAIN_MENU['options'],
-                         self.main_console.width,
-                         self.main_console.height)
-        self.current_x = 20
-        self.current_y = 20
-        self.menu.create_menu(self.current_x, self.current_y)
+    def __init__(self, game_context):
+        self.covers_screen = True
+        views = [
+            LabelView(
+                text=MAIN_MENU["text"],
+                layout_options=LayoutOptions(top=0.4, height=0.1, bottom=None)
+            ),
+            ButtonView(
+                text="Play",
+                callback=lambda: self.director.replace_scene(CharacterCreationScene(game_context)),
+                layout_options=LayoutOptions(top=0.5, height=0.2, left=0.4, right=None, bottom=None, width=0.1),
+            ),
+            ButtonView(
+                text="Quit",
+                callback=lambda: self.director.quit(),
+                layout_options=LayoutOptions(top=0.5, height=0.2, left=0.5, right=None, bottom=None, width=0.1)
+            )
+        ]
+        super().__init__(views)
 
-    def render(self):
-        self.main_console.blit(self.menu, 0, 0)
-        tdl.flush()
-
-    def handle_input(self, key_events, mouse_events):
-        for key_event in key_events:
-            if key_event.keychar.upper() == 'A':
-                self.transition_to("CharacterCreationScene")
-            elif key_event.keychar.upper() == 'B':
-                # Halt the script using SystemExit
-                raise SystemExit('The window has been closed.')
