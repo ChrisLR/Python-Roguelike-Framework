@@ -1,25 +1,21 @@
-import tdl
-from base.scene import BaseScene
-from components.stats import make_character_stats
-from components.needs import Needs
-from data.python_templates.classes import character_class_templates
-from data.python_templates.outfits import starter_warrior, starter_thief
-from data.python_templates.races import race_templates
-from data.python_templates.needs import hunger, thirst
-from scenes.game.scene import GameScene
-from ui import controls
-from ui.controls.validatedintstepperview import ValidatedIntStepperView
 from clubsandwich.ui import (
     UIScene,
     SingleLineTextInputView,
     LabelView,
     CyclingButtonView,
-    IntStepperView,
     ButtonView,
     LayoutOptions,
     WindowView,
-    View
 )
+
+from components.needs import Needs
+from components.stats import make_character_stats
+from data.python_templates.classes import character_class_templates
+from data.python_templates.needs import hunger, thirst
+from data.python_templates.outfits import starter_warrior, starter_thief
+from data.python_templates.races import race_templates
+from scenes.game.scene import GameScene
+from ui.controls.validatedintstepperview import ValidatedIntStepperView
 
 
 class CharacterCreationScene(UIScene):

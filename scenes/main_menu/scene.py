@@ -3,7 +3,7 @@ from clubsandwich.ui.ui_scene import UIScene
 from clubsandwich.ui import LayoutOptions
 
 from scenes.character_creation.scene import CharacterCreationScene
-from ui.flavor_text import MAIN_MENU
+from flavor_text import MAIN_MENU
 
 
 class MainMenuScene(UIScene):
