@@ -14,7 +14,7 @@ class MainMenuScene(UIScene):
         views = [
             LabelView(
                 text=MAIN_MENU["text"],
-                layout_options=LayoutOptions(top=0.4, height=0.1, bottom=None)
+                layout_options=LayoutOptions(top=0.4, height=0.1, left=None, bottom=None, right=None, width=0.1)
             ),
             ButtonView(
                 text="Play",

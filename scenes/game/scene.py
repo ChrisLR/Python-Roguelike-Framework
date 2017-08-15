@@ -12,7 +12,7 @@ from generators.dungeon_generator import DungeonGenerator
 from generators.forerunner import Forerunner
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
-from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow
+from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
 from clubsandwich.ui import LayoutOptions
 
 logger = logging.getLogger(__name__)
@@ -27,12 +27,13 @@ class GameScene(UIScene):
     ID = "Game"
 
     def __init__(self, game_context):
-        self.console = ScrollingTextView(6, 70, layout_options=LayoutOptions(top=None, height=0.3, bottom=0, left=0, right=None, width=0.99))
+        self.console = ScrollingTextView(6, 70, layout_options=LayoutOptions(top=None, height=10, bottom=0, left=0, right=None, width=0.99))
         EchoService(self.console, game_context)
         game_context.action_manager = ActionManager(game_context)
-        self.game_view = GameWindow(game_context, layout_options=LayoutOptions(top=0, height=0.7, bottom=None, left=0, right=None, width=1))
+        self.game_view = GameWindow(game_context, layout_options=LayoutOptions(top=10, height=30, bottom=None, left=0, right=None, width=1))
         self.game_context = game_context
-        super().__init__(WindowView("", subviews=[self.game_view, self.console]))
+        self.hud_view = HudWindow(game_context, layout_options=LayoutOptions(top=0, height=10, bottom=None, left=0, right=None, width=1))
+        super().__init__(WindowView("", subviews=[self.hud_view, self.game_view, self.console]))
         self.loaded_levels = []
 
         # self.invoke_window(game_window)
