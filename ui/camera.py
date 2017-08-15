@@ -9,13 +9,10 @@ class Camera(object):
         :param screen_bounds: Size(width, height) of the boundaries of the screen on which to draw.
         """
         self.location = location
-        self.screen_point_offset = Point(1, -10)
-        self.screen_size = Size(
-            screen_size.width - self.screen_point_offset.x,
-            screen_size.height - self.screen_point_offset.y
-        )
+        self.screen_point_offset = Point(1, 5)
+        self.screen_size = screen_size
         self.point = Point(*self.location.get_local_coords())
-        self.view_rect = Rect(self.point, self.screen_size)
+        self.view_rect = self.set_view_rect(self.point)
 
     def transform(self, point, enforce_bounds=True):
         """
@@ -25,10 +22,18 @@ class Camera(object):
         :return: Relative Point to draw
         """
         if enforce_bounds:
-            if not self.check_bounds(point.x, point.y):
+            if not self.view_rect.contains(point):
                 return None
 
-        return Point(point.x - self.point.x, point.y - self.point.y)
+        return Point(point.x - self.view_rect.x, point.y - self.view_rect.y)
+
+    def set_view_rect(self, point):
+        offset_point = Point(point.x + self.screen_point_offset.x, point.y + self.screen_point_offset.y)
+        offset_size = Size(
+            self.screen_size.width - self.screen_point_offset.x,
+            self.screen_size.height - self.screen_point_offset.y
+        )
+        return Rect(offset_point, offset_size)
 
     def focus_on_game_object(self, game_object):
         self.location.area = game_object.location.area
@@ -38,19 +43,6 @@ class Camera(object):
         self.location.local_x = game_object.location.local_x - int(self.screen_size.width / 2)
         self.location.local_y = game_object.location.local_y - int(self.screen_size.height / 2)
         self.point = Point(*self.location.get_local_coords())
-        self.view_rect = Rect(self.point, self.screen_size)
+        self.view_rect = self.set_view_rect(self.point)
 
-    def check_bounds(self, x=None, y=None):
-        """
-        Allows checking the X or the Y or both to see if its in drawing bounds.
-        """
-        if x is not None:
-            if self.point.x > x or self.point.x + self.screen_size.width < x:
-                return False
-
-        if y is not None:
-            if self.point.y > y or self.point.y + self.screen_size.width < y:
-                return False
-
-        return True
 

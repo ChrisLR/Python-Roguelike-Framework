@@ -43,7 +43,7 @@ class GameWindow(RectView):
         for x, y in viewer_fov:
             if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
                 relative_point = self.camera.transform(Point(x, y))
-                if relative_point:
+                if relative_point is not None:
                     ctx.printf(
                         relative_point,
                         current_level.maze[x][y].display.get_draw_info()
@@ -56,7 +56,7 @@ class GameWindow(RectView):
             x, y = item.location.get_local_coords()
             if (x, y) in player.fov:
                 relative_point = self.camera.transform(Point(x, y))
-                if relative_point:
+                if relative_point is not None:
                     ctx.printf(
                         relative_point,
                         item.display.get_draw_info()
@@ -69,7 +69,7 @@ class GameWindow(RectView):
             x, y = monster.location.get_local_coords()
             if (x, y) in player.fov:
                 relative_point = self.camera.transform(Point(x, y))
-                if relative_point:
+                if relative_point is not None:
                     ctx.printf(
                         relative_point,
                         monster.display.get_draw_info()
@@ -77,7 +77,7 @@ class GameWindow(RectView):
 
     def draw_player(self, player, ctx):
         relative_point = self.camera.transform(Point(*player.location.get_local_coords()))
-        if relative_point:
+        if relative_point is not None:
             ctx.printf(relative_point, player.display.get_draw_info())
 
     def set_tiles_background_color(self, ctx):
@@ -85,15 +85,9 @@ class GameWindow(RectView):
         # TODO Allowing us to use many colors as walls and tiles to create levels with different looks.
         current_level = self.camera.location.level
         for y in range(current_level.height):
-            if not self.camera.check_bounds(y=y):
-                continue
-
             for x in range(current_level.width):
-                if not self.camera.check_bounds(x=x):
-                    continue
-
                 relative_point = self.camera.transform(Point(x, y))
-                if relative_point:
+                if relative_point is not None:
                     tile = current_level.maze[x][y]
                     wall = tile.block_sight
                     ground = tile.is_ground
