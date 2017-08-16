@@ -1,3 +1,4 @@
+from bearlibterminal import terminal
 from clubsandwich.ui import (
     UIScene,
     SingleLineTextInputView,
@@ -160,6 +161,13 @@ class CharacterCreationScene(UIScene):
             starter_warrior.apply(player)
         player.is_player = True
         self.director.replace_scene(GameScene(self.game_context))
+
+    def terminal_read(self, val):
+        super().terminal_read(val)
+        if val == terminal.TK_UP:
+            self.view.find_prev_responder()
+        elif val == terminal.TK_DOWN:
+            self.view.find_next_responder()
 
 
 def get_left_layout(top, **kwargs):
