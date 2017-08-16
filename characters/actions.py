@@ -77,7 +77,6 @@ def wear_wield(actor, chosen_item):
 
 
 def move(actor, dx, dy):
-
     x, y = actor.location.get_local_coords()
     new_x = x + dx
     new_y = y + dy
@@ -93,6 +92,9 @@ def move(actor, dx, dy):
         actor.location.local_y = new_y
         old_tile.contains_object = False
         new_tile.contains_object = True
+
+        return True
+    return False
 
 
 def distance_to(actor, target):
@@ -129,7 +131,13 @@ def move_or_attack(character, target_x, target_y):
         move(character, target_x, target_y)
 
 
-def move_towards(actor, target):
+def move_towards(actor, target, partial=True):
+    """
+    :param actor: The Actor that moves towards the target
+    :param target: The Target
+    :param partial: If True, will allow the Actor to do a partial move.
+    :return:
+    """
     # TODO I think this should be split,  a part that determines in which direction you have to move
     # TODO then reuse the part where we try to move instead.
     # TODO Because we will be able to reuse it for missiles/spells
@@ -138,13 +146,16 @@ def move_towards(actor, target):
     # vector from this object to the target, and distance
     distance_x = target_x - actor_x
     distance_y = target_y - actor_y
-    distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
+    move_x = sign(distance_x)
+    move_y = sign(distance_y)
 
-    # normalize it to length 1 (preserving direction), then round it and
-    # convert to integer so the movement is restricted to the map grid
-    distance_x = int(round(distance_x / distance))
-    distance_y = int(round(distance_y / distance))
-    move(actor, distance_x, distance_y)
+    # TODO This is a VERY simplistic solution, you can still screw the monster from following
+    # TODO by turning a corner but if it stays in your FOV it should follow right, until proper ai.
+    result = move(actor, move_x, move_y)
+    if not result and partial:
+        result = move(actor, move_x, 0)
+        if not result:
+            move(actor, 0, move_y)
 
 
 def monster_take_turn(monster, player):
@@ -162,3 +173,12 @@ def monster_take_turn(monster, player):
             # close enough, attack! (if the player is still alive.)
             elif not player.is_dead():
                 attack(monster, player)
+
+
+def sign(number):
+    if number == 0:
+        return 0
+    elif number > 0:
+        return 1
+    elif number < 0:
+        return -1
