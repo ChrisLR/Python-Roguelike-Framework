@@ -60,5 +60,5 @@ class MainLoop(DirectorLoop):
 
     def terminal_init(self):
         super().terminal_init()
-        terminal.set("window: title='Python Roguelike Framework', size=120x50;")
+        terminal.set("window: title='Python Roguelike Template', size=120x50;")
 

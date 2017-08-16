@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Python-Roguelike-Framework documentation build configuration file, created by
+# Python-Roguelike-Template documentation build configuration file, created by
 # sphinx-quickstart on Wed Aug 31 22:03:17 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -60,7 +60,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Python-Roguelike-Framework'
+project = 'Python-Roguelike-Template'
 copyright = '2016, Jeff Palladino'
 author = 'Jeff Palladino'
 
@@ -145,7 +145,7 @@ html_theme = 'sphinx_rtd_theme'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'Python-Roguelike-Framework v2.0.0'
+# html_title = 'Python-Roguelike-Template v2.0.0'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -271,7 +271,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Python-Roguelike-Framework.tex', 'Python-Roguelike-Framework Documentation',
+    (master_doc, 'Python-Roguelike-Template.tex', 'Python-Roguelike-Template Documentation',
      'Jeff Palladino', 'manual'),
 ]
 
@@ -313,7 +313,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'python-roguelike-framework', 'Python-Roguelike-Framework Documentation',
+    (master_doc, 'python-roguelike-framework', 'Python-Roguelike-Template Documentation',
      [author], 1)
 ]
 
@@ -328,8 +328,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Python-Roguelike-Framework', 'Python-Roguelike-Framework Documentation',
-     author, 'Python-Roguelike-Framework', 'One line description of project.',
+    (master_doc, 'Python-Roguelike-Template', 'Python-Roguelike-Template Documentation',
+     author, 'Python-Roguelike-Template', 'One line description of project.',
      'Miscellaneous'),
 ]
 

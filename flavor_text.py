@@ -5,7 +5,7 @@ This is where you add flavor text to your game.
 MAIN_MENU = {
     "name": "Main Menu",
     "text": """
-    Welcome to Python Roguelike Framework!
+    Welcome to Python Roguelike Template!
     
     This '@' is you. Your goal is to explore the dungeon. 
     Use caution though as there are monsters lurking 
