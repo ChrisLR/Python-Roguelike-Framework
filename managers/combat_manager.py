@@ -2,6 +2,7 @@ import random
 
 from combat import enums as combat_enums
 from combat.attack import MeleeAttackTemplate
+from echo.contexts import Context
 from stats.enums import StatsEnum
 from managers.echo import EchoService
 import echo.functions
@@ -40,19 +41,21 @@ def execute_combat_round(attacker, defender):
     attack_template = choose_attack(attacker)
     if not attack_template:
         return
-    attack_result = attack_template.make_attack(attacker, defender)
-    if attack_result.success:
-        threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
-        attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
-        # TODO We might want to display info about actual rolls but that should be handled in the Echo manager/service
-        # TODO I am still unsure on where its best to apply actual damage.
-        # TODO Leaving it in the defender object could have them behave differently
-        # TODO but at the same time having it centralized in one location will keep the other classes smaller.
-        # TODO Maybe this should be extracted to a component?
-        take_damage(defender, attack_result)
-    else:
-        choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
-    EchoService.singleton.echo(str(attack_result) + "\n")
+    attack_results = attack_template.execute(attacker, defender)
+    for attack_result in attack_results:
+        EchoService.singleton.echo(attack_result.attack_message + "...\n")
+        if attack_result.success:
+            threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
+            attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
+            # TODO We might want to display info about actual rolls but that should be handled in the Echo manager/service
+            # TODO I am still unsure on where its best to apply actual damage.
+            # TODO Leaving it in the defender object could have them behave differently
+            # TODO but at the same time having it centralized in one location will keep the other classes smaller.
+            # TODO Maybe this should be extracted to a component?
+            take_damage(defender, attack_result)
+        else:
+            choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
+        EchoService.singleton.echo(str(attack_result) + "\n")
 
 
 def take_damage(actor, attack_result):
