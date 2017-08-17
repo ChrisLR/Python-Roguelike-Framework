@@ -12,10 +12,11 @@ from util.colors import Colors
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
+all_attacks = (attacks.MeleeAttack, attacks.Punch)
 
 
 def choose_attack(attacker):
-    possible_attacks = attacker.get_attacks()
+    possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker)]
 
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs

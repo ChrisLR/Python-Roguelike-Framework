@@ -175,10 +175,6 @@ class Character(GameObject):
     def current_level(self):
         return self.location.level
 
-    def get_attacks(self):
-        # We'll need to distinguish innate racial attacks and learned attacks.
-        return [attacks.MeleeAttack, attacks.Punch]
-
     def get_defenses(self):
         return base_defenses
 

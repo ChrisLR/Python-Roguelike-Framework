@@ -146,7 +146,7 @@ class MeleeAttack(Attack):
             )
         else:
             return cls.observer_attack_messages_per_damage_type[damage_type].format(
-                attacker=actor,
+                attacker=actor.name,
                 attacker_his=functions.his_her_it(actor),
                 attacker_weapon=weapon_item.name,
                 defender=target.name if not target.is_player else "you"
