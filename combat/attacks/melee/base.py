@@ -25,11 +25,15 @@ class MeleeAttack(Attack):
     }
 
     @classmethod
+    def can_execute(cls, actor):
+        return any(actor.equipment.get_wielded_items())
+
+    @classmethod
     def execute(cls, actor, target):
         attack_results = []
         weapons = cls.get_used_weapons(actor)
         dual_wield_modifier = 0
-        if any((weapon for weapon in weapons if not weapon.light)):
+        if any((weapon for weapon in weapons if not weapon.weapon or not weapon.weapon.light)):
             dual_wield_modifier = -2
 
         target_ac = target.get_armor_class()
@@ -43,7 +47,7 @@ class MeleeAttack(Attack):
                 str_modifier = hit_modifier if stat_used == StatsEnum.Strength \
                     else actor.get_stat_modifier(StatsEnum.Strength)
 
-                cls.make_damage_roll(attack_result, weapon, str_modifier, is_offhand)
+                cls.make_damage_roll(actor, attack_result, weapon, str_modifier, is_offhand)
 
             attack_results.append(attack_result)
             is_offhand = True
@@ -83,13 +87,21 @@ class MeleeAttack(Attack):
             difficulty_class=target_ac,
             modifiers=hit_modifier
         )
-        return AttackResult(success, critical, attacker, defender, target_ac, natural_roll, total_hit_roll)
+        return AttackResult(
+            success=success,
+            critical=critical,
+            attacker=attacker,
+            target_object=defender,
+            target_ac=target_ac,
+            natural_roll=natural_roll,
+            total_hit_roll=total_hit_roll,
+        )
 
     @classmethod
     def make_damage_roll(cls, attacker, attack_result, weapon_item, str_modifier, is_offhand=False):
         damage_dice = cls.get_damage_dice(weapon_item)
         total_damage = check_roller.roll_damage(
-            dice_stacks=damage_dice,
+            dice_stacks=(damage_dice, ),
             modifiers=cls.get_damage_bonus(attacker, weapon_item, str_modifier, is_offhand),
             critical=attack_result.critical
         )

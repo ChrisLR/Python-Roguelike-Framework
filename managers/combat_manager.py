@@ -1,7 +1,7 @@
 import random
 
 from combat import enums as combat_enums
-from combat.attack import MeleeAttackTemplate
+from combat import attacks
 from echo.contexts import Context
 from stats.enums import StatsEnum
 from managers.echo import EchoService
@@ -15,15 +15,15 @@ from util.colors import Colors
 
 
 def choose_attack(attacker):
-    attacks = attacker.get_attacks()
+    possible_attacks = attacker.get_attacks()
 
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs
-    if attacks:
-        melee_attacks = [attack for attack in attacks if isinstance(attack, MeleeAttackTemplate)]
-        if melee_attacks:
-            return random.choice(melee_attacks)
-        return random.choice(attacks)
+    if possible_attacks:
+        if attacks.MeleeAttack in possible_attacks:
+            return attacks.MeleeAttack
+        else:
+            return random.choice(possible_attacks)
 
 
 def choose_defense(attacker, defender, hit_roll):

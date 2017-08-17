@@ -36,7 +36,7 @@ class Cone(Target):
 
 
 class Radius(Target):
-    __slots__ = ['center', 'range', 'targets']
+    __slots__ = ['center', 'range', '_targets']
 
     def __init__(self, center, range):
         self.center = center

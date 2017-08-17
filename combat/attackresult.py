@@ -7,7 +7,7 @@ class AttackResult(object):
                  'separated_damage', 'target_ac', 'body_part_hit', 'attacker']
 
     def __init__(self, success, critical, attacker, target_object, target_ac,
-                 message, natural_roll=None, total_hit_roll=None, total_damage=None,
+                 attack_message="", natural_roll=None, total_hit_roll=None, total_damage=None,
                  separated_damage=None, attacker_weapon=None):
 
         self.success = success
