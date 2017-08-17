@@ -126,19 +126,7 @@ class MeleeAttackTemplate(AttackTemplate):
         attacker_weapon = kwargs.get("attacker_weapon")
         return attacker_weapon.weapon.damage_dice
 
-    def get_used_weapon(self, attacker):
-        for wielded_item in attacker.equipment.get_wielded_items():
-            weapon = wielded_item.get_component('weapon')
-            if weapon.melee_damage_type == self.required_item_melee_damage_type:
-                return wielded_item
 
-    def get_damage_type(self, **kwargs):
-        item = kwargs.get("attacker_weapon")
-        if item.weapon:
-            return item.weapon.melee_damage_type
-        else:
-            # TODO This indicates an improvised weapon. We'll need to get a better way to handle this.
-            return DamageType.Blunt
 
 
 class RangedAttackTemplate(AttackTemplate):
