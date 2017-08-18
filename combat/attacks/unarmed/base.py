@@ -1,8 +1,8 @@
+from abilities.physical_abilities import PhysicalAbilities
 from combat import targets
 from combat.attackresult import AttackResult
 from combat.attacks.base import Attack
 from combat.enums import DamageType
-from abilities.physical_abilities import PhysicalAbilities
 from echo import functions
 from stats.enums import StatsEnum
 from util import check_roller
@@ -18,7 +18,7 @@ class Punch(Attack):
     observer_message = "{attacker} swings {attacker_his} fist at {defender}"
 
     @classmethod
-    def can_execute(cls, actor):
+    def can_execute(cls, actor, target):
         actor_body = actor.body
         if actor_body:
             return any([ability for ability in actor_body.get_physical_abilities().keys()
@@ -32,8 +32,7 @@ class Punch(Attack):
         attack_result = cls.make_hit_roll(actor, target, hit_modifier, target_ac)
         attack_result.attack_message = cls.get_message(actor, target)
 
-        if attack_result.success:
-            cls.make_damage_roll(actor, attack_result, hit_modifier)
+        cls.make_damage_roll(actor, attack_result, hit_modifier)
 
         return attack_result,
 

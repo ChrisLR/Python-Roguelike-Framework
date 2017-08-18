@@ -25,7 +25,7 @@ class MeleeAttack(Attack):
     }
 
     @classmethod
-    def can_execute(cls, actor):
+    def can_execute(cls, actor, target):
         return any(actor.equipment.get_wielded_items())
 
     @classmethod
@@ -43,11 +43,11 @@ class MeleeAttack(Attack):
             hit_modifier -= dual_wield_modifier
             attack_result = cls.make_hit_roll(actor, target, hit_modifier, target_ac)
             attack_result.attack_message = cls.get_message_for_weapon(actor, weapon, target)
-            if attack_result.success:
-                str_modifier = hit_modifier if stat_used == StatsEnum.Strength \
-                    else actor.get_stat_modifier(StatsEnum.Strength)
+            attack_result.attacker_weapon = weapon
+            str_modifier = hit_modifier if stat_used == StatsEnum.Strength \
+                else actor.get_stat_modifier(StatsEnum.Strength)
 
-                cls.make_damage_roll(actor, attack_result, weapon, str_modifier, is_offhand)
+            cls.make_damage_roll(actor, attack_result, weapon, str_modifier, is_offhand)
 
             attack_results.append(attack_result)
             is_offhand = True

@@ -2,6 +2,7 @@ import random
 
 from combat import enums as combat_enums
 from combat import attacks
+from combat import defenses
 from echo.contexts import Context
 from stats.enums import StatsEnum
 from managers.echo import EchoService
@@ -13,10 +14,11 @@ from util.colors import Colors
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
+all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
 
 
-def choose_attack(attacker):
-    possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker)]
+def choose_attack(attacker, defender):
+    possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker, defender)]
 
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs
@@ -27,11 +29,10 @@ def choose_attack(attacker):
             return random.choice(possible_attacks)
 
 
-def choose_defense(attacker, defender, hit_roll):
-    defenses = [defense for defense in defender.get_defenses()
-                if defense.evaluate(defender, hit_roll)]
+def choose_defense(attack_result):
+    possible_defenses = [defense for defense in all_defenses if defense.evaluate(attack_result)]
 
-    return random.choice(defenses)
+    return random.choice(possible_defenses)
 
 
 def execute_combat_round(attacker, defender):
@@ -39,15 +40,15 @@ def execute_combat_round(attacker, defender):
     This is meant to be the "round" when you walk into someone.
     """
     # Prepare attack
-    attack_template = choose_attack(attacker)
+    attack_template = choose_attack(attacker, defender)
     if not attack_template:
         return
     attack_results = attack_template.execute(attacker, defender)
     for attack_result in attack_results:
         EchoService.singleton.echo(attack_result.attack_message + "...\n")
+        threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
+        attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
         if attack_result.success:
-            threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
-            attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
             # TODO We might want to display info about actual rolls but that should be handled in the Echo manager/service
             # TODO I am still unsure on where its best to apply actual damage.
             # TODO Leaving it in the defender object could have them behave differently
@@ -55,7 +56,9 @@ def execute_combat_round(attacker, defender):
             # TODO Maybe this should be extracted to a component?
             take_damage(defender, attack_result)
         else:
-            choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
+            defense_result = choose_defense(attack_result).execute(attack_result)
+            EchoService.singleton.echo("...{}\n".format(defense_result.message))
+
         EchoService.singleton.echo(str(attack_result) + "\n")
 
 

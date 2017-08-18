@@ -1,8 +1,6 @@
 import math
 
 from characters.enums import Sex, EncumberanceLevel
-from combat import attacks
-from data.python_templates.defenses import base_defenses
 from components.experience_pool import ExperiencePool
 from components.equipment import Equipment
 from components.location import Location
@@ -174,7 +172,3 @@ class Character(GameObject):
     @property
     def current_level(self):
         return self.location.level
-
-    def get_defenses(self):
-        return base_defenses
-
