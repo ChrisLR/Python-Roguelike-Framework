@@ -29,7 +29,10 @@ class ArmorAbsorb(Defense):
     def get_message(cls, attack_result):
         defender = attack_result.target_object
         body_part_hit = attack_result.body_part_hit
-        defender_armor = defender.equipment.worn_equipment_map.get(body_part_hit.instance)[0]
+        defender_armor = defender.equipment.worn_equipment_map.get(body_part_hit.instance)
+        if defender_armor:
+            defender_armor = defender_armor[0]
+            
         if attack_result.attacker.is_player:
             return cls.attacker_message.format(
                 defender_his=functions.his_her_it(attack_result.target_object),

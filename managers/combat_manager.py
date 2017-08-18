@@ -3,6 +3,7 @@ import random
 from combat import enums as combat_enums
 from combat import attacks
 from combat import defenses
+from combat import finishers
 from echo.contexts import Context
 from stats.enums import StatsEnum
 from managers.echo import EchoService
@@ -15,6 +16,7 @@ from util.colors import Colors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
+all_finishers = (finishers.Impale,)
 
 
 def choose_attack(attacker, defender):
@@ -81,11 +83,14 @@ def take_damage(actor, attack_result):
         attack_result.body_part_hit.name,
         attack_result.total_damage
     )
-    EchoService.singleton.echo(damage_string + "\n")
 
-    # TODO THIS MUST BE EXTRACTED
     # check for death. if there's a death function, call it
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
+        # Here, instead of displaying the damage, we try to execute a finisher.
+        possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
+        finisher = random.choice(possible_finishers)
+        damage_string = finisher.execute(attack_result)
+
         if actor.is_player:
             player_death(actor)
         else:
@@ -93,6 +98,8 @@ def take_damage(actor, attack_result):
 
         x, y = actor.location.get_local_coords()
         actor.current_level.maze[x][y].contains_object = False
+
+    EchoService.singleton.echo(damage_string + "\n")
 
 
 def player_death(player):
