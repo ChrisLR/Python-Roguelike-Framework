@@ -149,6 +149,6 @@ class MeleeAttack(Attack):
                 attacker=actor.name,
                 attacker_his=functions.his_her_it(actor),
                 attacker_weapon=weapon_item.name,
-                defender=target.name if not target.is_player else "you"
+                defender=functions.name_or_you(target)
             )
 

@@ -89,8 +89,7 @@ def take_damage(actor, attack_result):
         # Here, instead of displaying the damage, we try to execute a finisher.
         possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
         finisher = random.choice(possible_finishers)
-        damage_string = finisher.execute(attack_result)
-
+        EchoService.singleton.echo(finisher.execute(attack_result) + "\n")
         if actor.is_player:
             player_death(actor)
         else:
@@ -98,6 +97,7 @@ def take_damage(actor, attack_result):
 
         x, y = actor.location.get_local_coords()
         actor.current_level.maze[x][y].contains_object = False
+        return
 
     EchoService.singleton.echo(damage_string + "\n")
 
