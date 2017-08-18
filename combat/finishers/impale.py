@@ -6,8 +6,8 @@ from echo import functions
 class Impale(Finisher):
     name = "Impale"
     description = "Impale your enemy with a slashing or piercing weapon."
-    attacker_message = "...impaling {defender}'s {defender_bodypart} with your {attacker_weapon}!"
-    observer_message = "...impaling {defender}'s {defender_bodypart} with {attacker_his} {attacker_weapon}!"
+    attacker_message = "...impaling {defender}'s {defender_bodypart} with your {attacker_weapon}"
+    observer_message = "...impaling {defender} {defender_bodypart} with {attacker_his} {attacker_weapon}"
 
     @classmethod
     def evaluate(cls, attack_result):
@@ -33,14 +33,14 @@ class Impale(Finisher):
             )
         else:
             message = cls.observer_message.format(
-                defender=defender,
+                defender=functions.names_or_your(defender),
                 defender_bodypart=attack_result.body_part_hit.name,
                 attacker_his=functions.his_her_it(attack_result.attacker),
                 attacker_weapon=attack_result.attacker_weapon.name
             )
 
         if defender.body.blood_uid:
-            message += "\n ... {blood} splattering behind {defender_him}!!\n".format(
+            message += " splashing {blood} behind {defender_him}!!\n".format(
                 blood=defender.body.blood_uid,
                 defender_him=functions.him_her_it(defender)
             )

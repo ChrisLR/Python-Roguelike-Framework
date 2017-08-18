@@ -31,5 +31,5 @@ class Dodge(Defense):
         else:
             return cls.observer_message.format(
                 attacker_his=functions.his_her_it(attack_result.attacker),
-                defender=functions.he_her_it(attack_result.target_object)
+                defender_he=functions.he_her_it(attack_result.target_object)
             )

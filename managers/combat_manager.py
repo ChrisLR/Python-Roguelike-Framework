@@ -16,7 +16,7 @@ from util.colors import Colors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
-all_finishers = (finishers.Impale,)
+all_finishers = (finishers.Impale, finishers.ChokePunch)
 
 
 def choose_attack(attacker, defender):
@@ -47,6 +47,7 @@ def execute_combat_round(attacker, defender):
         return
     attack_results = attack_template.execute(attacker, defender)
     for attack_result in attack_results:
+        attack_result.attack_used = attack_template
         EchoService.singleton.echo(attack_result.attack_message + "...\n")
         threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
@@ -86,10 +87,13 @@ def take_damage(actor, attack_result):
 
     # check for death. if there's a death function, call it
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
-        # Here, instead of displaying the damage, we try to execute a finisher.
-        possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
-        finisher = random.choice(possible_finishers)
-        EchoService.singleton.echo(finisher.execute(attack_result) + "\n")
+        if random.randint(0, 100) <= 10:
+            # Here, instead of displaying the damage, we try to execute a finisher.
+            possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
+            finisher = random.choice(possible_finishers)
+            damage_string = finisher.execute(attack_result) + "\n"
+        EchoService.singleton.echo(damage_string + "\n")
+
         if actor.is_player:
             player_death(actor)
         else:

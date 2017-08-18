@@ -15,7 +15,7 @@ def his_her_it(value):
 
 def him_her_it(value):
     if hasattr(value, "is_player") and value.is_player:
-        return "your"
+        return "you"
 
     if hasattr(value, 'sex'):
         if value.sex == Sex.Male:
@@ -27,7 +27,7 @@ def him_her_it(value):
 
 def he_her_it(value):
     if hasattr(value, "is_player") and value.is_player:
-        return "You"
+        return "you"
 
     if hasattr(value, 'sex'):
         if value.sex == Sex.Male:

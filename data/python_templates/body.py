@@ -26,7 +26,7 @@ def build_humanoid_body():
     humanoid_body.inner_material = 'flesh'
     humanoid_body.outer_material = 'skin'
     humanoid_body.structural_material = 'bone'
-    humanoid_body.blood_type = 'humanoid_blood'
+    humanoid_body.blood_uid = 'humanoid_blood'
 
     return humanoid_body
 
