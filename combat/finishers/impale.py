@@ -6,13 +6,14 @@ from echo import functions
 class Impale(Finisher):
     name = "Impale"
     description = "Impale your enemy with a slashing or piercing weapon."
-    attacker_message = "impaling {defender}'s {defender_bodypart} with your {attacker_weapon}"
-    observer_message = "impaling {defender} {defender_bodypart} with {attacker_his} {attacker_weapon}"
+    attacker_message = "You impale {defender}'s {defender_bodypart} with your {attacker_weapon}"
+    observer_message = "{attacker} impales {defender} {defender_bodypart} with {attacker_his} {attacker_weapon}"
 
     @classmethod
     def evaluate(cls, attack_result):
-        if attack_result.attacker_weapon:
-            weapon_component = attack_result.attacker_weapon.weapon
+        attacker_weapon = attack_result.attacker_weapon
+        if attacker_weapon and hasattr(attacker_weapon, 'weapon'):
+            weapon_component = attacker_weapon.weapon
             if weapon_component:
                 if weapon_component.melee_damage_type in (DamageType.Pierce, DamageType.Slash):
                     return True
@@ -33,6 +34,7 @@ class Impale(Finisher):
             )
         else:
             message = cls.observer_message.format(
+                attacker=functions.get_name_or_string(attack_result.attacker),
                 defender=functions.names_or_your(defender),
                 defender_bodypart=attack_result.body_part_hit.name,
                 attacker_his=functions.his_her_it(attack_result.attacker),

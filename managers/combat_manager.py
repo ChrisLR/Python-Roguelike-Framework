@@ -16,7 +16,7 @@ from util.colors import Colors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
-all_finishers = (finishers.Impale, finishers.ChokePunch)
+all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)
 
 
 def choose_attack(attacker, defender):
@@ -99,7 +99,7 @@ def take_damage(actor, attack_result):
     # check for death. if there's a death function, call it
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
         is_killing_blow = True
-        if random.randint(0, 100) <= 10:
+        if random.randint(0, 10) <= 10:
             is_finisher = True
             # Here, instead of displaying the damage, we try to execute a finisher.
             possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
