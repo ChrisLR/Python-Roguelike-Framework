@@ -116,9 +116,15 @@ def move_or_attack(character, target_x, target_y):
     # the coordinates the player is moving to/attacking
     x = character.location.local_x
     y = character.location.local_y
+    current_level = character.current_level
     new_x = x + target_x
     new_y = y + target_y
-    new_tile = character.current_level.maze[new_x][new_y]
+    if new_x < 0 or new_x > current_level.width:
+        return
+    if new_y < 0 or new_y > current_level.height:
+        return
+
+    new_tile = current_level.maze[new_x][new_y]
 
     # try to find an attack-able object there
     if new_tile.contains_object:

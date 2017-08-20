@@ -45,7 +45,7 @@ class ForestGenerator(object):
     def _verify_surroundings(self, level, x, y):
         for x1 in range(0, 3):
             for y2 in range(0, 3):
-                if x - (x1 - 1) in level.maze and y - (y2 - 1) in level.maze[x - (x1 -1)]:
+                if x - (x1 - 1) in level.maze and y - (y2 - 1) in level.maze[x - (x1 - 1)]:
                     if level.maze[x - (x1 - 1)][y - (y2 - 1)].uid == "forest_tree_wall":
                         return False
         return True
