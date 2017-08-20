@@ -1,19 +1,18 @@
 import logging
-import settings
 
-from clubsandwich.ui import UIScene, ScrollingTextView, WindowView
 from bearlibterminal import terminal
-
+from clubsandwich.ui import LayoutOptions
+from clubsandwich.ui import UIScene, ScrollingTextView, WindowView
+import random
+import settings
 from areas.level import Level
 from characters import actions
 from data.python_templates.characters import character_templates
 from data.python_templates.items import item_templates
-from generators.dungeon_generator import DungeonGenerator
-from generators.forerunner import Forerunner
+from generators import dungeon_generator, forest_generator
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
-from clubsandwich.ui import LayoutOptions
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -146,17 +145,23 @@ class GameScene(UIScene):
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
-        dungeon_generator = DungeonGenerator(self.game_context.factory_service)
+        generator = random.choice(
+            (
+                forest_generator.ForestGenerator,
+                dungeon_generator.DungeonGenerator
+            )
+        )(self.game_context.factory_service)
+
         player = self.game_context.player
         player.is_player = True
-        dungeon_generator.generate(level)
-        self.place_dungeon_objects(level, player)
+        generator.generate(level)
+        self.place_dungeon_objects(level, player, generator)
 
-    def place_dungeon_objects(self, level, player):
+    def place_dungeon_objects(self, level, player, generator):
         character_factory = self.game_context.character_factory
         item_factory = self.game_context.item_factory
         level.monster_spawn_list = [character_factory.build(uid) for uid, monster in character_templates.items()]
         level.item_spawn_list = [item_factory.build(uid) for uid, item in item_templates.items()]
 
-        forerunner = Forerunner(level, player)
+        forerunner = generator.forerunner(level, player)
         forerunner.run()

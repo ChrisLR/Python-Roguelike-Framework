@@ -18,35 +18,37 @@ class ForestGenerator(object):
     """
         Takes a level config and outputs a new areas maze.
     """
+
     def __init__(self, factory_service):
         self.factory_service = factory_service
+        self.forerunner = ForestForerunner
 
     def fill_with_grass(self, level):
         level.maze = [[tiles.forest_grass_floor.copy(x, y) for y in range(level.height)] for x in range(level.width)]
 
     def grow_big_trees(self, level):
         # We want about one big tree per 9 tile
-        for x in range(0,)
+        wanted_big_trees = int((level.width * level.height) / 9) + 1
+        created = 0
+        attempts = 0
+        while created < wanted_big_trees:
+            x = random.randrange(0, level.width)
+            y = random.randrange(0, level.height)
+            if self._verify_surroundings(level, x, y):
+                level.maze[x][y] = tiles.forest_tree_wall.copy(x, y)
+                created += 1
+            else:
+                attempts += 1
+            if attempts > 100:
+                break
 
-
-    @staticmethod
-    def _create_room(level, room):
-        # go through the tiles in the rectangle and make them passable
-        for x in range(room.x1 + 1, room.x2):
-            for y in range(room.y1 + 1, room.y2):
-                level.maze[x][y] = tiles.dirt_floor.copy(x, y)
-
-    @staticmethod
-    def _create_h_tunnel(level, x1, x2, y):
-        # horizontal tunnel. min() and max() are used in case x1>x2
-        for x in range(min(x1, x2), max(x1, x2) + 1):
-            level.maze[x][y] = tiles.dirt_floor.copy(x, y)
-
-    @staticmethod
-    def _create_v_tunnel(level, y1, y2, x):
-        # vertical tunnel
-        for y in range(min(y1, y2), max(y1, y2) + 1):
-            level.maze[x][y] = tiles.dirt_floor.copy(x, y)
+    def _verify_surroundings(self, level, x, y):
+        for x1 in range(0, 3):
+            for y2 in range(0, 3):
+                if x - (x1 - 1) in level.maze and y - (y2 - 1) in level.maze[x - (x1 -1)]:
+                    if level.maze[x - (x1 - 1)][y - (y2 - 1)].uid == "forest_tree_wall":
+                        return False
+        return True
 
     def generate(self, level):
         """
@@ -56,57 +58,60 @@ class ForestGenerator(object):
         """
         # TODO The dungeon's instances are spawned and loaded here.
         # fill map with "blocked" tiles
-        level.maze = [[tiles.dirt_wall.copy(x, y) for y in range(level.height)] for x in range(level.width)]
-
-        for r in range(level.max_rooms):
-            # random width and height
-            w = random.randint(level.min_room_size, level.max_room_size)
-            h = random.randint(level.min_room_size, level.max_room_size)
-
-            # random position without going out of the boundaries of the map
-            x = random.randint(0, level.width - w - 1)
-            y = random.randint(0, level.height - h - 1)
-
-            # "DungeonRoom" class makes rectangles easier to work with
-            new_room = Room(x, y, w, h)
-            level.rooms.append(new_room)
-
-            # run through the other rooms and see if they intersect with this one
-            failed = False
-            for other_room in level.rooms:
-                if other_room is not new_room and new_room.intersect(other_room):
-                    failed = True
-                    break
-
-            if not failed:
-                # this means there are no intersections, so this room is valid
-
-                # "paint" it to the map's tiles
-                self._create_room(level, new_room)
-
-                # center coordinates of new room, will be useful later
-                new_x, new_y = new_room.center()
-
-                if level.num_rooms > 0:
-                    # connect it to the previous room with a tunnel
-                    # center coordinates of previous room
-                    (prev_x, prev_y) = level.rooms[level.num_rooms - 1].center()
-
-                    # draw a coin (random number that is either 0 or 1)
-                    if random.randint(0, 1) == 1:
-                        # first move horizontally, then vertically
-                        self._create_h_tunnel(level, prev_x, new_x, prev_y)
-                        self._create_v_tunnel(level, prev_y, new_y, new_x)
-                    else:
-                        # first move vertically, then horizontally
-                        self._create_v_tunnel(level, prev_y, new_y, prev_x)
-                        self._create_h_tunnel(level, prev_x, new_x, new_y)
-
-                # finally, append the new room to the list
-                level.rooms.append(new_room)
-                level.num_rooms += 1
-
-        # connect them with a tunnel
-        self._create_h_tunnel(level, 25, 55, 23)
+        self.fill_with_grass(level)
+        self.grow_big_trees(level)
 
 
+class ForestForerunner(object):
+    """
+    The Forerunner will traverse the forest and place forest objects such as monsters and items
+
+    Usage:
+        forerunner = Forefunner(level, player)
+        forerunner.run()
+    """
+    # TODO: figure out someplace besides scene.py where this should live
+
+    def __init__(self, level, player):
+        self.level = level
+        self.player = player
+
+    def run(self):
+        # place the player in the center of the first room
+        player_x = random.randrange(0, self.level.width)
+        player_y = random.randrange(0, self.level.height)
+        tile = self.level.maze[player_x][player_y]
+
+        self._place_player(self.level, tile, self.player)
+
+        self._place_monsters()
+        # self.place_items_in_rooms()  # TODO
+        # self.place_stairs(self.level.rooms)  # TODO
+
+    def _place_monsters(self):
+        if not self.level.monster_spawn_list:
+            return
+        for i in self.level.monster_spawn_list:
+            x = random.randrange(0, self.level.width)
+            y = random.randrange(0, self.level.height)
+
+            tile = self.level.maze[x][y]
+            self._place_monster(self.level, tile)
+
+    @staticmethod
+    def _place_monster(level, tile):
+        # TODO This kind of spawning has a few issues, it should use a service to spawn monsters.
+        monster = level.monster_spawn_list.pop(0)
+        monster.location = tile.location.copy()
+        monster.location.level = level
+        level.spawned_monsters.append(monster)
+        tile.contains_object = True
+
+    @staticmethod
+    def _place_player(level, tile, player):
+        """
+        Place the player in the maze.
+        """
+        player.location = tile.location.copy()
+        player.location.level = level
+        tile.contains_object = True
