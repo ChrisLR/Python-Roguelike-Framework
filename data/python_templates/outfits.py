@@ -20,7 +20,7 @@ def build_starter_warrior():
             items.boot,
         ],
         items_held=[
-            items.longsword
+            items.longsword,
         ],
         items_in_inventory=[consumables.bread, consumables.waterskin, consumables.potion_of_healing]
     )
@@ -47,6 +47,7 @@ def build_starter_thief():
             leather_boot_variant.copy(),
         ],
         items_held=[
+            items.short_sword,
             items.short_sword
         ],
         items_in_inventory=[consumables.bread, consumables.waterskin, consumables.potion_of_healing]

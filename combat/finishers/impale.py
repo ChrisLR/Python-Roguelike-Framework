@@ -6,8 +6,8 @@ from echo import functions
 class Impale(Finisher):
     name = "Impale"
     description = "Impale your enemy with a slashing or piercing weapon."
-    attacker_message = "...impaling {defender}'s {defender_bodypart} with your {attacker_weapon}"
-    observer_message = "...impaling {defender} {defender_bodypart} with {attacker_his} {attacker_weapon}"
+    attacker_message = "impaling {defender}'s {defender_bodypart} with your {attacker_weapon}"
+    observer_message = "impaling {defender} {defender_bodypart} with {attacker_his} {attacker_weapon}"
 
     @classmethod
     def evaluate(cls, attack_result):

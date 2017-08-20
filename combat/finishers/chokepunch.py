@@ -7,10 +7,10 @@ from echo import functions
 class ChokePunch(Finisher):
     name = "Choke Punch"
     description = "Choke your enemy as you punch him repeatedly."
-    attacker_message = "...grabbing {defender_his} throat with your hand as you punch {defender_him} " \
+    attacker_message = "grabbing {defender_his} throat with your hand as you punch {defender_him} " \
                        "repeatedly until {defender_his} face is a bloody pulp."
 
-    observer_message = "...grabbing {defender_his} throat with {attacker_his} hand as {attacker_he} " \
+    observer_message = "grabbing {defender_his} throat with {attacker_his} hand as {attacker_he} " \
                        "punches {defender_him} repeatedly until {defender_his} face is a bloody pulp."
 
     @classmethod

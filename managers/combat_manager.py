@@ -45,24 +45,33 @@ def execute_combat_round(attacker, defender):
     attack_template = choose_attack(attacker, defender)
     if not attack_template:
         return
+
     attack_results = attack_template.execute(attacker, defender)
     for attack_result in attack_results:
         attack_result.attack_used = attack_template
-        EchoService.singleton.echo(attack_result.attack_message + "...\n")
         threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
+        death = False
         if attack_result.success:
-            # TODO We might want to display info about actual rolls but that should be handled in the Echo manager/service
-            # TODO I am still unsure on where its best to apply actual damage.
-            # TODO Leaving it in the defender object could have them behave differently
-            # TODO but at the same time having it centralized in one location will keep the other classes smaller.
-            # TODO Maybe this should be extracted to a component?
-            take_damage(defender, attack_result)
+            damage_string, death, finisher = take_damage(defender, attack_result)
+            if finisher:
+                message = "{}\n".format(damage_string)
+            else:
+                message = "{}, {}\n".format(attack_result.attack_message, damage_string)
         else:
             defense_result = choose_defense(attack_result).execute(attack_result)
-            EchoService.singleton.echo("...{}\n".format(defense_result.message))
+            message = "{}, {}\n".format(attack_result.attack_message, defense_result.message)
 
-        EchoService.singleton.echo(str(attack_result) + "\n")
+        EchoService.singleton.echo(message)
+        EchoService.singleton.echo(str(attack_result))
+        if death:
+            if defender.is_player:
+                player_death(defender)
+            else:
+                monster_death(defender)
+            x, y = defender.location.get_local_coords()
+            defender.current_level.maze[x][y].contains_object = False
+            return
 
 
 def take_damage(actor, attack_result):
@@ -70,7 +79,7 @@ def take_damage(actor, attack_result):
     # TODO Determine threat level for total damage
     if attack_result.total_damage <= 0:
         return
-    damage_string = "... "
+    damage_string = ""
     wound_strings = []
 
     for damage, damage_type in attack_result.separated_damage:
@@ -85,25 +94,20 @@ def take_damage(actor, attack_result):
         attack_result.total_damage
     )
 
+    is_killing_blow = False
+    is_finisher = False
     # check for death. if there's a death function, call it
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
+        is_killing_blow = True
         if random.randint(0, 100) <= 10:
+            is_finisher = True
             # Here, instead of displaying the damage, we try to execute a finisher.
             possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
             finisher = random.choice(possible_finishers)
-            damage_string = finisher.execute(attack_result) + "\n"
-        EchoService.singleton.echo(damage_string + "\n")
-
-        if actor.is_player:
-            player_death(actor)
-        else:
-            monster_death(actor)
-
-        x, y = actor.location.get_local_coords()
-        actor.current_level.maze[x][y].contains_object = False
-        return
-
-    EchoService.singleton.echo(damage_string + "\n")
+            damage_string = finisher.execute(attack_result)
+            return damage_string, is_killing_blow, is_finisher
+        return damage_string, is_killing_blow, is_finisher
+    return damage_string, is_killing_blow, is_finisher
 
 
 def player_death(player):
