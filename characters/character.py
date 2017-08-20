@@ -1,8 +1,6 @@
 import math
 
 from characters.enums import Sex, EncumberanceLevel
-from data.python_templates.attacks import base_attacks
-from data.python_templates.defenses import base_defenses
 from components.experience_pool import ExperiencePool
 from components.equipment import Equipment
 from components.location import Location
@@ -174,12 +172,3 @@ class Character(GameObject):
     @property
     def current_level(self):
         return self.location.level
-
-    def get_attacks(self):
-        # We'll need to distinguish innate racial attacks and learned attacks.
-        # This BaseAttack is just in the meantime.
-        return [attack for attack in base_attacks if attack.evaluate_requirements(self)]
-
-    def get_defenses(self):
-        return base_defenses
-

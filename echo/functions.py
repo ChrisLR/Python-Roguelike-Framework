@@ -15,7 +15,7 @@ def his_her_it(value):
 
 def him_her_it(value):
     if hasattr(value, "is_player") and value.is_player:
-        return "your"
+        return "you"
 
     if hasattr(value, 'sex'):
         if value.sex == Sex.Male:
@@ -27,7 +27,7 @@ def him_her_it(value):
 
 def he_her_it(value):
     if hasattr(value, "is_player") and value.is_player:
-        return "You"
+        return "you"
 
     if hasattr(value, 'sex'):
         if value.sex == Sex.Male:
@@ -39,14 +39,21 @@ def he_her_it(value):
 
 def name_or_you(value):
     if hasattr(value, "is_player") and value.is_player:
-        return "You"
+        return "you"
 
     return value.name
 
 
+def names_or_your(value):
+    if hasattr(value, "is_player") and value.is_player:
+        return "your"
+
+    return value.name + "'s"
+
+
 def get_name_or_string(value):
     if not value:
-        return "None"
+        return ""
     if isinstance(value, str) or isinstance(value, int):
         return value
     else:
