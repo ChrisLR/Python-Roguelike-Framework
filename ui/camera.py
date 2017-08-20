@@ -2,7 +2,7 @@ from clubsandwich.geom import Point, Rect, Size
 
 
 class Camera(object):
-    def __init__(self, location, screen_size):
+    def __init__(self, location, screen_size, character_focus=None):
         """
         Initialize a Camera for drawing.
         :param location: Location component
@@ -13,6 +13,7 @@ class Camera(object):
         self.screen_size = screen_size
         self.point = Point(*self.location.get_local_coords())
         self.view_rect = self.set_view_rect(self.point)
+        self.character_focus = character_focus
 
     def transform(self, point, enforce_bounds=True):
         """
@@ -35,7 +36,12 @@ class Camera(object):
         )
         return Rect(offset_point, offset_size)
 
-    def focus_on_game_object(self, game_object):
+    def focus_on_game_object(self, game_object=None):
+        if game_object is None:
+            game_object = self.character_focus
+            if game_object is None:
+                return
+
         self.location.area = game_object.location.area
         self.location.level = game_object.location.level
         self.location.global_x = game_object.location.global_x

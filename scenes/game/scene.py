@@ -13,6 +13,8 @@ from generators import dungeon_generator, forest_generator
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
+from util.cursor import Cursor
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -41,11 +43,27 @@ class GameScene(UIScene):
         logger.info("Starting new game.")
         self.new_game()
         self.movement_keys = settings.KEY_MAPPINGS
+        self.cursor = None
 
     def terminal_read(self, val):
         # TODO It would be nice to only set moved=True if the action succeeded.
         player = self.game_context.player
         moved = False
+
+        if self.cursor:
+            if val in self.movement_keys:
+                key_x, key_y = self.movement_keys[val]
+                actions.move(self.cursor, key_x, key_y)
+                return
+
+            if val == terminal.TK_ENTER:
+                self.cursor.on_enter()
+                self.cursor = None
+                self.game_view.camera.character_focus = player
+
+            if val == terminal.TK_ESCAPE:
+                self.cursor = None
+                self.game_view.camera.character_focus = player
 
         if player.is_dead():
             return
@@ -83,6 +101,15 @@ class GameScene(UIScene):
 
         if val is terminal.TK_W:
             self.director.push_scene(ItemQueryWindow(self._wear_wield_item_callback, *self._get_all_player_items()))
+            return
+
+        if val is terminal.TK_X:
+            def clear_cursor(monster):
+                self.cursor = None
+                self.game_view.camera.character_focus = player
+
+            self.cursor = Cursor(player.location.copy(), clear_cursor)
+            self.game_view.camera.character_focus = self.cursor
             return
 
         if moved:
@@ -154,6 +181,7 @@ class GameScene(UIScene):
 
         player = self.game_context.player
         player.is_player = True
+
         generator.generate(level)
         self.place_dungeon_objects(level, player, generator)
 

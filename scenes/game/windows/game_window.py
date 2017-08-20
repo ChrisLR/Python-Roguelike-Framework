@@ -1,11 +1,9 @@
-from enum import Enum
 import tdl
 from clubsandwich.geom import Point, Size
 from clubsandwich.ui import RectView
 
-from managers.echo import EchoService
-from stats.enums import StatsEnum
 from ui.camera import Camera
+from util.cursor import Cursor
 
 
 class GameWindow(RectView):
@@ -14,11 +12,12 @@ class GameWindow(RectView):
         self.game_context = game_context
         player = self.game_context.player
         self.camera = Camera(location=player.location.copy(), screen_size=Size(120, 30))
+        self.camera.character_focus = player
 
     def draw(self, ctx):
         player = self.game_context.player
         current_level = player.location.level
-        self.camera.focus_on_game_object(player)
+        self.camera.focus_on_game_object()
         self.set_tiles_background_color(ctx)
 
         player_x = player.location.local_x
@@ -79,6 +78,12 @@ class GameWindow(RectView):
         relative_point = self.camera.transform(Point(*player.location.get_local_coords()))
         if relative_point is not None:
             ctx.printf(relative_point, player.display.get_draw_info())
+
+        if isinstance(self.camera.character_focus, Cursor):
+            cursor = self.camera.character_focus
+            relative_point = self.camera.transform(Point(*cursor.location.get_local_coords()))
+            if relative_point is not None:
+                ctx.printf(relative_point, cursor.display.get_draw_info())
 
     def set_tiles_background_color(self, ctx):
         # TODO Instead of using a different color, we should darken whatever color it is.

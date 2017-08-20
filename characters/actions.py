@@ -80,9 +80,17 @@ def move(actor, dx, dy):
     x, y = actor.location.get_local_coords()
     new_x = x + dx
     new_y = y + dy
+    if new_x < 0 or new_x > actor.location.level.width:
+        return
+    if new_y < 0 or new_y > actor.location.level.height:
+        return
 
-    old_tile = actor.current_level.maze[x][y]
-    new_tile = actor.current_level.maze[new_x][new_y]
+    old_tile = actor.location.level.maze[x][y]
+    new_tile = actor.location.level.maze[new_x][new_y]
+    if hasattr(actor, 'system_ghost'):
+        actor.location.local_x = new_x
+        actor.location.local_y = new_y
+        return True
 
     # move by the given amount, if the destination is not blocked
     if not new_tile.is_blocked:
