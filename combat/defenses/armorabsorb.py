@@ -6,8 +6,8 @@ from echo import functions
 class ArmorAbsorb(Defense):
     name = "Armor Absorb"
     description = "Your Armor absorbs the damage."
-    attacker_message = "but your attack glances off {defender_his} {defender_armor}!"
-    observer_message = "but {attacker_his} glances off {defender_his} {defender_armor}!"
+    attacker_message = "but your {attacker_weapon} glances off {defender_his} {defender_armor}!"
+    observer_message = "but {attacker_his} {attacker_weapon} glances off {defender_his} {defender_armor}!"
 
     @classmethod
     def evaluate(cls, attack_result):
@@ -36,11 +36,13 @@ class ArmorAbsorb(Defense):
         if attack_result.attacker.is_player:
             return cls.attacker_message.format(
                 defender_his=functions.his_her_it(attack_result.target_object),
-                defender_armor=defender_armor.name if defender_armor else "armor"
+                defender_armor=defender_armor.name if defender_armor else "armor",
+                attacker_weapon=functions.get_name_or_string(attack_result.attacker_weapon)
             )
         else:
             return cls.observer_message.format(
                 attacker_his=functions.his_her_it(attack_result.attacker),
                 defender_his=functions.his_her_it(defender),
-                defender_armor=defender_armor.name if defender_armor else "armor"
+                defender_armor=defender_armor.name if defender_armor else "armor",
+                attacker_weapon=functions.get_name_or_string(attack_result.attacker_weapon)
             )

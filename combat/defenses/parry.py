@@ -9,7 +9,7 @@ class Parry(Defense):
     name = "Parry"
     description = "You parry your opponent."
     attacker_message = "but you parry with your {defender_weapon}!"
-    observer_message = "but {defender} parries with {defender_his} {defender_weapon}!"
+    observer_message = "but {defender} {parries} with {defender_his} {defender_weapon}!"
 
     @classmethod
     def evaluate(cls, attack_result):
@@ -35,11 +35,12 @@ class Parry(Defense):
         parry_weapon = random.choice(wielded_items)
         if attack_result.attacker.is_player:
             return cls.attacker_message.format(
-                defender_weapon=parry_weapon.name
+                defender_weapon=functions.get_name_or_string(parry_weapon)
             )
         else:
             return cls.observer_message.format(
                 defender=functions.he_her_it(attack_result.target_object),
                 defender_his=functions.his_her_it(attack_result.target_object),
-                defender_weapon=parry_weapon.name
+                defender_weapon=functions.get_name_or_string(parry_weapon),
+                parries="parries" if not attack_result.target_object.is_player else "parry"
             )

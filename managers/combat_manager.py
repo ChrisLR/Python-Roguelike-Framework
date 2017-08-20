@@ -78,7 +78,7 @@ def take_damage(actor, attack_result):
     # TODO Here we take each damage dealt, apply resistance
     # TODO Determine threat level for total damage
     if attack_result.total_damage <= 0:
-        return
+        return "to no effect.", False, False
     damage_string = ""
     wound_strings = []
 

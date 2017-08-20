@@ -31,6 +31,7 @@ class Punch(Attack):
         hit_modifier = actor.get_stat_modifier(StatsEnum.Strength)
         attack_result = cls.make_hit_roll(actor, target, hit_modifier, target_ac)
         attack_result.attack_message = cls.get_message(actor, target)
+        attack_result.attacker_weapon = "fist"
 
         cls.make_damage_roll(actor, attack_result, hit_modifier)
 

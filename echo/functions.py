@@ -53,7 +53,7 @@ def names_or_your(value):
 
 def get_name_or_string(value):
     if not value:
-        return "None"
+        return ""
     if isinstance(value, str) or isinstance(value, int):
         return value
     else:

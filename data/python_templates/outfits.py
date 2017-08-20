@@ -48,7 +48,7 @@ def build_starter_thief():
         ],
         items_held=[
             items.short_sword,
-            items.short_sword
+            items.short_sword.copy()
         ],
         items_in_inventory=[consumables.bread, consumables.waterskin, consumables.potion_of_healing]
     )
