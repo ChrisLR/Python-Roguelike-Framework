@@ -31,7 +31,7 @@ class GameScene(UIScene):
 
     def __init__(self, game_context):
         self.console = ScrollingTextView(
-            9, 110, layout_options=LayoutOptions(top=None, height=10, bottom=0, left=1, right=None, width=0.98))
+            12, 110, layout_options=LayoutOptions(top=None, height=12, bottom=0, left=1, right=None, width=0.98))
         EchoService(self.console, game_context)
         game_context.action_manager = ActionManager(game_context)
         self.game_view = GameWindow(game_context, layout_options=LayoutOptions(top=10, height=30, bottom=None, left=0, right=None, width=1))
