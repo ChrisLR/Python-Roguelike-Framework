@@ -20,7 +20,7 @@ class Cursor(GameObject):
             self.recall(monster)
 
     def get_monster(self):
-        return next((monster for monster in self.location.level.monster_spawn_list
+        return next((monster for monster in self.location.level.spawned_monsters
                      if monster.location.local_x == self.location.local_x
                      and monster.location.local_y == self.location.local_y), None)
 

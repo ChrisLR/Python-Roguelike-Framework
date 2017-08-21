@@ -1,6 +1,7 @@
-from combat.finishers.base import Finisher
 from combat.enums import DamageType
+from combat.finishers.base import Finisher
 from echo import functions
+from util import gridhelpers
 
 
 class Impale(Finisher):
@@ -11,12 +12,13 @@ class Impale(Finisher):
 
     @classmethod
     def evaluate(cls, attack_result):
-        attacker_weapon = attack_result.attacker_weapon
-        if attacker_weapon and hasattr(attacker_weapon, 'weapon'):
-            weapon_component = attacker_weapon.weapon
-            if weapon_component:
-                if weapon_component.melee_damage_type in (DamageType.Pierce, DamageType.Slash):
-                    return True
+        if gridhelpers.distance_to(attack_result.attacker, attack_result.target_object) <= 1:
+            attacker_weapon = attack_result.attacker_weapon
+            if attacker_weapon and hasattr(attacker_weapon, 'weapon'):
+                weapon_component = attacker_weapon.weapon
+                if weapon_component:
+                    if weapon_component.melee_damage_type in (DamageType.Pierce, DamageType.Slash):
+                        return True
         return False
 
     @classmethod

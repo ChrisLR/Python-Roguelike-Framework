@@ -14,6 +14,8 @@ from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
 from util.cursor import Cursor
+import functools
+import math
 
 
 logger = logging.getLogger(__name__)
@@ -103,6 +105,19 @@ class GameScene(UIScene):
             self.director.push_scene(ItemQueryWindow(self._wear_wield_item_callback, *self._get_all_player_items()))
             return
 
+        if val is terminal.TK_F:
+            closest_monster = self.get_closest_monster(player)
+
+            def attack_wrapper(_monster):
+                actions.attack(player, _monster, ranged=True)
+                self.update_turn(player)
+
+            if closest_monster:
+                self.cursor = Cursor(closest_monster.location.copy(), attack_wrapper)
+            else:
+                self.cursor = Cursor(player.location.copy(), attack_wrapper)
+            self.game_view.camera.character_focus = self.cursor
+
         if val is terminal.TK_X:
             def clear_cursor(monster):
                 self.cursor = None
@@ -113,10 +128,13 @@ class GameScene(UIScene):
             return
 
         if moved:
-            player.update()
-            for monster in player.location.level.spawned_monsters:
-                monster.update()
-                self.game_context.action_manager.monster_take_turn(monster, player)
+            self.update_turn(player)
+
+    def update_turn(self, player):
+        player.update()
+        for monster in player.location.level.spawned_monsters:
+            monster.update()
+            self.game_context.action_manager.monster_take_turn(monster, player)
 
     def _get_all_player_items(self):
         player = self.game_context.player
@@ -193,3 +211,25 @@ class GameScene(UIScene):
 
         forerunner = generator.forerunner(level, player)
         forerunner.run()
+
+    def get_closest_monster(self, player):
+        closest_delta = None
+        closest_monster = None
+        p_x, p_y = player.location.get_local_coords()
+        for monster in player.location.level.spawned_monsters:
+            if monster.is_dead():
+                continue
+            monster_x, monster_y = monster.location.get_local_coords()
+            delta = abs(p_x - monster_x) + abs(p_y - monster_y)
+            if closest_delta is None:
+                closest_delta = delta
+                closest_monster = monster
+                continue
+
+            if delta < closest_delta:
+                closest_monster = monster
+                closest_delta = delta
+
+        if closest_monster.location.get_local_coords() in player.fov:
+            return closest_monster
+        return None

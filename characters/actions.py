@@ -5,25 +5,24 @@ This is where the main business logic lives.
 
 Any action that can be taken by the player or a npc (e.g. monster) is defined here.
 """
-import math
 
+from components.location import Location
+from components.messages import QueryType
+from echo.contexts import Context
 from managers import combat_manager
 from managers.echo import EchoService
-from echo.contexts import Context
-from components.location import Location
-from components.messages import MessageType, QueryType
-
-
 # TODO One thing I want to change is the tile contains flag
 # TODO It should not have to be changed EVERY time something moves, instead we should
 # TODO Abstract it to another layer which would handle WHATEVER it needs to move something
 # TODO Because many actions will move characters and not all of them will make it "walk"
 # TODO also because it only take one forgotten line to make difficult to track bugs.
+from util.gridhelpers import distance_to
 
 
 def attack(attacker, target, ranged=False):
     # a simple formula for attack damage
-    combat_manager.execute_combat_round(attacker, target, ranged)
+    if not target.is_dead():
+        combat_manager.execute_combat_round(attacker, target, ranged)
 
 
 def consume(actor, chosen_item):
@@ -105,17 +104,6 @@ def move(actor, dx, dy):
     return False
 
 
-def distance_to(actor, target):
-    # TODO This should not be here
-    actor_x, actor_y = actor.location.get_local_coords()
-    target_x, target_y = target.location.get_local_coords()
-
-    # return the distance to another object
-    distance_x = target_x - actor_x
-    distance_y = target_y - actor_y
-    return math.sqrt(distance_x ** 2 + distance_y ** 2)
-
-
 def move_or_attack(character, target_x, target_y):
     """
     Either move to a new tile or attack
@@ -127,9 +115,9 @@ def move_or_attack(character, target_x, target_y):
     current_level = character.current_level
     new_x = x + target_x
     new_y = y + target_y
-    if new_x < 0 or new_x > current_level.width:
+    if new_x < 0 or new_x >= current_level.width:
         return
-    if new_y < 0 or new_y > current_level.height:
+    if new_y < 0 or new_y >= current_level.height:
         return
 
     new_tile = current_level.maze[new_x][new_y]

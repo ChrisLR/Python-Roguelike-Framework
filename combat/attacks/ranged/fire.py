@@ -6,6 +6,7 @@ from stats.enums import StatsEnum
 from util import check_roller
 from util.dice import DiceStack, Dice
 from echo import functions
+from managers.echo import EchoService
 
 
 class FireWeapon(RangedAttack):
@@ -33,14 +34,15 @@ class FireWeapon(RangedAttack):
                               if item.weapon and item.weapon.ranged_damage_type
                               and item.weapon.ammunition_uid), None)
 
-        if not ranged_weapon:
-            return
-
         weapon_component = ranged_weapon.weapon
         ammunition = attacker.inventory.get_items(weapon_component.ammunition_uid, count=1, pop=True)
         if not ammunition:
+            if attacker.is_player:
+                EchoService.singleton.echo("You have no {} left to fire!".format(
+                    weapon_component.ammunition_uid))
             return
 
+        ammunition = ammunition[0]
         target_ac = target.get_armor_class()
         hit_modifier = attacker.get_stat_modifier(StatsEnum.Dexterity)
 

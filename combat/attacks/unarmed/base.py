@@ -5,7 +5,7 @@ from combat.attacks.base import Attack
 from combat.enums import DamageType
 from echo import functions
 from stats.enums import StatsEnum
-from util import check_roller
+from util import check_roller, gridhelpers
 from util.dice import Dice, DiceStack
 
 
@@ -19,10 +19,11 @@ class Punch(Attack):
 
     @classmethod
     def can_execute(cls, actor, target):
-        actor_body = actor.body
-        if actor_body:
-            return any([ability for ability in actor_body.get_physical_abilities().keys()
-                        if ability == PhysicalAbilities.PUNCH])
+        if gridhelpers.distance_to(actor, target) <= 1:
+            actor_body = actor.body
+            if actor_body:
+                return any([ability for ability in actor_body.get_physical_abilities().keys()
+                            if ability == PhysicalAbilities.PUNCH])
         return False
 
     @classmethod

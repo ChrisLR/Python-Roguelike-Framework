@@ -1,15 +1,13 @@
 import random
 
-from combat import enums as combat_enums
+import echo.functions
 from combat import attacks
 from combat import defenses
+from combat import enums as combat_enums
 from combat import finishers
-from echo.contexts import Context
-from stats.enums import StatsEnum
 from managers.echo import EchoService
-import echo.functions
+from stats.enums import StatsEnum
 from util.colors import Colors
-
 
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors
@@ -46,11 +44,14 @@ def execute_combat_round(attacker, defender, ranged=False):
     This is meant to be the "round" when you walk into someone.
     """
     # Prepare attack
-    attack_template = choose_attack(attacker, defender)
+    attack_template = choose_attack(attacker, defender, ranged)
     if not attack_template:
         return
 
     attack_results = attack_template.execute(attacker, defender)
+    if not attack_results:
+        return
+
     for attack_result in attack_results:
         attack_result.attack_used = attack_template
         threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
@@ -104,12 +105,13 @@ def take_damage(actor, attack_result):
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
         is_killing_blow = True
         if random.randint(0, 10) <= 10:
-            is_finisher = True
             # Here, instead of displaying the damage, we try to execute a finisher.
             possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
-            finisher = random.choice(possible_finishers)
-            damage_string = finisher.execute(attack_result)
-            return damage_string, is_killing_blow, is_finisher
+            if possible_finishers:
+                is_finisher = True
+                finisher = random.choice(possible_finishers)
+                damage_string = finisher.execute(attack_result)
+                return damage_string, is_killing_blow, is_finisher
         return damage_string, is_killing_blow, is_finisher
     return damage_string, is_killing_blow, is_finisher
 

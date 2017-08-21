@@ -4,7 +4,7 @@ from combat.attacks.base import Attack
 from combat.enums import DamageType
 from echo import functions
 from stats.enums import StatsEnum
-from util import check_roller
+from util import check_roller, gridhelpers
 from util.dice import Dice, DiceStack
 
 
@@ -26,7 +26,8 @@ class MeleeAttack(Attack):
 
     @classmethod
     def can_execute(cls, actor, target):
-        return any(actor.equipment.get_wielded_items())
+        return any(actor.equipment.get_wielded_items()) \
+               and gridhelpers.distance_to(actor, target) <= 1
 
     @classmethod
     def execute(cls, actor, target):

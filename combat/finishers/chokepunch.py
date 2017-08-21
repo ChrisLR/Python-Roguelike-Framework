@@ -1,7 +1,7 @@
-from combat.finishers.base import Finisher
 from combat import attacks
-from combat.enums import DamageType
+from combat.finishers.base import Finisher
 from echo import functions
+from util import gridhelpers
 
 
 class ChokePunch(Finisher):
@@ -15,8 +15,9 @@ class ChokePunch(Finisher):
 
     @classmethod
     def evaluate(cls, attack_result):
-        if attack_result.attack_used == attacks.Punch:
-            return True
+        if gridhelpers.distance_to(attack_result.attacker, attack_result.target_object) <= 1:
+            if attack_result.attack_used == attacks.Punch:
+                return True
         return False
 
     @classmethod
