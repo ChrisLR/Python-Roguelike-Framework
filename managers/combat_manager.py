@@ -15,12 +15,16 @@ from util.colors import Colors
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
+all_ranged_attacks = (attacks.FireWeapon, )
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
 all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)
 
 
-def choose_attack(attacker, defender):
-    possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker, defender)]
+def choose_attack(attacker, defender, ranged=False):
+    if ranged:
+        possible_attacks = [attack for attack in all_ranged_attacks if attack.can_execute(attacker, defender)]
+    else:
+        possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker, defender)]
 
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs
@@ -37,7 +41,7 @@ def choose_defense(attack_result):
     return random.choice(possible_defenses)
 
 
-def execute_combat_round(attacker, defender):
+def execute_combat_round(attacker, defender, ranged=False):
     """
     This is meant to be the "round" when you walk into someone.
     """

@@ -55,9 +55,9 @@ class Punch(Attack):
 
     @classmethod
     def make_damage_roll(cls, attacker, attack_result, str_modifier):
-        damage_dice = cls.get_damage_dice(attacker)
+        melee_damage_dice = cls.get_melee_damage_dice(attacker)
         total_damage = check_roller.roll_damage(
-            dice_stacks=(damage_dice,),
+            dice_stacks=(melee_damage_dice,),
             modifiers=str_modifier,
             critical=attack_result.critical
         )
@@ -67,7 +67,7 @@ class Punch(Attack):
         return attack_result
 
     @classmethod
-    def get_damage_dice(cls, actor):
+    def get_melee_damage_dice(cls, actor):
         return DiceStack(1, Dice(actor.stats.get_current_value(StatsEnum.Size) - 1))
 
     @classmethod

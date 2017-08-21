@@ -99,9 +99,9 @@ class MeleeAttack(Attack):
 
     @classmethod
     def make_damage_roll(cls, attacker, attack_result, weapon_item, str_modifier, is_offhand=False):
-        damage_dice = cls.get_damage_dice(weapon_item)
+        melee_damage_dice = cls.get_melee_damage_dice(weapon_item)
         total_damage = check_roller.roll_damage(
-            dice_stacks=(damage_dice, ),
+            dice_stacks=(melee_damage_dice, ),
             modifiers=cls.get_damage_bonus(attacker, weapon_item, str_modifier, is_offhand),
             critical=attack_result.critical
         )
@@ -123,10 +123,10 @@ class MeleeAttack(Attack):
         return str_modifier
 
     @classmethod
-    def get_damage_dice(cls, weapon_item):
+    def get_melee_damage_dice(cls, weapon_item):
         weapon = weapon_item.weapon
         if weapon:
-            return weapon_item.weapon.damage_dice
+            return weapon_item.weapon.melee_damage_dice
         return DiceStack(1, Dice(4))
 
     @classmethod

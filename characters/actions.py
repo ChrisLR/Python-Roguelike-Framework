@@ -21,9 +21,9 @@ from components.messages import MessageType, QueryType
 # TODO also because it only take one forgotten line to make difficult to track bugs.
 
 
-def attack(attacker, target):
+def attack(attacker, target, ranged=False):
     # a simple formula for attack damage
-    combat_manager.execute_combat_round(attacker, target)
+    combat_manager.execute_combat_round(attacker, target, ranged)
 
 
 def consume(actor, chosen_item):
