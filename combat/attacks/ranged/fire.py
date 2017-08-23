@@ -23,7 +23,8 @@ class FireWeapon(RangedAttack):
         if attacker_weapon:
             weapon_component = attacker_weapon.weapon
             if weapon_component.ammunition_uid and attacker_weapon.weapon.ranged_damage_type:
-                return True
+                if weapon_component.long_range < attack_context.distance_to * 6:
+                    return True
         return False
 
     @classmethod
