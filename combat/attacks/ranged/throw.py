@@ -2,6 +2,7 @@ from combat import targets
 from combat.attacks.ranged.base import RangedAttack
 from combat.enums import DamageType
 from echo import functions
+from managers.echo import EchoService
 from stats.enums import StatsEnum
 from util import check_roller
 from util.dice import DiceStack, Dice
@@ -23,6 +24,9 @@ class ThrowWeapon(RangedAttack):
             if weapon_component.thrown:
                 if weapon_component.long_range < attack_context.distance_to * 6:
                     return True
+                else:
+                    if attack_context.attacker.is_player:
+                        EchoService.singleton.echo("You are too far away.")
         return False
 
     @classmethod

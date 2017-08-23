@@ -25,6 +25,9 @@ class FireWeapon(RangedAttack):
             if weapon_component.ammunition_uid and attacker_weapon.weapon.ranged_damage_type:
                 if weapon_component.long_range < attack_context.distance_to * 6:
                     return True
+                else:
+                    if attack_context.attacker.is_player:
+                        EchoService.singleton.echo("You are too far away.")
         return False
 
     @classmethod
