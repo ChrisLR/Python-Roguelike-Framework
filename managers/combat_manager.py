@@ -14,7 +14,7 @@ from util.colors import Colors
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
-all_ranged_attacks = (attacks.FireWeapon, )
+all_ranged_attacks = (attacks.FireWeapon, attacks.ThrowWeapon)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
 all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)
 

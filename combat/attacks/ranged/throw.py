@@ -12,7 +12,7 @@ class ThrowWeapon(RangedAttack):
     description = "Basic throw a weapon at an enemy."
     target_type = targets.Single
 
-    actor_attack_message = "You throw an {attacker_weapon} at {defender}"
+    actor_attack_message = "You throw a {attacker_weapon} at {defender}"
     observer_attack_message = "{attacker} throws a {attacker_weapon} at {defender}"
 
     @classmethod
@@ -27,12 +27,17 @@ class ThrowWeapon(RangedAttack):
     @classmethod
     def execute(cls, attack_context):
         attacker = attack_context.attacker
+        defender = attack_context.defender
+        attacker_weapon = attack_context.attacker_weapon
         hit_modifier = attacker.get_stat_modifier(StatsEnum.Dexterity)
 
         attack_result = cls.make_hit_roll(attack_context, hit_modifier)
         attack_result.attack_message = cls.get_message(attack_context)
 
         cls.make_damage_roll(attack_result, hit_modifier)
+        attacker.equipment.remove_item(attacker_weapon)
+        attacker_weapon.location = defender.location.copy()
+        attacker.location.level.spawned_items.append(attacker_weapon)
 
         return attack_result,
 

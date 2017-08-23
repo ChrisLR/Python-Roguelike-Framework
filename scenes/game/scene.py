@@ -110,7 +110,11 @@ class GameScene(UIScene):
         if val is terminal.TK_F:
             closest_monster = self.get_closest_monster(player)
             ranged_weapon = RangedAttack.get_ranged_weapon(player)
-            EchoService.singleton.echo("You are aiming with " + ranged_weapon.name)
+            if not ranged_weapon:
+                EchoService.singleton.echo("You have nothing to fire with.")
+                return
+            else:
+                EchoService.singleton.echo("You are aiming with " + ranged_weapon.name)
 
             def attack_wrapper(_monster):
                 attack_context = AttackContext(
