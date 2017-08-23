@@ -15,6 +15,7 @@ from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
 from util.cursor import Cursor
 import functools
+from combat.attacks.ranged.base import RangedAttack
 from combat import AttackContext
 import math
 
@@ -108,11 +109,19 @@ class GameScene(UIScene):
 
         if val is terminal.TK_F:
             closest_monster = self.get_closest_monster(player)
+            ranged_weapon = RangedAttack.get_ranged_weapon(player)
+            EchoService.singleton.echo("You are aiming with " + ranged_weapon.name)
 
             def attack_wrapper(_monster):
-                attack_context = AttackContext(player, _monster, _monster.get_armor_class(), ranged=True)
-                actions.attack(player, _monster, attack_context)
-                self.update_turn(player)
+                attack_context = AttackContext(
+                    attacker=player,
+                    defender=_monster,
+                    attacker_weapon=ranged_weapon,
+                    ranged=True
+                )
+                if _monster.location.get_local_coords() in player.fov:
+                    actions.attack(player, _monster, attack_context)
+                    self.update_turn(player)
 
             if closest_monster:
                 self.cursor = Cursor(closest_monster.location.copy(), attack_wrapper)

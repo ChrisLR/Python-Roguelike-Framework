@@ -19,13 +19,10 @@ class FireWeapon(RangedAttack):
 
     @classmethod
     def can_execute(cls, attack_context):
-        attacker = attack_context.attacker
-        ranged_weapon = next((item for item in attacker.equipment.get_wielded_items()
-                              if item.weapon and item.weapon.ranged_damage_type), None)
-
-        if ranged_weapon:
-            weapon_component = ranged_weapon.weapon
-            if weapon_component.ammunition_uid:
+        attacker_weapon = attack_context.attacker_weapon
+        if attacker_weapon:
+            weapon_component = attacker_weapon.weapon
+            if weapon_component.ammunition_uid and attacker_weapon.weapon.ranged_damage_type:
                 return True
         return False
 

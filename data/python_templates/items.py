@@ -308,13 +308,13 @@ def build_dagger():
             size=Size.Medium,
             melee_damage_type=DamageType.Pierce,
             melee_damage_dice=DiceStack(1, Dice(4)),
-            ammunition_uid="arrow",
             normal_range=20,
             long_range=60,
             ranged_damage_type=DamageType.Pierce,
             ranged_damage_dice=DiceStack(1, Dice(4)),
             finesse=True,
-            light=True
+            light=True,
+            thrown=True
         ),
     )
 
