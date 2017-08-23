@@ -18,45 +18,31 @@ class Punch(Attack):
     observer_message = "{attacker} swings {attacker_his} fist at {defender}"
 
     @classmethod
-    def can_execute(cls, actor, target):
-        if gridhelpers.distance_to(actor, target) <= 1:
-            actor_body = actor.body
-            if actor_body:
-                return any([ability for ability in actor_body.get_physical_abilities().keys()
+    def can_execute(cls, attack_context):
+        attacker = attack_context.attacker
+        if attack_context.distance_to <= 1:
+            attacker_body = attacker.body
+            if attacker_body:
+                return any([ability for ability in attacker_body.get_physical_abilities().keys()
                             if ability == PhysicalAbilities.PUNCH])
         return False
 
     @classmethod
-    def execute(cls, actor, target):
-        target_ac = target.get_armor_class()
-        hit_modifier = actor.get_stat_modifier(StatsEnum.Strength)
-        attack_result = cls.make_hit_roll(actor, target, hit_modifier, target_ac)
-        attack_result.attack_message = cls.get_message(actor, target)
-        attack_result.attacker_weapon = "fist"
+    def execute(cls, attack_context):
+        attacker = attack_context.attacker
+        defender = attack_context.defender
+        hit_modifier = attacker.get_stat_modifier(StatsEnum.Strength)
+        attack_result = cls.make_hit_roll(attack_context, hit_modifier)
+        attack_result.attack_message = cls.get_message(attacker, defender)
+        attack_result.context.attacker_weapon = "fist"
 
-        cls.make_damage_roll(actor, attack_result, hit_modifier)
+        cls.make_damage_roll(attack_result, hit_modifier)
 
         return attack_result,
 
     @classmethod
-    def make_hit_roll(cls, attacker, defender, hit_modifier, target_ac):
-        success, critical, natural_roll, total_hit_roll = check_roller.d20_check_roll(
-            difficulty_class=target_ac,
-            modifiers=hit_modifier
-        )
-        return AttackResult(
-            success=success,
-            critical=critical,
-            attacker=attacker,
-            target_object=defender,
-            target_ac=target_ac,
-            natural_roll=natural_roll,
-            total_hit_roll=total_hit_roll,
-        )
-
-    @classmethod
-    def make_damage_roll(cls, attacker, attack_result, str_modifier):
-        melee_damage_dice = cls.get_melee_damage_dice(attacker)
+    def make_damage_roll(cls, attack_result, str_modifier):
+        melee_damage_dice = cls.get_melee_damage_dice(attack_result.context.attacker)
         total_damage = check_roller.roll_damage(
             dice_stacks=(melee_damage_dice,),
             modifiers=str_modifier,

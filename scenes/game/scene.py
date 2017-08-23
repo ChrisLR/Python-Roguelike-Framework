@@ -15,6 +15,7 @@ from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
 from util.cursor import Cursor
 import functools
+from combat import AttackContext
 import math
 
 
@@ -109,7 +110,8 @@ class GameScene(UIScene):
             closest_monster = self.get_closest_monster(player)
 
             def attack_wrapper(_monster):
-                actions.attack(player, _monster, ranged=True)
+                attack_context = AttackContext(player, _monster, _monster.get_armor_class(), ranged=True)
+                actions.attack(player, _monster, attack_context)
                 self.update_turn(player)
 
             if closest_monster:

@@ -21,12 +21,14 @@ class Miss(Defense):
 
     @classmethod
     def get_message(cls, attack_result):
-        if attack_result.attacker.is_player:
+        attacker = attack_result.context.attacker
+        defender = attack_result.context.defender
+        if attacker.is_player:
             return cls.attacker_message.format(
-                defender_him=functions.him_her_it(attack_result.target_object)
+                defender_him=functions.him_her_it(defender)
             )
         else:
             return cls.observer_message.format(
-                attacker_he=functions.he_her_it(attack_result.attacker),
-                defender=attack_result.target_object.name
+                attacker_he=functions.he_her_it(attacker),
+                defender=functions.name_or_you(defender)
             )

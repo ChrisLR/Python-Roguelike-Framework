@@ -13,7 +13,7 @@ class Block(Defense):
 
     @classmethod
     def evaluate(cls, attack_result):
-        defender = attack_result.target_object
+        defender = attack_result.context.defender
         if not any((item for item in defender.equipment.get_wielded_items() if item.armor)):
             return False
 
@@ -32,7 +32,7 @@ class Block(Defense):
     def get_message(cls, attack_result):
         defender = attack_result.target_object
         defender_shield = random.choice((item for item in defender.equipment.get_wielded_items() if item.armor))
-        if attack_result.attacker.is_player:
+        if attack_result.context.attacker.is_player:
             return cls.attacker_message.format(
                 defender_he=functions.he_her_it(defender),
                 defender_his=functions.his_her_it(defender),
@@ -41,6 +41,6 @@ class Block(Defense):
         else:
             return cls.observer_message.format(
                 defender_he=functions.he_her_it(defender),
-                attacker_his=functions.his_her_it(attack_result.attacker),
+                attacker_his=functions.his_her_it(attack_result.context.attacker),
                 defender_shield=defender_shield.name
             )

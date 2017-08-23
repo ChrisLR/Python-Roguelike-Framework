@@ -16,8 +16,8 @@ class CrushSkull(Finisher):
 
     @classmethod
     def evaluate(cls, attack_result):
-        if gridhelpers.distance_to(attack_result.attacker, attack_result.target_object) <= 1:
-            attacker_weapon = attack_result.attacker_weapon
+        if attack_result.context.distance_to <= 1:
+            attacker_weapon = attack_result.context.attacker_weapon
             if attacker_weapon and hasattr(attacker_weapon, 'weapon'):
                 weapon_component = attacker_weapon.weapon
                 if weapon_component:
@@ -32,15 +32,15 @@ class CrushSkull(Finisher):
     @classmethod
     def get_message(cls, attack_result):
         defender = attack_result.target_object
-        if attack_result.attacker.is_player:
+        if attack_result.context.attacker.is_player:
             return cls.attacker_message.format(
-                attacker_weapon=functions.get_name_or_string(attack_result.attacker_weapon),
+                attacker_weapon=functions.get_name_or_string(attack_result.context.attacker_weapon),
                 defender_his=functions.his_her_it(defender),
             )
         else:
             return cls.observer_message.format(
-                attacker=functions.get_name_or_string(attack_result.attacker),
-                attacker_his=functions.his_her_it(attack_result.attacker),
-                attacker_weapon=functions.get_name_or_string(attack_result.attacker_weapon),
+                attacker=functions.get_name_or_string(attack_result.context.attacker),
+                attacker_his=functions.his_her_it(attack_result.context.attacker),
+                attacker_weapon=functions.get_name_or_string(attack_result.context.attacker_weapon),
                 defender_his=functions.his_her_it(defender),
             )

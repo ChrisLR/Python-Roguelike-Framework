@@ -5,6 +5,7 @@ from combat import attacks
 from combat import defenses
 from combat import enums as combat_enums
 from combat import finishers
+from combat.attackcontext import AttackContext
 from managers.echo import EchoService
 from stats.enums import StatsEnum
 from util.colors import Colors
@@ -18,11 +19,13 @@ all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.M
 all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)
 
 
-def choose_attack(attacker, defender, ranged=False):
-    if ranged:
-        possible_attacks = [attack for attack in all_ranged_attacks if attack.can_execute(attacker, defender)]
+def choose_attack(attack_context):
+    if attack_context.ranged:
+        possible_attacks = [attack for attack in all_ranged_attacks
+                            if attack.can_execute(attack_context)]
     else:
-        possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker, defender)]
+        possible_attacks = [attack for attack in all_attacks
+                            if attack.can_execute(attack_context)]
 
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs
@@ -39,21 +42,26 @@ def choose_defense(attack_result):
     return random.choice(possible_defenses)
 
 
-def execute_combat_round(attacker, defender, ranged=False):
+def execute_combat_round(attacker, defender, attack_context=None):
     """
     This is meant to be the "round" when you walk into someone.
     """
+    if not attack_context:
+        attack_context = AttackContext(
+            attacker=attacker,
+            defender=defender,
+        )
     # Prepare attack
-    attack_template = choose_attack(attacker, defender, ranged)
+    attack_template = choose_attack(attack_context)
     if not attack_template:
         return
 
-    attack_results = attack_template.execute(attacker, defender)
+    attack_results = attack_template.execute(attack_context)
     if not attack_results:
         return
 
     for attack_result in attack_results:
-        attack_result.attack_used = attack_template
+        attack_result.context.attack_used = attack_template
         threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
         death = False

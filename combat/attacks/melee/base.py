@@ -25,30 +25,30 @@ class MeleeAttack(Attack):
     }
 
     @classmethod
-    def can_execute(cls, actor, target):
-        return any(actor.equipment.get_wielded_items()) \
-               and gridhelpers.distance_to(actor, target) <= 1
+    def can_execute(cls, attack_context):
+        attacker = attack_context.attacker
+        return any(attacker.equipment.get_wielded_items()) and attack_context.distance_to <= 1
 
     @classmethod
-    def execute(cls, actor, target):
+    def execute(cls, attack_context):
         attack_results = []
-        weapons = cls.get_used_weapons(actor)
+        weapons = cls.get_used_weapons(attack_context)
         dual_wield_modifier = 0
         if any((weapon for weapon in weapons if not weapon.weapon or not weapon.weapon.light)):
             dual_wield_modifier = -2
 
-        target_ac = target.get_armor_class()
         is_offhand = False
         for weapon in weapons:
-            stat_used, hit_modifier = cls.get_stat_used(actor, weapon)
+            attack_context.attacker_weapon = weapon
+            stat_used, hit_modifier = cls.get_stat_used(attack_context)
             hit_modifier -= dual_wield_modifier
-            attack_result = cls.make_hit_roll(actor, target, hit_modifier, target_ac)
-            attack_result.attack_message = cls.get_message_for_weapon(actor, weapon, target)
-            attack_result.attacker_weapon = weapon
+            attack_result = cls.make_hit_roll(attack_context, hit_modifier)
+            attack_result.attack_message = cls.get_message_for_weapon(attack_context)
+            attack_result.context.attacker_weapon = weapon
             str_modifier = hit_modifier if stat_used == StatsEnum.Strength \
-                else actor.get_stat_modifier(StatsEnum.Strength)
+                else attack_context.attacker.get_stat_modifier(StatsEnum.Strength)
 
-            cls.make_damage_roll(actor, attack_result, weapon, str_modifier, is_offhand)
+            cls.make_damage_roll(attack_result, weapon, str_modifier, is_offhand)
 
             attack_results.append(attack_result)
             is_offhand = True
@@ -56,14 +56,14 @@ class MeleeAttack(Attack):
         return attack_results
 
     @classmethod
-    def get_used_weapons(cls, attacker):
+    def get_used_weapons(cls, attack_context):
         """
         This Method will return the real wielded weapons.
         If none it will return anything that is wielded (Improvised Weapon)
-        :param attacker: GameObject that is attacking
+        :param attack_context: AttackContext instance
         :return: List of Items or None
         """
-        items = attacker.equipment.get_wielded_items()
+        items = attack_context.attacker.equipment.get_wielded_items()
         weapons = [item for item in items if item.weapon]
 
         if weapons:
@@ -72,8 +72,9 @@ class MeleeAttack(Attack):
             return items
 
     @classmethod
-    def get_stat_used(cls, attacker, weapon_item):
-        weapon_component = weapon_item.weapon
+    def get_stat_used(cls, attack_context):
+        attacker = attack_context.attacker
+        weapon_component = attack_context.attacker_weapon.weapon
         str_modifier = attacker.get_stat_modifier(StatsEnum.Strength)
         if weapon_component and weapon_component.finesse:
             dex_modifier = attacker.get_stat_modifier(StatsEnum.Dexterity)
@@ -83,27 +84,11 @@ class MeleeAttack(Attack):
         return StatsEnum.Strength, str_modifier
 
     @classmethod
-    def make_hit_roll(cls, attacker, defender, hit_modifier, target_ac):
-        success, critical, natural_roll, total_hit_roll = check_roller.d20_check_roll(
-            difficulty_class=target_ac,
-            modifiers=hit_modifier
-        )
-        return AttackResult(
-            success=success,
-            critical=critical,
-            attacker=attacker,
-            target_object=defender,
-            target_ac=target_ac,
-            natural_roll=natural_roll,
-            total_hit_roll=total_hit_roll,
-        )
-
-    @classmethod
-    def make_damage_roll(cls, attacker, attack_result, weapon_item, str_modifier, is_offhand=False):
+    def make_damage_roll(cls, attack_result, weapon_item, str_modifier, is_offhand=False):
         melee_damage_dice = cls.get_melee_damage_dice(weapon_item)
         total_damage = check_roller.roll_damage(
             dice_stacks=(melee_damage_dice, ),
-            modifiers=cls.get_damage_bonus(attacker, weapon_item, str_modifier, is_offhand),
+            modifiers=cls.get_damage_bonus(attack_result, str_modifier, is_offhand),
             critical=attack_result.critical
         )
         attack_result.total_damage = total_damage
@@ -112,14 +97,14 @@ class MeleeAttack(Attack):
         return attack_result
 
     @classmethod
-    def get_damage_bonus(cls, attacker, weapon_item, str_modifier=None, is_offhand=False):
+    def get_damage_bonus(cls, attack_result, str_modifier=None, is_offhand=False):
         # TODO Weapon could have a damage bonus here.
         # TODO Some weapons held in one hand could also give a bonus here.
         if is_offhand:
             return 0
 
         if str_modifier is None:
-            str_modifier = attacker.get_stat_modifier(StatsEnum.Strength)
+            str_modifier = attack_result.attacker.get_stat_modifier(StatsEnum.Strength)
 
         return str_modifier
 
@@ -138,18 +123,21 @@ class MeleeAttack(Attack):
             return DamageType.Blunt
 
     @classmethod
-    def get_message_for_weapon(cls, actor, weapon_item, target):
-        damage_type = cls.get_melee_damage_type(weapon_item)
-        if actor.is_player:
+    def get_message_for_weapon(cls, attack_context):
+        attacker_weapon = attack_context.attacker_weapon
+        attacker = attack_context.attacker
+        defender = attack_context.defender
+
+        damage_type = cls.get_melee_damage_type(attacker_weapon)
+        if attacker.is_player:
             return cls.actor_attack_messages_per_damage_type[damage_type].format(
-                attacker_weapon=weapon_item.name,
-                defender=target.name
+                attacker_weapon=attacker_weapon.name,
+                defender=defender.name
             )
         else:
             return cls.observer_attack_messages_per_damage_type[damage_type].format(
-                attacker=actor.name,
-                attacker_his=functions.his_her_it(actor),
-                attacker_weapon=weapon_item.name,
-                defender=functions.name_or_you(target)
+                attacker=attacker.name,
+                attacker_his=functions.his_her_it(attacker),
+                attacker_weapon=attacker_weapon.name,
+                defender=functions.name_or_you(defender)
             )
-

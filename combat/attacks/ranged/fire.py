@@ -18,8 +18,9 @@ class FireWeapon(RangedAttack):
     observer_attack_message = "{attacker} fires an {ammo} at {defender}"
 
     @classmethod
-    def can_execute(cls, actor, target):
-        ranged_weapon = next((item for item in actor.equipment.get_wielded_items()
+    def can_execute(cls, attack_context):
+        attacker = attack_context.attacker
+        ranged_weapon = next((item for item in attacker.equipment.get_wielded_items()
                               if item.weapon and item.weapon.ranged_damage_type), None)
 
         if ranged_weapon:
@@ -29,7 +30,10 @@ class FireWeapon(RangedAttack):
         return False
 
     @classmethod
-    def execute(cls, attacker, target):
+    def execute(cls, attack_context):
+        attacker = attack_context.attacker
+        defender = attack_context.defender
+
         ranged_weapon = next((item for item in attacker.equipment.get_wielded_items()
                               if item.weapon and item.weapon.ranged_damage_type
                               and item.weapon.ammunition_uid), None)
@@ -43,48 +47,46 @@ class FireWeapon(RangedAttack):
             return
 
         ammunition = ammunition[0]
-        target_ac = target.get_armor_class()
         hit_modifier = attacker.get_stat_modifier(StatsEnum.Dexterity)
 
-        attack_result = cls.make_hit_roll(attacker, target, hit_modifier, target_ac)
-        attack_result.attack_message = cls.get_message(attacker, ammunition, target)
-        attack_result.attacker_weapon = ranged_weapon
+        attack_result = cls.make_hit_roll(attack_context, hit_modifier)
+        attack_result.attack_message = cls.get_message(attacker, ammunition, defender)
+        attack_result.context.attacker_weapon = ranged_weapon
 
-        cls.make_damage_roll(attacker, attack_result, ranged_weapon, hit_modifier)
+        cls.make_damage_roll(attack_result, hit_modifier)
 
         return attack_result,
 
     @classmethod
-    def make_hit_roll(cls, attacker, defender, hit_modifier, target_ac):
+    def make_hit_roll(cls, attack_context, hit_modifier):
         success, critical, natural_roll, total_hit_roll = check_roller.d20_check_roll(
-            difficulty_class=target_ac,
+            difficulty_class=attack_context.defender_ac,
             modifiers=hit_modifier
         )
         return AttackResult(
             success=success,
             critical=critical,
-            attacker=attacker,
-            target_object=defender,
-            target_ac=target_ac,
+            context=attack_context,
             natural_roll=natural_roll,
             total_hit_roll=total_hit_roll,
         )
 
     @classmethod
-    def make_damage_roll(cls, attacker, attack_result, weapon_item, modifier):
-        melee_damage_dice = cls.get_ranged_damage_dice(weapon_item)
+    def make_damage_roll(cls, attack_result, modifier):
+        attacker_weapon = attack_result.context.attacker_weapon
+        melee_damage_dice = cls.get_ranged_damage_dice(attacker_weapon)
         total_damage = check_roller.roll_damage(
             dice_stacks=(melee_damage_dice,),
-            modifiers=cls.get_damage_bonus(attacker, weapon_item, modifier),
+            modifiers=cls.get_damage_bonus(attack_result, modifier),
             critical=attack_result.critical
         )
         attack_result.total_damage = total_damage
-        attack_result.separated_damage = [(total_damage, cls.get_ranged_damage_type(weapon_item))]
+        attack_result.separated_damage = [(total_damage, cls.get_ranged_damage_type(attacker_weapon))]
 
         return attack_result
 
     @classmethod
-    def get_damage_bonus(cls, attacker, weapon_item, modifier):
+    def get_damage_bonus(cls, attack_result, modifier):
         # TODO Weapon could have a damage bonus here.
         # TODO Some weapons held in one hand could also give a bonus here.
 
