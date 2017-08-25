@@ -26,7 +26,7 @@ class ChokePunch(Finisher):
 
     @classmethod
     def get_message(cls, attack_result):
-        defender = attack_result.target_object
+        defender = attack_result.context.defender
         if attack_result.context.attacker.is_player:
             return cls.attacker_message.format(
                 defender_his=functions.his_her_it(defender),
