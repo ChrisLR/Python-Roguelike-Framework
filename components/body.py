@@ -1,7 +1,6 @@
+import abc
 import logging
 import random
-
-import six
 
 from abilities.physical_abilities import PhysicalAbilities
 from bodies.body_part_tree import BodypartTree
@@ -16,31 +15,52 @@ class Body(Component):
     """
     Height is in feet, Weight in pounds
     """
-    def __init__(self, uid, bodypart_tree, name="", height=0, weight=0, outer_material_uid=None,
-                 inner_material_uid=None, structural_material_uid=None, blood_uid=None):
+    @abc.abstractclassmethod
+    def uid(self):
+        pass
+
+    @abc.abstractclassmethod
+    def name(self):
+        pass
+
+    @abc.abstractclassmethod
+    def template_bodypart_tree(self):
+        pass
+
+    @abc.abstractclassmethod
+    def base_height(self):
+        pass
+
+    @abc.abstractclassmethod
+    def base_weight(self):
+        pass
+
+    @abc.abstractclassmethod
+    def template_outer_material(self):
+        pass
+
+    @abc.abstractclassmethod
+    def template_inner_material(self):
+        pass
+
+    @abc.abstractclassmethod
+    def template_structural_material(self):
+        pass
+
+    @abc.abstractclassmethod
+    def template_blood(self):
+        pass
+
+    def __init__(self):
         super().__init__()
-        self.uid = uid
-        self.bodypart_tree = bodypart_tree
-        self.name = name
-        self.height = height
-        self.weight = weight
-        self.outer_material_uid = outer_material_uid
-        self.inner_material_uid = inner_material_uid
-        self.structural_material_uid = structural_material_uid
-        self.blood_uid = blood_uid
+        self.bodypart_tree = self.template_bodypart_tree.copy()
+        self.outer_material = self.template_outer_material.copy()
+        self.inner_material = self.template_inner_material.copy()
+        self.structural_material = self.template_structural_material.copy()
+        self.blood = self.template_blood.copy()
 
     def copy(self):
-        return Body(
-            uid=self.uid,
-            name=self.name,
-            bodypart_tree=self.bodypart_tree.copy(),
-            height=self.height,
-            weight=self.weight,
-            outer_material_uid=self.outer_material_uid,
-            inner_material_uid=self.inner_material_uid,
-            structural_material_uid=self.structural_material_uid,
-            blood_uid=self.blood_uid,
-        )
+        return type(self)()
 
     def __str__(self):
         return "Body({})".format(self.name)
@@ -98,7 +118,7 @@ class Body(Component):
     def get_physical_abilities(self):
         abilities = {}
         for node in self.bodypart_tree.nodes:
-            for ability_name, ability_value in six.iteritems(node.instance.physical_abilities):
+            for ability_name, ability_value in node.instance.physical_abilities.iteritems():
                 if ability_name not in abilities:
                     abilities[ability_name] = ability_value
                 else:
