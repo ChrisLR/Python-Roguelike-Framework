@@ -26,3 +26,4 @@ class Location(Component):
 
     def get_local_coords(self):
         return self.local_x, self.local_y
+

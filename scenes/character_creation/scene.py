@@ -13,7 +13,7 @@ from components.needs import Needs
 from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.needs import hunger, thirst
-from data.python_templates.outfits import starter_warrior, starter_thief
+from data.python_templates.outfits import starter_warrior, starter_thief, starter_ranger
 from data.python_templates.races import race_templates
 from scenes.game.scene import GameScene
 from ui.controls.validatedintstepperview import ValidatedIntStepperView
@@ -157,8 +157,10 @@ class CharacterCreationScene(UIScene):
         # TODO We will need a much better way to assign outfits.
         if self.character_class.uid.lower() == "thief":
             starter_thief.apply(player)
-        else:
+        elif self.character_class.uid.lower() == "warrior":
             starter_warrior.apply(player)
+        elif self.character_class.uid.lower() == "ranger":
+            starter_ranger.apply(player)
         player.is_player = True
         self.director.replace_scene(GameScene(self.game_context))
 

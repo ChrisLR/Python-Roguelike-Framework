@@ -1,7 +1,7 @@
-from combat.finishers.base import Finisher
 from combat import attacks
-from combat.enums import DamageType
+from combat.finishers.base import Finisher
 from echo import functions
+from util import gridhelpers
 
 
 class ChokePunch(Finisher):
@@ -15,8 +15,9 @@ class ChokePunch(Finisher):
 
     @classmethod
     def evaluate(cls, attack_result):
-        if attack_result.attack_used == attacks.Punch:
-            return True
+        if attack_result.context.distance_to <= 1:
+            if attack_result.context.attack_used == attacks.Punch:
+                return True
         return False
 
     @classmethod
@@ -25,17 +26,17 @@ class ChokePunch(Finisher):
 
     @classmethod
     def get_message(cls, attack_result):
-        defender = attack_result.target_object
-        if attack_result.attacker.is_player:
+        defender = attack_result.context.defender
+        if attack_result.context.attacker.is_player:
             return cls.attacker_message.format(
                 defender_his=functions.his_her_it(defender),
                 defender_him=functions.him_her_it(defender),
             )
         else:
             return cls.observer_message.format(
-                attacker=functions.get_name_or_string(attack_result.attacker),
+                attacker=functions.get_name_or_string(attack_result.context.attacker),
                 defender_his=functions.his_her_it(defender),
-                attacker_his=functions.his_her_it(attack_result.attacker),
-                attacker_he=functions.he_her_it(attack_result.attacker),
+                attacker_his=functions.his_her_it(attack_result.context.attacker),
+                attacker_he=functions.he_her_it(attack_result.context.attacker),
                 defender_him=functions.him_her_it(defender)
             )

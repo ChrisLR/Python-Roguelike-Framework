@@ -1,4 +1,6 @@
 import abc
+from util import check_roller
+from combat import AttackResult
 
 
 class Attack(object):
@@ -17,5 +19,23 @@ class Attack(object):
         pass
 
     @abc.abstractclassmethod
-    def execute(cls, actor, target):
+    def can_execute(cls, attack_context):
         pass
+
+    @abc.abstractclassmethod
+    def execute(cls, attack_context):
+        pass
+
+    @classmethod
+    def make_hit_roll(cls, attack_context, hit_modifier):
+        success, critical, natural_roll, total_hit_roll = check_roller.d20_check_roll(
+            difficulty_class=attack_context.defender_ac,
+            modifiers=hit_modifier
+        )
+        return AttackResult(
+            success=success,
+            critical=critical,
+            context=attack_context,
+            natural_roll=natural_roll,
+            total_hit_roll=total_hit_roll,
+        )

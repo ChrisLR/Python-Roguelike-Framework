@@ -11,7 +11,7 @@ class ArmorAbsorb(Defense):
 
     @classmethod
     def evaluate(cls, attack_result):
-        defender = attack_result.target_object
+        defender = attack_result.context.defender
         effective_dex_modifier = defender.get_effective_dex_modifier()
         shield_modifier = defender.get_shield_modifiers()
         minimum_ac = 10 + effective_dex_modifier + shield_modifier
@@ -27,22 +27,25 @@ class ArmorAbsorb(Defense):
 
     @classmethod
     def get_message(cls, attack_result):
-        defender = attack_result.target_object
+        attacker = attack_result.context.attacker
+        defender = attack_result.context.defender
+        attacker_weapon = attack_result.context.attacker_weapon
+
         body_part_hit = attack_result.body_part_hit
         defender_armor = defender.equipment.worn_equipment_map.get(body_part_hit.instance)
         if defender_armor:
             defender_armor = defender_armor[0]
 
-        if attack_result.attacker.is_player:
+        if attacker.is_player:
             return cls.attacker_message.format(
-                defender_his=functions.his_her_it(attack_result.target_object),
+                defender_his=functions.his_her_it(defender),
                 defender_armor=defender_armor.name if defender_armor else "armor",
-                attacker_weapon=functions.get_name_or_string(attack_result.attacker_weapon)
+                attacker_weapon=functions.get_name_or_string(attacker_weapon)
             )
         else:
             return cls.observer_message.format(
-                attacker_his=functions.his_her_it(attack_result.attacker),
+                attacker_his=functions.his_her_it(attacker),
                 defender_his=functions.his_her_it(defender),
                 defender_armor=defender_armor.name if defender_armor else "armor",
-                attacker_weapon=functions.get_name_or_string(attack_result.attacker_weapon)
+                attacker_weapon=functions.get_name_or_string(attacker_weapon)
             )

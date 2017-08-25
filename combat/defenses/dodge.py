@@ -12,7 +12,7 @@ class Dodge(Defense):
     @classmethod
     def evaluate(cls, attack_result):
         minimum_ac = 10
-        maximum_ac = minimum_ac + attack_result.target_object.get_effective_dex_modifier()
+        maximum_ac = minimum_ac + attack_result.context.defender.get_effective_dex_modifier()
 
         if minimum_ac <= attack_result.total_hit_roll <= maximum_ac:
             return True
@@ -24,12 +24,15 @@ class Dodge(Defense):
 
     @classmethod
     def get_message(cls, attack_result):
-        if attack_result.attacker.is_player:
+        attacker = attack_result.context.attacker
+        defender = attack_result.context.defender
+
+        if attacker.is_player:
             return cls.attacker_message.format(
-                defender_his=functions.his_her_it(attack_result.target_object)
+                defender_his=functions.his_her_it(defender)
             )
         else:
             return cls.observer_message.format(
-                attacker_his=functions.his_her_it(attack_result.attacker),
-                defender_he=functions.he_her_it(attack_result.target_object)
+                attacker_his=functions.his_her_it(attacker),
+                defender_he=functions.he_her_it(defender)
             )

@@ -13,13 +13,13 @@ class Parry(Defense):
 
     @classmethod
     def evaluate(cls, attack_result):
-        defender_equipment = attack_result.target_object.equipment
+        defender_equipment = attack_result.context.defender.equipment
         if defender_equipment:
             if not defender_equipment.get_wielded_items():
                 return False
 
         minimum_ac = 10
-        maximum_ac = minimum_ac + attack_result.target_object.get_effective_dex_modifier()
+        maximum_ac = minimum_ac + attack_result.context.defender.get_effective_dex_modifier()
 
         if minimum_ac <= attack_result.total_hit_roll <= maximum_ac:
             return True
@@ -33,7 +33,7 @@ class Parry(Defense):
     def get_message(cls, attack_result):
         wielded_items = attack_result.target_object.equipment.get_wielded_items()
         parry_weapon = random.choice(wielded_items)
-        if attack_result.attacker.is_player:
+        if attack_result.context.attacker.is_player:
             return cls.attacker_message.format(
                 defender_weapon=functions.get_name_or_string(parry_weapon)
             )

@@ -1,26 +1,31 @@
 import random
 
-from combat import enums as combat_enums
+import echo.functions
 from combat import attacks
 from combat import defenses
+from combat import enums as combat_enums
 from combat import finishers
-from echo.contexts import Context
-from stats.enums import StatsEnum
+from combat.attackcontext import AttackContext
 from managers.echo import EchoService
-import echo.functions
+from stats.enums import StatsEnum
 from util.colors import Colors
-
 
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch)
+all_ranged_attacks = (attacks.FireWeapon, attacks.ThrowWeapon)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
 all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)
 
 
-def choose_attack(attacker, defender):
-    possible_attacks = [attack for attack in all_attacks if attack.can_execute(attacker, defender)]
+def choose_attack(attack_context):
+    if attack_context.ranged:
+        possible_attacks = [attack for attack in all_ranged_attacks
+                            if attack.can_execute(attack_context)]
+    else:
+        possible_attacks = [attack for attack in all_attacks
+                            if attack.can_execute(attack_context)]
 
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs
@@ -37,18 +42,26 @@ def choose_defense(attack_result):
     return random.choice(possible_defenses)
 
 
-def execute_combat_round(attacker, defender):
+def execute_combat_round(attacker, defender, attack_context=None):
     """
     This is meant to be the "round" when you walk into someone.
     """
+    if not attack_context:
+        attack_context = AttackContext(
+            attacker=attacker,
+            defender=defender,
+        )
     # Prepare attack
-    attack_template = choose_attack(attacker, defender)
+    attack_template = choose_attack(attack_context)
     if not attack_template:
         return
 
-    attack_results = attack_template.execute(attacker, defender)
+    attack_results = attack_template.execute(attack_context)
+    if not attack_results:
+        return
+
     for attack_result in attack_results:
-        attack_result.attack_used = attack_template
+        attack_result.context.attack_used = attack_template
         threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
         death = False
@@ -99,13 +112,14 @@ def take_damage(actor, attack_result):
     # check for death. if there's a death function, call it
     if actor.stats.get_current_value(StatsEnum.Health) <= 0:
         is_killing_blow = True
-        if random.randint(0, 10) <= 10:
-            is_finisher = True
+        if random.randint(0, 100) <= 10:
             # Here, instead of displaying the damage, we try to execute a finisher.
             possible_finishers = [finisher for finisher in all_finishers if finisher.evaluate(attack_result)]
-            finisher = random.choice(possible_finishers)
-            damage_string = finisher.execute(attack_result)
-            return damage_string, is_killing_blow, is_finisher
+            if possible_finishers:
+                is_finisher = True
+                finisher = random.choice(possible_finishers)
+                damage_string = finisher.execute(attack_result)
+                return damage_string, is_killing_blow, is_finisher
         return damage_string, is_killing_blow, is_finisher
     return damage_string, is_killing_blow, is_finisher
 

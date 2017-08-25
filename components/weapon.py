@@ -1,5 +1,5 @@
-from components.component import Component
 from combat.enums import DamageType
+from components.component import Component
 from util.dice import DiceStack, Dice
 
 
@@ -9,7 +9,7 @@ class Weapon(Component):
     def __init__(self, weapon_category, weapon_type, size, ammunition_uid=None, finesse=False,
                  loading=False, normal_range=0, long_range=0, reach=False, thrown=False, two_handed=False,
                  light=False, melee_damage_type=DamageType.Blunt, ranged_damage_type=None,
-                 damage_dice=DiceStack(1, Dice(1))):
+                 melee_damage_dice=DiceStack(1, Dice(1)), ranged_damage_dice=DiceStack(1, Dice(1))):
         super().__init__()
         self.weapon_category = weapon_category
         self.weapon_type = weapon_type
@@ -24,13 +24,14 @@ class Weapon(Component):
         self.two_handed = two_handed
         self.melee_damage_type = melee_damage_type
         self.ranged_damage_type = ranged_damage_type
-        self.damage_dice = damage_dice
+        self.melee_damage_dice = melee_damage_dice
         self.light = light
+        self.ranged_damage_dice = ranged_damage_dice
 
     def copy(self):
         return Weapon(
             ammunition_uid=self.ammunition_uid,
-            damage_dice=self.damage_dice,
+            melee_damage_dice=self.melee_damage_dice,
             finesse=self.finesse,
             loading=self.loading,
             long_range=self.long_range,
@@ -38,6 +39,7 @@ class Weapon(Component):
             melee_damage_type=self.melee_damage_type,
             normal_range=self.normal_range,
             ranged_damage_type=self.ranged_damage_type,
+            ranged_damage_dice=self.ranged_damage_dice,
             size=self.size,
             thrown=self.thrown,
             two_handed=self.two_handed,
