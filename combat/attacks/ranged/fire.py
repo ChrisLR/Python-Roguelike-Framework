@@ -1,12 +1,12 @@
-from combat.attacks.ranged.base import RangedAttack
 from combat import targets
-from combat.enums import DamageType
 from combat.attackresult import AttackResult
+from combat.attacks.ranged.base import RangedAttack
+from combat.enums import DamageType
+from echo import functions
+from managers.echo import EchoService
 from stats.enums import StatsEnum
 from util import check_roller
 from util.dice import DiceStack, Dice
-from echo import functions
-from managers.echo import EchoService
 
 
 class FireWeapon(RangedAttack):

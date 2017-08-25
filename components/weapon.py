@@ -1,5 +1,5 @@
-from components.component import Component
 from combat.enums import DamageType
+from components.component import Component
 from util.dice import DiceStack, Dice
 
 

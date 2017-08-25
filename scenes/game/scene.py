@@ -1,12 +1,15 @@
 import logging
+import random
 
 from bearlibterminal import terminal
 from clubsandwich.ui import LayoutOptions
 from clubsandwich.ui import UIScene, ScrollingTextView, WindowView
-import random
+
 import settings
 from areas.level import Level
 from characters import actions
+from combat import AttackContext
+from combat.attacks.ranged.base import RangedAttack
 from data.python_templates.characters import character_templates
 from data.python_templates.items import item_templates
 from generators import dungeon_generator, forest_generator
@@ -14,11 +17,6 @@ from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from scenes.game.windows import GameWindow, ItemQueryWindow, InventoryWindow, HudWindow
 from util.cursor import Cursor
-import functools
-from combat.attacks.ranged.base import RangedAttack
-from combat import AttackContext
-import math
-
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
