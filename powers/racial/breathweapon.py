@@ -1,9 +1,8 @@
-
 from enum import Enum
 
-from powers.racial.base import RacialPower
-from combat.targets import Beam, Cone
 from combat.enums import DamageType
+from combat.targets import Beam, Cone
+from powers.racial.base import RacialPower
 
 
 class BreathWeapon(RacialPower):

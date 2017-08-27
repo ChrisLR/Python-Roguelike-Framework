@@ -51,3 +51,7 @@ class Race(object):
     @abc.abstractclassmethod
     def body(self):
         pass
+
+    @abc.abstractclassmethod
+    def racial_powers(self):
+        pass
