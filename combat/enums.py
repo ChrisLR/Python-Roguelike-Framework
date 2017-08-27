@@ -2,9 +2,14 @@ from enum import Enum
 
 
 class DamageType(Enum):
-    Blunt = 0
-    Slash = 1
-    Pierce = 2
+    Blunt = "blunt"
+    Slash = "slash"
+    Pierce = "pierce"
+    Acid = "acid"
+    Cold = "cold"
+    Fire = "fire"
+    Lightning = "lightning"
+    Poison = "poison"
 
 
 class ThreatLevel(Enum):

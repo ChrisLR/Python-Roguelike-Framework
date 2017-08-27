@@ -15,3 +15,4 @@ class PhysicalAbilities(Enum):
     LIVE = 10
     BREATHE = 11
     SMELL = 12
+    CLAW = 13

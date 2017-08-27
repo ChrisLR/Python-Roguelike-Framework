@@ -11,6 +11,7 @@ Leather = Material('leather', 'Leather', hardness=0.1, sharpness=0, potency=0.2,
 StuddedLeather = Material('studded_leather', 'Studded Leather', hardness=0.2, sharpness=0, potency=0.2, weight=1.3, value=4.5)
 Wood = Material('wood', 'Wood', hardness=0.3, sharpness=0.4, potency=0.5, weight=3, value=0.5)
 Scale = Material('scale', 'Scale', hardness=0.4, sharpness=0.5, potency=0.4, weight=4.5, value=5)
+DragonScale = Material('dragonscale', 'DragonScale', hardness=0.5, sharpness=0.5, potency=0.5, weight=4, value=200)
 Bone = Material('bone', 'Bone', hardness=0.5, sharpness=0.5, potency=0.5, weight=5, value=1)
 Stone = Material('stone', 'Stone', hardness=0.5, sharpness=0.2, potency=0.1, weight=6, value=0.1)
 Silver = Material('silver', 'Silver', hardness=0.5, sharpness=0.5, potency=1, weight=6, value=125)
