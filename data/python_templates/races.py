@@ -20,7 +20,7 @@ def build_orc_race():
     orc_level_tree.abilities_modifiers = {
         1: [Ability(PowerAbilities.Berserk, 1)]
     }
-    orc_race = Race("orc", "Orc", orc_level_tree, "humanoid")
+    orc_race = Race("orc", "Orc", orc_level_tree, "orcish")
 
     return orc_race
 
@@ -38,14 +38,14 @@ def build_troll_race():
     troll_level_tree.abilities_modifiers = {
         1: [Ability(PowerAbilities.Regeneration, 1)]
     }
-    troll_race = Race("troll", "Troll", troll_level_tree, "humanoid")
+    troll_race = Race("troll", "Troll", troll_level_tree, "trollish")
 
     return troll_race
 
 
 def build_human_race():
     human_level_tree = LevelTree()
-    human_race = Race("human", "Human", human_level_tree, "humanoid")
+    human_race = Race("human", "Human", human_level_tree, "human")
 
     return human_race
 
