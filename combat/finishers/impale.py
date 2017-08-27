@@ -45,9 +45,9 @@ class Impale(Finisher):
                 attacker_weapon=attacker_weapon.name
             )
 
-        if defender.body.blood_uid:
+        if defender.body.blood:
             message += " splashing {blood} behind {defender_him}!!\n".format(
-                blood=defender.body.blood_uid,
+                blood=defender.body.blood.name,
                 defender_him=functions.him_her_it(defender)
             )
 

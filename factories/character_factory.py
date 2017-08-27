@@ -1,4 +1,6 @@
+from bodies import body_listing
 from characters.character import Character
+from components.body import Body
 from components.display import Display
 from components.effects import Effects
 from components.inventory import Inventory
@@ -42,7 +44,8 @@ class CharacterFactory(object):
             character_race=self.get_race_template_by_uid(race_uid).copy(),
             stats=stats,
             display=Display((255, 255, 255), (0, 0, 0), "@"),
-            body=self.factory_service.build_body_instance_by_uid(body_uid),
+            # TODO This is temporary, we will change this with a race refactor.
+            body=next((body for body in body_listing if body.uid == body_uid))(),
             inventory=Inventory()
         )
         health_base = new_instance.character_class.hit_die

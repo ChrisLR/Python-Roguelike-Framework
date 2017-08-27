@@ -150,7 +150,7 @@ class CharacterCreationScene(UIScene):
             race_uid=self.race.uid,
             stats=make_character_stats(
                 **{uid.lower(): value for uid, value in self.stats.items()}),
-            body_uid="humanoid"
+            body_uid=self.race.body_template_uid
         )
         player = self.game_context.player
         player.register_component(Needs.create_standard(1, 100, hunger, thirst))

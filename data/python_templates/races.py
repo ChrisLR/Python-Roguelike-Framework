@@ -20,7 +20,7 @@ def build_orc_race():
     orc_level_tree.abilities_modifiers = {
         1: [Ability(PowerAbilities.Berserk, 1)]
     }
-    orc_race = Race("orc", "Orc", orc_level_tree, "humanoid")
+    orc_race = Race("orc", "Orc", orc_level_tree, "orcish")
 
     return orc_race
 
@@ -38,23 +38,41 @@ def build_troll_race():
     troll_level_tree.abilities_modifiers = {
         1: [Ability(PowerAbilities.Regeneration, 1)]
     }
-    troll_race = Race("troll", "Troll", troll_level_tree, "humanoid")
+    troll_race = Race("troll", "Troll", troll_level_tree, "trollish")
 
     return troll_race
 
 
 def build_human_race():
     human_level_tree = LevelTree()
-    human_race = Race("human", "Human", human_level_tree, "humanoid")
+    human_race = Race("human", "Human", human_level_tree, "human")
 
     return human_race
+
+
+def build_dog_race():
+    dog_level_tree = LevelTree()
+    dog_race = Race("dog", "Dog", dog_level_tree, "dog")
+
+    return dog_race
+
+
+def build_wolf_race():
+    wolf_level_tree = LevelTree()
+    wolf_race = Race("wolf", "Wolf", wolf_level_tree, "wolf")
+
+    return wolf_race
 
 human_race = build_human_race()
 orc_race = build_orc_race()
 troll_race = build_troll_race()
+dog_race = build_dog_race()
+wolf_race = build_wolf_race()
 
 race_templates = {
     human_race.uid: human_race,
     orc_race.uid: orc_race,
-    troll_race.uid: troll_race
+    troll_race.uid: troll_race,
+    dog_race.uid: dog_race,
+    wolf_race.uid: wolf_race,
 }

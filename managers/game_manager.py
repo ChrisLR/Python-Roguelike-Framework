@@ -3,7 +3,6 @@ from bearlibterminal import terminal
 from scenes.main_menu.scene import MainMenuScene
 
 from managers.game_context import GameContext
-from factories.body_factory import BodyFactory
 from factories.character_factory import CharacterFactory
 from factories.factory_service import FactoryService
 from factories.item_factory import ItemFactory
@@ -41,12 +40,11 @@ class GameManager(object):
         """
         This is where the game templates / data is loaded.
         """
-        self.game_context.factory_service = FactoryService(body_factory=BodyFactory())
+        self.game_context.factory_service = FactoryService()
         factory_service = self.game_context.factory_service
         character_factory = CharacterFactory(factory_service=self.game_context.factory_service)
         factory_service.character_factory = character_factory
         self.game_context.character_factory = character_factory
-        self.game_context.body_factory = factory_service.body_factory
         self.game_context.item_factory = ItemFactory()
 
 
@@ -61,4 +59,3 @@ class MainLoop(DirectorLoop):
     def terminal_init(self):
         super().terminal_init()
         terminal.set("window: title='Python Roguelike Template', size=120x50;")
-

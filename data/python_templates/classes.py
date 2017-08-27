@@ -30,12 +30,20 @@ def build_ranger_class():
     return CharacterClass('ranger', 'Ranger', ranger_level_tree, hit_die=10)
 
 
+def build_canid_class():
+    canid_level_tree = LevelTree()
+
+    return CharacterClass('canid', 'Canid', canid_level_tree, hit_die=8)
+
+
 warrior_class = build_warrior_class()
 thief_class = build_thief_class()
 ranger_class = build_ranger_class()
+canid_class = build_canid_class()
 
 character_class_templates = {
     warrior_class.uid: warrior_class,
     thief_class.uid: thief_class,
     ranger_class.uid: ranger_class,
+    canid_class.uid: canid_class
 }

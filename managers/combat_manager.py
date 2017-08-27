@@ -13,7 +13,7 @@ from util.colors import Colors
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
-all_attacks = (attacks.MeleeAttack, attacks.Punch)
+all_attacks = (attacks.MeleeAttack, attacks.Punch, attacks.Bite)
 all_ranged_attacks = (attacks.FireWeapon, attacks.ThrowWeapon)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
 all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)
@@ -97,7 +97,10 @@ def take_damage(actor, attack_result):
 
     for damage, damage_type in attack_result.separated_damage:
         if damage > 0:
-            wound_strings.append(describe_wounds(damage_type))
+            if attack_result.damage_message:
+                wound_strings.append(attack_result.damage_message)
+            else:
+                wound_strings.append(describe_wounds(damage_type))
             actor.stats.modify_core_current_value(StatsEnum.Health, -damage)
 
     damage_string += ",".join(wound_strings)

@@ -32,7 +32,7 @@ class ArmorAbsorb(Defense):
         attacker_weapon = attack_result.context.attacker_weapon
 
         body_part_hit = attack_result.body_part_hit
-        defender_armor = defender.equipment.worn_equipment_map.get(body_part_hit.instance)
+        defender_armor = defender.equipment.worn_equipment_map.get(body_part_hit)
         if defender_armor:
             defender_armor = defender_armor[0]
 
