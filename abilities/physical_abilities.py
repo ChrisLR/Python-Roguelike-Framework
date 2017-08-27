@@ -14,3 +14,4 @@ class PhysicalAbilities(Enum):
     MOVE = 9
     LIVE = 10
     BREATHE = 11
+    SMELL = 12

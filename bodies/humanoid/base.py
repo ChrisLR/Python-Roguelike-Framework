@@ -28,6 +28,7 @@ class HumanoidBody(Body):
     template_right_ear = bodyparts.HumanoidEar
     template_mouth = bodyparts.HumanoidMouth
     template_teeth = bodyparts.HumanoidTeeth
+    template_nose = bodyparts.HumanoidNose
 
     template_left_arm = bodyparts.HumanoidArm
     template_left_hand = bodyparts.HumanoidHand
@@ -53,6 +54,7 @@ class HumanoidBody(Body):
         self.right_ear = self.template_right_ear(self.name, "left", attached_to=self.head)
         self.mouth = self.template_mouth(self.name, "", inserted_in=self.head)
         self.teeth = self.template_teeth(self.name, "", inserted_in=self.mouth)
+        self.nose = self.template_nose(self.name, "", attached_to=self.head)
 
         self.left_arm = self.template_left_arm(self.name, "left", attached_to=self.torso)
         self.left_hand = self.template_left_hand(self.name, "left", attached_to=self.left_arm)
@@ -68,6 +70,7 @@ class HumanoidBody(Body):
             (
                 self.torso, self.heart, self.lungs,
                 self.neck, self.head, self.brain,
+                self.nose, self.left_ear, self.right_ear,
                 self.left_eye, self.right_eye,
                 self.left_arm, self.left_hand,
                 self.right_arm, self.right_hand,

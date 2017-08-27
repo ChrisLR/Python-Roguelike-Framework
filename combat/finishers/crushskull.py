@@ -31,7 +31,7 @@ class CrushSkull(Finisher):
 
     @classmethod
     def get_message(cls, attack_result):
-        defender = attack_result.target_object
+        defender = attack_result.defender
         if attack_result.context.attacker.is_player:
             return cls.attacker_message.format(
                 attacker_weapon=functions.get_name_or_string(attack_result.context.attacker_weapon),

@@ -63,14 +63,21 @@ class HumanoidEar(base.Ear):
     uid = "humanoid_ear"
     relative_size = 5
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.SEE: 1}
+    physical_abilities = {PhysicalAbilities.HEAR: 1}
 
 
 class HumanoidMouth(base.Mouth):
     uid = "humanoid_mouth"
     relative_size = 5
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.EAT: 1}
+    physical_abilities = {PhysicalAbilities.EAT: 1, PhysicalAbilities.BREATHE: 1}
+
+
+class HumanoidNose(base.Mouth):
+    uid = "humanoid_nose"
+    relative_size = 5
+    threat_level = ThreatLevel.Minor
+    physical_abilities = {PhysicalAbilities.SMELL: 1, PhysicalAbilities.BREATHE: 1}
 
 
 class HumanoidBrain(base.Brain):

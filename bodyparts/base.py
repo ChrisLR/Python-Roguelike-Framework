@@ -109,6 +109,12 @@ class Mouth(BodyPart):
 
 
 # noinspection PyAbstractClass
+class Muzzle(BodyPart):
+    __metaclass__ = abc.ABCMeta
+    base_name = "muzzle"
+
+
+# noinspection PyAbstractClass
 class Brain(BodyPart):
     __metaclass__ = abc.ABCMeta
     base_name = "brain"
@@ -130,3 +136,15 @@ class Lungs(BodyPart):
 class Teeth(BodyPart):
     __metaclass__ = abc.ABCMeta
     base_name = "teeth"
+
+
+# noinspection PyAbstractClass
+class Nose(BodyPart):
+    __metaclass__ = abc.ABCMeta
+    base_name = "nose"
+
+
+# noinspection PyAbstractClass
+class Tail(BodyPart):
+    __metaclass__ = abc.ABCMeta
+    base_name = "tail"
