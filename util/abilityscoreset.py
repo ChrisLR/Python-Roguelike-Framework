@@ -8,3 +8,14 @@ class AbilityScoreSet(object):
         self.intelligence = intelligence
         self.wisdom = wisdom
         self.charisma = charisma
+
+    @classmethod
+    def set_all(cls, value):
+        return AbilityScoreSet(
+            strength=value,
+            dexterity=value,
+            constitution=value,
+            intelligence=value,
+            wisdom=value,
+            charisma=value
+        )

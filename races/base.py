@@ -41,7 +41,7 @@ class Race(object):
         pass
 
     @abc.abstractclassmethod
-    def skill_proficiencies(self):
+    def racial_proficiencies(self):
         pass
 
     @abc.abstractclassmethod

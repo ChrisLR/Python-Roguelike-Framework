@@ -7,6 +7,7 @@ from components.material import Material
 Skin = Material('skin', 'Skin', hardness=0, sharpness=0, potency=0.2, weight=0.1, value=0)
 Flesh = Material('flesh', 'Flesh', hardness=0, sharpness=0, potency=0.2, weight=0.15, value=0)
 Fur = Material('fur', 'Fur', hardness=0.1, sharpness=0, potency=0.2, weight=1, value=1)
+Hide = Material('fur', 'Fur', hardness=0.2, sharpness=0, potency=0.1, weight=2, value=1)
 Leather = Material('leather', 'Leather', hardness=0.1, sharpness=0, potency=0.2, weight=1, value=1)
 StuddedLeather = Material('studded_leather', 'Studded Leather', hardness=0.2, sharpness=0, potency=0.2, weight=1.3, value=4.5)
 Wood = Material('wood', 'Wood', hardness=0.3, sharpness=0.4, potency=0.5, weight=3, value=0.5)

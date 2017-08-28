@@ -20,7 +20,7 @@ class Dragonborn(Race):
     average_height = 6
     average_weight = 250
     known_languages = (languages.Common, languages.Draconic)
-    skill_proficiencies = None
+    racial_proficiencies = None
     body = bodies.DraconianBody
     racial_powers = []
 

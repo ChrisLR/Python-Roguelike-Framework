@@ -19,5 +19,18 @@ class Common(Language):
 
 
 class Draconic(Language):
-    uid = "common"
+    uid = "draconic"
     name = "Draconic"
+
+
+class Orcish(Language):
+    uid = "orcish"
+    name = "Orcish"
+
+
+class Giant(Language):
+    uid = "giant"
+    name = "Giant"
+
+
+listing = [Common, Draconic, Orcish, Giant]
