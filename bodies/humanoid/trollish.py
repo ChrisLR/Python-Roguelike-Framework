@@ -9,5 +9,6 @@ class TrollishBody(HumanoidBody):
 
     template_outer_material = material.Hide
 
-    template_left_hand =
-    template_right_hand =
+    template_left_hand = bodyparts.TrollishHand
+    template_right_hand = bodyparts.TrollishHand
+    template_teeth = bodyparts.TrollishFangs
