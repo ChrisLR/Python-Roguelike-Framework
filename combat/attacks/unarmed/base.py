@@ -1,11 +1,10 @@
-from abilities.physical_abilities import PhysicalAbilities
+import abilities
 from combat import targets
-from combat.attackresult import AttackResult
 from combat.attacks.base import Attack
 from combat.enums import DamageType
 from echo import functions
 from stats.enums import StatsEnum
-from util import check_roller, gridhelpers
+from util import check_roller
 from util.dice import Dice, DiceStack
 
 
@@ -23,8 +22,8 @@ class Punch(Attack):
         if attack_context.distance_to <= 1:
             attacker_body = attacker.body
             if attacker_body:
-                return any([ability for ability in attacker_body.get_physical_abilities().keys()
-                            if ability == PhysicalAbilities.PUNCH])
+                return any([ability for ability in attacker_body.get_physical_abilities()
+                            if isinstance(ability, abilities.Punch)])
         return False
 
     @classmethod

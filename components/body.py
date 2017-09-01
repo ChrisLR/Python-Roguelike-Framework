@@ -1,4 +1,5 @@
 import abc
+import copy
 import logging
 import random
 
@@ -105,11 +106,22 @@ class Body(Component):
             if not bodypart.physical_abilities:
                 continue
 
-            for ability_name, ability_value in bodypart.physical_abilities.items():
-                if ability_name not in abilities:
-                    abilities[ability_name] = ability_value
+            for ability in bodypart.physical_abilities:
+                if ability.name not in abilities:
+                    abilities[ability.name] = ability
                 else:
-                    if abilities[ability_name] < ability_value:
-                        abilities[ability_name] = ability_value
+                    if ability.is_stackable:
+                        joint_ability = copy.copy(ability)
+                        joint_ability.value += abilities.pop(ability.name).value
+                        abilities[ability.name] = joint_ability
+
+                    if abilities[ability.name].value < ability.value:
+                        abilities[ability.name] = ability
 
         return abilities
+
+    def get_ability(self, ability_type, minimum_value=0):
+        abilities = self.get_physical_abilities()
+        ability = abilities.get(ability_type.name, None)
+        if ability and ability.value > minimum_value:
+            return ability
