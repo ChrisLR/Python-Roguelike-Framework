@@ -98,7 +98,7 @@ class HumanoidLungs(base.Lungs):
     uid = "humanoid_lungs"
     relative_size = 25
     threat_level = ThreatLevel.Fatal
-    physical_abilities = {abilities.Breathe}
+    physical_abilities = {abilities.Breathe(1)}
 
 
 class HumanoidTeeth(base.Teeth):

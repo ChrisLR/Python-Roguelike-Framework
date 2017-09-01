@@ -29,3 +29,6 @@ class Ability(object):
 
     def __init__(self, value):
         self.value = value
+
+    def __hash__(self):
+        return hash(type(self))

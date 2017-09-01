@@ -18,12 +18,12 @@ class Claw(PhysicalAbility):
 
 
 class Kick(PhysicalAbility):
-    name = "Bite"
+    name = "Kick"
     is_passive = True
     is_stackable = False
 
 
 class Punch(PhysicalAbility):
-    name = "Bite"
+    name = "Punch"
     is_passive = True
     is_stackable = False

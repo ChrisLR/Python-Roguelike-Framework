@@ -9,6 +9,15 @@ class Dice(object):
         pass
 
 
+class CustomDice(Dice):
+    @property
+    def sides(self):
+        return self._sides
+
+    def __init__(self, sides):
+        self._sides = sides
+
+
 class D1(Dice):
     sides = 1
 

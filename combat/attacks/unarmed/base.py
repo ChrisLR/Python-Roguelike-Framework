@@ -4,8 +4,7 @@ from combat.attacks.base import Attack
 from combat.enums import DamageType
 from echo import functions
 from stats.enums import StatsEnum
-from util import check_roller
-from util.dice import Dice, DiceStack
+from util import check_roller, dice
 
 
 class Punch(Attack):
@@ -22,8 +21,7 @@ class Punch(Attack):
         if attack_context.distance_to <= 1:
             attacker_body = attacker.body
             if attacker_body:
-                return any([ability for ability in attacker_body.get_physical_abilities()
-                            if isinstance(ability, abilities.Punch)])
+                return bool(attacker_body.get_ability(abilities.Punch))
         return False
 
     @classmethod
@@ -54,7 +52,7 @@ class Punch(Attack):
 
     @classmethod
     def get_melee_damage_dice(cls, actor):
-        return DiceStack(1, Dice(actor.stats.get_current_value(StatsEnum.Size) - 1))
+        return dice.DiceStack(1, dice.CustomDice(actor.stats.get_current_value(StatsEnum.Size) - 1))
 
     @classmethod
     def get_message(cls, actor, target):

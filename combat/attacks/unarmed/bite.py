@@ -22,8 +22,7 @@ class Bite(Attack):
         if attack_context.distance_to <= 1:
             attacker_body = attacker.body
             if attacker_body:
-                return any([ability for ability in attacker_body.get_physical_abilities()
-                            if isinstance(ability, abilities.Bite) and ability.value >= 1])
+                return bool(attacker_body.get_ability(abilities.Bite, 1))
         return False
 
     @classmethod
@@ -54,11 +53,10 @@ class Bite(Attack):
         return attack_result
 
     @classmethod
-    def get_melee_damage_dice(cls, actor):
-        bite_ability = next((ability for ability in actor.body.get_physical_abilities()
-                             if key == PhysicalAbilities.BITE and ability >= 1))
+    def get_melee_damage_dice(cls, attacker):
+        bite_ability = attacker.body.get_ability(abilities.Bite, 1)
 
-        return DiceStack(bite_ability, dice.D4)
+        return dice.DiceStack(bite_ability.value, dice.D4)
 
     @classmethod
     def get_message(cls, actor, target):
