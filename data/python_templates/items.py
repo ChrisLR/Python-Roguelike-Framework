@@ -1,14 +1,14 @@
 import data.python_templates.material
 from combat.enums import DamageType
 from components.armor import Armor
-from components.weapon import Weapon
 from components.display import Display
 from components.stats import Stats
-from stats.enums import Size
-from items.item import Item
+from components.weapon import Weapon
 from items import enums as item_enums
+from items.item import Item
+from stats.enums import Size
+from util import dice
 from util.colors import Colors
-from util.dice import Dice, DiceStack
 
 
 def build_short_sword():
@@ -22,7 +22,7 @@ def build_short_sword():
     _short_sword.register_component(Stats(health=1, size=Size.Medium))
     _short_sword.register_component(
         Weapon(weapon_category=item_enums.WeaponCategory.Martial, weapon_type=item_enums.WeaponType.Melee,
-               size=Size.Small, melee_damage_type=DamageType.Pierce, melee_damage_dice=DiceStack(1, Dice(6)))
+               size=Size.Small, melee_damage_type=DamageType.Pierce, melee_damage_dice=dice.DiceStack(1, dice.D6))
     )
 
     return _short_sword
@@ -39,7 +39,7 @@ def build_long_sword():
     _long_sword.register_component(Stats(health=1, size=Size.Medium))
     _long_sword.register_component(
         Weapon(weapon_category=item_enums.WeaponCategory.Martial, weapon_type=item_enums.WeaponType.Melee,
-               size=Size.Medium, melee_damage_type=DamageType.Slash, melee_damage_dice=DiceStack(1, Dice(8)))
+               size=Size.Medium, melee_damage_type=DamageType.Slash, melee_damage_dice=dice.DiceStack(1, dice.D8))
     )
 
     return _long_sword
@@ -250,43 +250,15 @@ def build_longbow():
             weapon_type=item_enums.WeaponType.Ranged,
             size=Size.Medium,
             melee_damage_type=DamageType.Blunt,
-            melee_damage_dice=DiceStack(1, Dice(4)),
+            melee_damage_dice=dice.DiceStack(1, dice.D4),
             ammunition_uid="arrow",
             normal_range=150,
             long_range=600,
             two_handed=True,
             ranged_damage_type=DamageType.Pierce,
-            ranged_damage_dice=DiceStack(1, Dice(8))
+            ranged_damage_dice=dice.DiceStack(1, dice.D8)
         ),
 
-    )
-
-    return _longbow
-
-
-def build_longbow():
-    _longbow = Item(
-        uid="longbow",
-        name="Longbow",
-        description="A Longbow",
-        display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
-    )
-    _longbow.register_component(data.python_templates.material.Wood.copy())
-    _longbow.register_component(Stats(health=1, size=Size.Medium))
-    _longbow.register_component(
-        Weapon(
-            weapon_category=item_enums.WeaponCategory.Martial,
-            weapon_type=item_enums.WeaponType.Ranged,
-            size=Size.Medium,
-            melee_damage_type=DamageType.Blunt,
-            melee_damage_dice=DiceStack(1, Dice(4)),
-            ammunition_uid="arrow",
-            normal_range=150,
-            long_range=600,
-            two_handed=True,
-            ranged_damage_type=DamageType.Pierce,
-            ranged_damage_dice=DiceStack(1, Dice(8))
-        ),
     )
 
     return _longbow
@@ -307,11 +279,11 @@ def build_dagger():
             weapon_type=item_enums.WeaponType.Ranged,
             size=Size.Medium,
             melee_damage_type=DamageType.Pierce,
-            melee_damage_dice=DiceStack(1, Dice(4)),
+            melee_damage_dice=dice.DiceStack(1, dice.D4),
             normal_range=20,
             long_range=60,
             ranged_damage_type=DamageType.Pierce,
-            ranged_damage_dice=DiceStack(1, Dice(4)),
+            ranged_damage_dice=dice.DiceStack(1, dice.D4),
             finesse=True,
             light=True,
             thrown=True

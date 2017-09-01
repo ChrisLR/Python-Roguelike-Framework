@@ -1,11 +1,11 @@
-from abilities.physical_abilities import PhysicalAbilities
+import abilities
 from combat import targets
 from combat.attacks.base import Attack
 from combat.enums import DamageType
 from echo import functions
 from stats.enums import StatsEnum
 from util import check_roller
-from util.dice import Dice, DiceStack
+from util import dice
 
 
 class Bite(Attack):
@@ -22,8 +22,7 @@ class Bite(Attack):
         if attack_context.distance_to <= 1:
             attacker_body = attacker.body
             if attacker_body:
-                return any([ability for key, ability in attacker_body.get_physical_abilities().items()
-                            if key == PhysicalAbilities.BITE and ability >= 1])
+                return bool(attacker_body.get_ability(abilities.Bite, 1))
         return False
 
     @classmethod
@@ -54,11 +53,10 @@ class Bite(Attack):
         return attack_result
 
     @classmethod
-    def get_melee_damage_dice(cls, actor):
-        bite_ability = next((ability for key, ability in actor.body.get_physical_abilities().items()
-                             if key == PhysicalAbilities.BITE and ability >= 1))
+    def get_melee_damage_dice(cls, attacker):
+        bite_ability = attacker.body.get_ability(abilities.Bite, 1)
 
-        return DiceStack(bite_ability, Dice(4))
+        return dice.DiceStack(bite_ability.value, dice.D4)
 
     @classmethod
     def get_message(cls, actor, target):

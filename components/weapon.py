@@ -1,6 +1,6 @@
 from combat.enums import DamageType
 from components.component import Component
-from util.dice import DiceStack, Dice
+from util import dice
 
 
 class Weapon(Component):
@@ -9,7 +9,7 @@ class Weapon(Component):
     def __init__(self, weapon_category, weapon_type, size, ammunition_uid=None, finesse=False,
                  loading=False, normal_range=0, long_range=0, reach=False, thrown=False, two_handed=False,
                  light=False, melee_damage_type=DamageType.Blunt, ranged_damage_type=None,
-                 melee_damage_dice=DiceStack(1, Dice(1)), ranged_damage_dice=DiceStack(1, Dice(1))):
+                 melee_damage_dice=dice.DiceStack(1, dice.D1), ranged_damage_dice=dice.DiceStack(1, dice.D1)):
         super().__init__()
         self.weapon_category = weapon_category
         self.weapon_type = weapon_type
@@ -46,4 +46,3 @@ class Weapon(Component):
             weapon_category=self.weapon_category,
             weapon_type=self.weapon_type,
         )
-

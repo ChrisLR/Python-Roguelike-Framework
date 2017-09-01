@@ -12,3 +12,7 @@ class EchoService(object):
             self.console.add_lines(replaced_message + "\n")
         else:
             self.console.add_lines(message + "\n")
+
+    def player_echo(self, actor, message, context=None):
+        if actor.is_player:
+            self.echo(message, context)

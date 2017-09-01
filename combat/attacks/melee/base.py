@@ -113,7 +113,7 @@ class MeleeAttack(Attack):
         weapon = weapon_item.weapon
         if weapon:
             return weapon_item.weapon.melee_damage_dice
-        return DiceStack(1, Dice(4))
+        return DiceStack(1, dice.D4)
 
     @classmethod
     def get_melee_damage_type(cls, item):
