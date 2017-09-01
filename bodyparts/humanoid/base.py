@@ -1,6 +1,6 @@
+import abilities
 from bodyparts import base
 from combat.enums import ThreatLevel
-from abilities.physical_abilities import PhysicalAbilities
 
 
 class HumanoidHead(base.Head):
@@ -35,74 +35,74 @@ class HumanoidLeg(base.Leg):
     uid = "humanoid_leg"
     relative_size = 25
     threat_level = ThreatLevel.Major
-    physical_abilities = {PhysicalAbilities.STAND: 1, PhysicalAbilities.MOVE: 1}
+    physical_abilities = {abilities.Stand(1)}
 
 
 class HumanoidHand(base.Hand):
     uid = "humanoid_hand"
     relative_size = 10
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.GRASP: 1, PhysicalAbilities.PUNCH: 1}
+    physical_abilities = {abilities.Grasp(1), abilities.Punch(1)}
 
 
 class HumanoidFoot(base.Foot):
     uid = "humanoid_foot"
     relative_size = 10
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.STAND: 1, PhysicalAbilities.MOVE: 1}
+    physical_abilities = {abilities.Stand(1)}
 
 
 class HumanoidEye(base.Eye):
     uid = "humanoid_eye"
     relative_size = 5
     threat_level = ThreatLevel.Critical
-    physical_abilities = {PhysicalAbilities.SEE: 1}
+    physical_abilities = {abilities.See(1)}
 
 
 class HumanoidEar(base.Ear):
     uid = "humanoid_ear"
     relative_size = 5
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.HEAR: 1}
+    physical_abilities = {abilities.Hear(1)}
 
 
 class HumanoidMouth(base.Mouth):
     uid = "humanoid_mouth"
     relative_size = 5
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.EAT: 1, PhysicalAbilities.BREATHE: 1}
+    physical_abilities = {abilities.Eat(1), abilities.Breathe(1)}
 
 
 class HumanoidNose(base.Mouth):
     uid = "humanoid_nose"
     relative_size = 5
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.SMELL: 1, PhysicalAbilities.BREATHE: 1}
+    physical_abilities = {abilities.Smell(1), abilities.Breathe(1)}
 
 
 class HumanoidBrain(base.Brain):
     uid = "humanoid_brain"
     relative_size = 15
     threat_level = ThreatLevel.Fatal
-    physical_abilities = {PhysicalAbilities.THINK: 1}
+    physical_abilities = {abilities.Think(1)}
 
 
 class HumanoidHeart(base.Heart):
     uid = "humanoid_heart"
     relative_size = 25
     threat_level = ThreatLevel.Fatal
-    physical_abilities = {PhysicalAbilities.LIVE: 1}
+    physical_abilities = {}
 
 
 class HumanoidLungs(base.Lungs):
     uid = "humanoid_lungs"
     relative_size = 25
     threat_level = ThreatLevel.Fatal
-    physical_abilities = {PhysicalAbilities.BREATHE: 1}
+    physical_abilities = {abilities.Breathe}
 
 
 class HumanoidTeeth(base.Teeth):
     uid = "humanoid_teeth"
     relative_size = 5
     threat_level = ThreatLevel.Major
-    physical_abilities = {PhysicalAbilities.BITE: 0.5}
+    physical_abilities = {abilities.Bite(0.5)}

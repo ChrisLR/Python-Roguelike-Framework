@@ -1,13 +1,13 @@
 from bodyparts import base
 from combat.enums import ThreatLevel
-from abilities.physical_abilities import PhysicalAbilities
+import abilities
 
 
 class TrollishHand(base.Hand):
     uid = "trollish_hand"
     relative_size = 10
     threat_level = ThreatLevel.Minor
-    physical_abilities = {PhysicalAbilities.GRASP: 1, PhysicalAbilities.PUNCH: 1, PhysicalAbilities.CLAW: 1}
+    physical_abilities = {abilities.Grasp(1), abilities.Punch(1), abilities.Claw()}
 
 
 class TrollishFangs(base.Teeth):

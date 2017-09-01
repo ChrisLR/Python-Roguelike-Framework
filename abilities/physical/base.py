@@ -19,7 +19,7 @@ class PhysicalAbility(Ability):
 class Breathe(PhysicalAbility):
     name = "Breathe"
     is_passive = True
-    is_stackable = False
+    is_stackable = True
 
 
 class Eat(PhysicalAbility):
@@ -38,11 +38,3 @@ class Think(PhysicalAbility):
     name = "Think"
     is_passive = True
     is_stackable = True
-
-
-
-
-
-
-
-

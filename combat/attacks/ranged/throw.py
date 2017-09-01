@@ -72,7 +72,7 @@ class ThrowWeapon(RangedAttack):
         weapon = weapon_item.weapon
         if weapon:
             return weapon_item.weapon.ranged_damage_dice
-        return DiceStack(1, Dice(4))
+        return DiceStack(1, dice.D4)
 
     @classmethod
     def get_ranged_damage_type(cls, item):

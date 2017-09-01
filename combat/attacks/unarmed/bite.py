@@ -58,7 +58,7 @@ class Bite(Attack):
         bite_ability = next((ability for key, ability in actor.body.get_physical_abilities().items()
                              if key == PhysicalAbilities.BITE and ability >= 1))
 
-        return DiceStack(bite_ability, Dice(4))
+        return DiceStack(bite_ability, dice.D4)
 
     @classmethod
     def get_message(cls, actor, target):

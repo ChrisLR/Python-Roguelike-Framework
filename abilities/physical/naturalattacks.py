@@ -8,9 +8,13 @@ class Bite(PhysicalAbility):
 
 
 class Claw(PhysicalAbility):
-    name = "Bite"
+    name = "Claw"
     is_passive = True
     is_stackable = False
+
+    def __init__(self, value, damage_dice):
+        super().__init__(value)
+        self.damage_dice = damage_dice
 
 
 class Kick(PhysicalAbility):
