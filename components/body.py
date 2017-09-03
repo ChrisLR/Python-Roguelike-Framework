@@ -3,9 +3,9 @@ import copy
 import logging
 import random
 
+import abilities
 from combat.enums import ThreatLevel
 from components.component import Component
-import abilities
 
 logger_ = logging.getLogger()
 
@@ -125,3 +125,18 @@ class Body(Component):
         ability = body_abilities.get(ability_type.name, None)
         if ability and ability.value >= minimum_value:
             return ability
+
+    def replace_body_part(self, old_body_part, new_body_part):
+        self.bodyparts.remove(old_body_part)
+        for bodypart in self.bodyparts:
+            if old_body_part in bodypart.child_inserts:
+                bodypart.child_inserts.remove(old_body_part)
+                bodypart.child_inserts.append(new_body_part)
+
+            if old_body_part in bodypart.child_attachments:
+                bodypart.child_attachments.remove(old_body_part)
+                bodypart.child_attachments.append(new_body_part)
+
+        new_body_part.child_inserts = old_body_part.child_inserts
+        new_body_part.child_attachments = old_body_part.child_attachments
+        self.bodyparts.append(new_body_part)

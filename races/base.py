@@ -55,3 +55,7 @@ class Race(object):
     @abc.abstractclassmethod
     def racial_powers(self):
         pass
+
+    @abc.abstractclassmethod
+    def racial_level_tree(self):
+        pass

@@ -1,9 +1,9 @@
 from abilities.ability import Ability
 from abilities.power_abilities import PowerAbilities
-from components.level_tree import LevelTree
 from components.race import Race
 from stats.enums import StatsEnum
 from stats.stat import StatModifier
+from util.leveltree import LevelTree
 
 
 def build_orc_race():
@@ -17,7 +17,7 @@ def build_orc_race():
             StatModifier(StatsEnum.Intelligence, -2)
         ]
     }
-    orc_level_tree.abilities_modifiers = {
+    orc_level_tree.ability_modifiers = {
         1: [Ability(PowerAbilities.Berserk, 1)]
     }
     orc_race = Race("orc", "Orc", orc_level_tree, "orcish")
@@ -35,7 +35,7 @@ def build_troll_race():
             StatModifier(StatsEnum.Intelligence, -4)
         ]
     }
-    troll_level_tree.abilities_modifiers = {
+    troll_level_tree.ability_modifiers = {
         1: [Ability(PowerAbilities.Regeneration, 1)]
     }
     troll_race = Race("troll", "Troll", troll_level_tree, "trollish")
