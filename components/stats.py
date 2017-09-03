@@ -71,6 +71,36 @@ class Stats(Component):
         return copy_instance
 
 
+class CharacterStats(Component):
+    NAME = 'stats'
+    """
+    This is the component that implements D&D stats.
+    """
+
+    def __init__(self, base_ability_score_set):
+        super().__init__()
+        self.base_ability_score_set = base_ability_score_set
+        self.registered_modifiers = {
+            StatsEnum.Strength: [],
+            StatsEnum.Dexterity: [],
+            StatsEnum.Constitution: [],
+            StatsEnum.Intelligence: [],
+            StatsEnum.Wisdom: [],
+            StatsEnum.Charisma: [],
+        }
+
+    @property
+    def strength(self):
+        modifiers = self.registered_modifiers[StatsEnum.Strength]
+        return self.base_ability_score_set.strength + sum(modifiers)
+
+    def register_modifier(self, stat_modifier):
+        self.registered_modifiers[stat_modifier.uid].append(stat_modifier)
+
+    def unregister_modifier(self, stat_modifier):
+        self.registered_modifiers[stat_modifier.uid].remove(stat_modifier)
+
+
 def make_character_stats(health=0, strength=8, dexterity=8, constitution=8,
                          intelligence=8, charisma=8, wisdom=8, size=5, **kwargs):
     """Helper function to add common core character stats."""

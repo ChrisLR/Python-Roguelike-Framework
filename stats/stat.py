@@ -21,19 +21,11 @@ class Stat(object):
 
 
 class StatModifier(object):
-    def __init__(self, uid, value, level_progression=0):
-        self.uid = uid
+    def __init__(self, stat_enum, value):
+        self.stat_enum = stat_enum
         self.value = value
-        self.level_progression = level_progression
 
     def __int__(self):
-        return
-
-    def get_leveled_value(self, level, initial_level):
-        if self.level_progression > 0:
-            multiplier = (level - initial_level) / self.level_progression
-            return math.ceil(self.value * multiplier)
-        else:
-            return self.value
+        return self.value
 
 
