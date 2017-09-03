@@ -45,7 +45,7 @@ class BodypartsMutation(Mutation):
         body = actor.body
         if not self.swapped_body_parts:
             return
-        
+
         for old_body_part, new_body_part in self.swapped_body_parts:
             body.replace_body_part(new_body_part, old_body_part)
         EchoService.singleton.echo(self.revert_message.format(actor=functions.names_or_your(actor)))

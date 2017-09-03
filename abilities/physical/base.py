@@ -17,18 +17,27 @@ class PhysicalAbility(Ability):
 
 
 class Breathe(PhysicalAbility):
+    """
+    How well a bodypart allows to breathe.
+    """
     name = "Breathe"
     is_passive = True
     is_stackable = True
 
 
 class Eat(PhysicalAbility):
+    """
+    How well a bodypart allows to eat.
+    """
     name = "Eat"
     is_passive = True
     is_stackable = False
 
 
 class Grasp(PhysicalAbility):
+    """
+    How well a bodypart allows to grasp things.
+    """
     name = "Grasp"
     is_passive = True
     is_stackable = False
