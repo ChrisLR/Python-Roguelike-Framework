@@ -172,3 +172,7 @@ class Character(GameObject):
     @property
     def current_level(self):
         return self.location.level
+
+    @property
+    def character_level(self):
+        return self.experience_pool.total_level
