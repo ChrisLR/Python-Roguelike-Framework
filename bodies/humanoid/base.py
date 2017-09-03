@@ -76,5 +76,6 @@ class HumanoidBody(Body):
                 self.right_arm, self.right_hand,
                 self.left_leg, self.left_foot,
                 self.right_leg, self.right_foot,
+                self.teeth,
             )
         )

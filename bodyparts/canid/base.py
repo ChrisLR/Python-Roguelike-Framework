@@ -1,6 +1,7 @@
 import abilities
 from bodyparts import base
 from combat.enums import ThreatLevel
+from util import dice
 
 
 class CanidHead(base.Head):
@@ -98,7 +99,7 @@ class CanidFangs(base.Teeth):
     uid = "canid_fangs"
     relative_size = 5
     threat_level = ThreatLevel.Major
-    physical_abilities = {abilities.Bite(1)}
+    physical_abilities = {abilities.Bite(1, dice.D4)}
 
 
 class CanidTail(base.Tail):

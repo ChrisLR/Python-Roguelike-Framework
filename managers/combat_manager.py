@@ -13,7 +13,7 @@ from util.colors import Colors
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
-all_attacks = (attacks.MeleeAttack, attacks.Punch, attacks.Bite)
+all_attacks = (attacks.MeleeAttack, attacks.Punch, attacks.Bite, attacks.Claw)
 all_ranged_attacks = (attacks.FireWeapon, attacks.ThrowWeapon)
 all_defenses = (defenses.ArmorAbsorb, defenses.Block, defenses.Dodge, defenses.Miss, defenses.Parry)
 all_finishers = (finishers.Impale, finishers.ChokePunch, finishers.CrushSkull)

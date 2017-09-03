@@ -65,6 +65,5 @@ class Bite(Attack):
         else:
             return cls.observer_message.format(
                 attacker=actor.name,
-                attacker_his=functions.his_her_it(actor),
                 defender=functions.name_or_you(target)
             )

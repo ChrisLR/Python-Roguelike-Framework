@@ -4,16 +4,17 @@ from combat.attacks.base import Attack
 from combat.enums import DamageType
 from echo import functions
 from stats.enums import StatsEnum
-from util import check_roller, dice
+from util import check_roller
+from util import dice
 
 
-class Punch(Attack):
-    name = "Punch"
+class Claw(Attack):
+    name = "Claw"
     target_type = targets.Single
-    description = "Basic unarmed attack."
+    description = "Basic claw attack."
 
-    actor_message = "You swing your fist at {defender}"
-    observer_message = "{attacker} swings {attacker_his} fist at {defender}"
+    actor_message = "You swipe your claws at {defender}"
+    observer_message = "{attacker} swipes {attacker_his} claws at {defender}"
 
     @classmethod
     def can_execute(cls, attack_context):
@@ -21,7 +22,7 @@ class Punch(Attack):
         if attack_context.distance_to <= 1:
             attacker_body = attacker.body
             if attacker_body:
-                return bool(attacker_body.get_ability(abilities.Punch))
+                return bool(attacker_body.get_ability(abilities.Claw, 1))
         return False
 
     @classmethod
@@ -31,7 +32,8 @@ class Punch(Attack):
         hit_modifier = attacker.get_stat_modifier(StatsEnum.Strength)
         attack_result = cls.make_hit_roll(attack_context, hit_modifier)
         attack_result.attack_message = cls.get_message(attacker, defender)
-        attack_result.context.attacker_weapon = "fist"
+        attack_result.context.attacker_weapon = "claws"
+        attack_result.damage_message = "clawing into"
 
         cls.make_damage_roll(attack_result, hit_modifier)
 
@@ -46,13 +48,15 @@ class Punch(Attack):
             critical=attack_result.critical
         )
         attack_result.total_damage = total_damage
-        attack_result.separated_damage = [(total_damage, DamageType.Blunt)]
+        attack_result.separated_damage = [(total_damage, DamageType.Pierce)]
 
         return attack_result
 
     @classmethod
-    def get_melee_damage_dice(cls, actor):
-        return dice.DiceStack(1, dice.D1)
+    def get_melee_damage_dice(cls, attacker):
+        claw_ability = attacker.body.get_ability(abilities.Claw, 1)
+
+        return dice.DiceStack(claw_ability.value, claw_ability.damage_dice)
 
     @classmethod
     def get_message(cls, actor, target):

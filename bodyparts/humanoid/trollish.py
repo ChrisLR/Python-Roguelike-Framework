@@ -29,4 +29,4 @@ class TrollishFangs(base.Teeth):
     uid = "trollish_fangs"
     relative_size = 15
     threat_level = ThreatLevel.Major
-    physical_abilities = {abilities.Bite(1)}
+    physical_abilities = {abilities.Bite(1, dice.D6)}

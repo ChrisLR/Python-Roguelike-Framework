@@ -26,13 +26,6 @@ class Context(object):
             parameters.DefenderArmor(defender_armor),
         )
 
-    @classmethod
-    def mutation(cls, actor=None, old_body_part=None, new_body_part=None):
-        return Context(
-            parameters.Actor(actor),
-            parameters.
-        )
-
     def replace(self, message):
         for parameter in self.parameters:
             # No mutation

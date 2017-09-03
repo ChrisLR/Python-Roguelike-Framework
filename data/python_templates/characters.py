@@ -70,7 +70,7 @@ dog = Character(
 
 wolf = Character(
     uid="wolf",
-    name="wolf",
+    name="Wolf",
     character_class=character_classes.canid_class,
     character_race=races.wolf_race,
     stats=make_character_stats(health=11, constitution=12, dexterity=15, strength=12,
