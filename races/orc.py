@@ -33,3 +33,4 @@ class Orc(Race):
         racial.RelentlessEndurance,
         racial.Darkvision
     )
+    racial_level_tree = None

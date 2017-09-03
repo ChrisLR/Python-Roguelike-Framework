@@ -1,8 +1,9 @@
 import bodies
-from powers import racial
-from races.base import Race
 import bodyparts
 import mutations
+from combat import attacks
+from powers import racial
+from races.base import Race
 from stats.enums import Size
 from util import languages
 from util.abilityscoreset import AbilityScoreSet
@@ -19,15 +20,19 @@ class Troll(Race):
     age_set = AgeSet(adult_age=10, elder_age=20, maximum_age=30)
     alignment_set = AlignmentSet(chaos=True, evil=True)
     speed = 30
-    size = Size.Medium
+    size = Size.Large
     average_height = 7
     average_weight = 300
     known_languages = (languages.Giant, )
     racial_proficiencies = None
     body = bodies.TrollishBody
     racial_powers = [
+        racial.BonusAttack(attacks.Bite),
+        racial.Darkvision,
         racial.KeenSmell,
+        racial.Regeneration,
     ]
+
     racial_level_tree = LevelTree(
         mutations={
             5: mutations.BodypartsMutation(
@@ -47,5 +52,3 @@ class Troll(Race):
             ),
         }
     )
-
-

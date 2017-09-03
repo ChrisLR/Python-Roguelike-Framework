@@ -23,6 +23,7 @@ class Dragonborn(Race):
     racial_proficiencies = None
     body = bodies.DraconianBody
     racial_powers = []
+    racial_level_tree = None
 
     _possible_dragon_types = racial.DraconicAncestry.possible_types
     _breath_damage_types = racial.BreathWeapon.possible_damage_types
