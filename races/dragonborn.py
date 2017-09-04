@@ -49,7 +49,7 @@ class Dragonborn(Race):
             target_type=_breath_target_types.Line, save_stat=StatsEnum.Dexterity
         ),
         _possible_dragon_types.Copper: racial.BreathWeapon(
-            breath_range=30, damage_type=_breath_damage_types.Copper,
+            breath_range=30, damage_type=_breath_damage_types.Fire,
             target_type=_breath_target_types.Line, save_stat=StatsEnum.Dexterity
         ),
         _possible_dragon_types.Gold: racial.BreathWeapon(

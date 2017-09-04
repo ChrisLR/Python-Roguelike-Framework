@@ -1,3 +1,5 @@
+import random
+
 import bodies
 import races
 from characters.character import Character
@@ -55,27 +57,29 @@ human_thief = Character(
 )
 human_thief.register_component(Outfitter('starter_thief'))
 
-dog = Character(
-    uid="dog",
-    name="Dog",
-    character_class=character_classes.canid_class,
-    character_race=races.dog_race,
-    stats=make_character_stats(health=5, constitution=12, dexterity=14, strength=13,
-                               intelligence=3, wisdom=12, charisma=7),
-    display=Display(Colors.WHITE, Colors.BLACK, "d"),
-    body=bodies.DogBody(),
-)
 
-wolf = Character(
-    uid="wolf",
-    name="Wolf",
-    character_class=character_classes.canid_class,
-    character_race=races.wolf_race,
-    stats=make_character_stats(health=11, constitution=12, dexterity=15, strength=12,
-                               intelligence=3, wisdom=12, charisma=6),
-    display=Display(Colors.WHITE, Colors.BLACK, "w"),
-    body=bodies.WolfBody(),
-)
+# TODO Dog and Wolf are disabled until Monsters are refactored.
+# dog = Character(
+#     uid="dog",
+#     name="Dog",
+#     character_class=character_classes.canid_class,
+#     character_race=races.dog_race,
+#     stats=make_character_stats(health=5, constitution=12, dexterity=14, strength=13,
+#                                intelligence=3, wisdom=12, charisma=7),
+#     display=Display(Colors.WHITE, Colors.BLACK, "d"),
+#     body=bodies.DogBody(),
+# )
+#
+# wolf = Character(
+#     uid="wolf",
+#     name="Wolf",
+#     character_class=character_classes.canid_class,
+#     character_race=races.wolf_race,
+#     stats=make_character_stats(health=11, constitution=12, dexterity=15, strength=12,
+#                                intelligence=3, wisdom=12, charisma=6),
+#     display=Display(Colors.WHITE, Colors.BLACK, "w"),
+#     body=bodies.WolfBody(),
+# )
 
 
 character_templates = {
@@ -84,6 +88,4 @@ character_templates = {
     weak_troll.uid: weak_troll,
     human_warrior.uid: human_warrior,
     human_thief.uid: human_thief,
-    dog.uid: dog,
-    wolf.uid: wolf,
 }

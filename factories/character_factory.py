@@ -6,7 +6,7 @@ from components.effects import Effects
 from components.inventory import Inventory
 from data.python_templates.characters import character_templates
 from data.python_templates.classes import character_class_templates
-from data.python_templates.races import race_templates
+import races
 from stats.enums import StatsEnum
 
 
@@ -32,7 +32,7 @@ class CharacterFactory(object):
         else:
             raise Exception("Could not find template for UID " + uid)
 
-    def create(self, uid, name, class_uid, race_uid, stats, body_uid):
+    def create(self, uid, name, class_uid, race, stats, body_uid):
         """
         Creates a new character based on arguments
         :return:
@@ -41,7 +41,7 @@ class CharacterFactory(object):
             uid=uid,
             name=name,
             character_class=self.get_class_template_by_uid(class_uid).copy(),
-            character_race=self.get_race_template_by_uid(race_uid).copy(),
+            character_race=race,
             stats=stats,
             display=Display((255, 255, 255), (0, 0, 0), "@"),
             # TODO This is temporary, we will change this with a race refactor.

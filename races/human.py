@@ -29,7 +29,8 @@ class Human(Race):
     _breath_damage_types = racial.BreathWeapon.possible_damage_types
     _breath_target_types = racial.BreathWeapon.possible_target_types
     _possible_damage_resistance = racial.DamageResistance.possible_damage_types
-    choices = {"bonus_language": [language for language in languages.listing if language not in known_languages]}
+    choices = {"bonus_language": [language for language in languages.listing if language != languages.Common]}
 
-    def __init__(self, bonus_language):
-        self.known_languages += bonus_language,
+    def __init__(self, bonus_language=None):
+        if bonus_language:
+            self.known_languages += bonus_language,

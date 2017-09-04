@@ -1,8 +1,11 @@
 import abc
 
+from components.component import Component
 
-class Race(object):
+
+class Race(Component):
     __metaclass__ = abc.ABCMeta
+    NAME = 'race'
 
     @abc.abstractclassmethod
     def uid(self):
@@ -59,3 +62,6 @@ class Race(object):
     @abc.abstractclassmethod
     def racial_level_tree(self):
         pass
+
+    def copy(self):
+        return type(self)()
