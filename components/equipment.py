@@ -64,7 +64,7 @@ class Equipment(Component):
 
         if item.armor:
             armor = item.armor
-            if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
+            if item.size == self.host.stats.size:
                 for compatible_bodypart_uid in armor.wearable_body_parts_uid:
                     host_body_parts = self.host_body.get_body_parts(compatible_bodypart_uid)
                     for host_body_part in host_body_parts:

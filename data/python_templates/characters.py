@@ -5,16 +5,17 @@ import races
 from characters.character import Character
 from components.display import Display
 from components.outfitter import Outfitter
-from components.stats import make_character_stats
+from components.stats import CharacterStats
 from data.python_templates import classes as character_classes
 from util.colors import Colors
+from util.abilityscoreset import AbilityScoreSet
 
 weak_orc = Character(
     uid="weak_orc",
     name="Weak Orc",
     character_class=character_classes.warrior_class,
     character_race=races.Orc(),
-    stats=make_character_stats(health=10),
+    stats=CharacterStats(AbilityScoreSet.set_all(8)),
     display=Display(Colors.DARK_OLIVE_GREEN, Colors.BLACK, "O"),
     body=bodies.OrcishBody(),
 )
@@ -23,7 +24,7 @@ strong_orc = Character(
     name="Strong Orc",
     character_class=character_classes.warrior_class,
     character_race=races.Orc(),
-    stats=make_character_stats(health=16, strength=12, constitution=12),
+    stats=CharacterStats(AbilityScoreSet.set_all(8, strength=12, constitution=12)),
     display=Display(Colors.DARK_OLIVE_GREEN, Colors.BLACK, "O"),
     body=bodies.OrcishBody(),
 )
@@ -32,7 +33,7 @@ weak_troll = Character(
     name="Weak Troll",
     character_class=character_classes.warrior_class,
     character_race=races.Troll(),
-    stats=make_character_stats(health=24, strength=14, constitution=14),
+    stats=CharacterStats(AbilityScoreSet.set_all(8, strength=14, constitution=14)),
     display=Display(Colors.DARK_GREEN, Colors.BLACK, "O"),
     body=bodies.TrollishBody(),
 )
@@ -41,7 +42,7 @@ human_warrior = Character(
     name="Human Warrior",
     character_class=character_classes.warrior_class,
     character_race=races.Human(),
-    stats=make_character_stats(health=10, strength=12, constitution=12, dexterity=10),
+    stats=CharacterStats(AbilityScoreSet.set_all(8, strength=12, constitution=12, dexterity=10)),
     display=Display(Colors.WHITE, Colors.BLACK, "O"),
     body=bodies.HumanBody(),
 )
@@ -51,7 +52,7 @@ human_thief = Character(
     name="Human Thief",
     character_class=character_classes.thief_class,
     character_race=races.Human(),
-    stats=make_character_stats(health=6, constitution=10, dexterity=16),
+    stats=CharacterStats(AbilityScoreSet.set_all(8, constitution=10, dexterity=16)),
     display=Display(Colors.WHITE, Colors.BLACK, "O"),
     body=bodies.HumanBody(),
 )

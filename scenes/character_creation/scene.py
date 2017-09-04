@@ -10,7 +10,6 @@ from clubsandwich.ui import (
 )
 
 from components.needs import Needs
-from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.needs import hunger, thirst
 from data.python_templates.outfits import starter_warrior, starter_thief, starter_ranger
@@ -18,6 +17,8 @@ import races
 from scenes.game.scene import GameScene
 from ui.controls.validatedintstepperview import ValidatedIntStepperView
 from scenes.character_creation.choicesresolution import ChoicesResolutionWindow
+from components.stats import CharacterStats
+from util.abilityscoreset import AbilityScoreSet
 
 
 class CharacterCreationScene(UIScene):
@@ -159,6 +160,8 @@ class CharacterCreationScene(UIScene):
                         self.finish()
 
                 move_through_chain(None, None)
+            else:
+                self.finish()
 
     def finish(self):
         if self.choices:
@@ -170,10 +173,11 @@ class CharacterCreationScene(UIScene):
             name=self.name,
             class_uid=self.character_class.uid,
             race=race,
-            stats=make_character_stats(
-                **{uid.lower(): value for uid, value in self.stats.items()}),
-            body_uid=self.race.body.uid
+            stats=CharacterStats(AbilityScoreSet(**{uid.lower(): value for uid, value in self.stats.items()})),
+            body_uid=self.race.body.uid,
+            enforce_max_hp=True
         )
+
         player = self.game_context.player
         player.register_component(Needs.create_standard(1, 100, hunger, thirst))
         # TODO We will need a much better way to assign outfits.

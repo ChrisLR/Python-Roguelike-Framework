@@ -13,7 +13,8 @@ from clubsandwich.ui import (
 class ChoicesResolutionWindow(UIScene):
     def __init__(self, callback, choice_name, choices):
         choices = [
-            ButtonView(str(choice), callback=partial(self.callback_and_pop_scene, callback, choice, choice_name))
+            ButtonView(choice.name if hasattr(choice, 'name') else str(choice),
+                       callback=partial(self.callback_and_pop_scene, callback, choice, choice_name))
             for choice in choices
         ]
 
@@ -23,12 +24,11 @@ class ChoicesResolutionWindow(UIScene):
                 KeyAssignedListView(
                     choices,
                     value_column_width=16,
-                    layout_options=LayoutOptions(left=0.1, width=0.3, height=0.3, top=0, right=None, bottom=None)
                 ),
-            ]
+            ],
+            layout_options=LayoutOptions(left=0.25, width=0.3, height=0.5, top=0.25, right=None, bottom=None)
         )
         super().__init__(window_view)
-        self.covers_screen = False
 
     @staticmethod
     def callback_and_pop_scene(callback, choice, choice_name):

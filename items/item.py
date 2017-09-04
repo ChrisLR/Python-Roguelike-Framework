@@ -12,7 +12,7 @@ class Item(GameObject):
     Painted, customized, engraved.
     A good loot system can go a long way in terms of extending play time.
     """
-    def __init__(self, uid, name="", description="", location=None, display=None):
+    def __init__(self, uid, name="", description="", location=None, display=None, size=None, weight=None):
         super().__init__()
         self.uid = uid
         self._name = name
@@ -21,6 +21,8 @@ class Item(GameObject):
             self.register_component(location)
         if display:
             self.register_component(display)
+        self.size = size
+        self.weight = weight
 
     @property
     def description(self):

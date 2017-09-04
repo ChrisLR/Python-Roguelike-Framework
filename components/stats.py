@@ -1,75 +1,7 @@
-import six
-
 from components.component import Component
-from components.messages import QueryType, MessageType
-from stats.enums import StatsEnum
-from stats.stat import Stat
-
-
-class Stats(Component):
-    NAME = 'stats'
-    """
-    This is the component that implements core stats but can also retrieves other components stats.
-    """
-    def __init__(self, **kwargs):
-        super().__init__()
-        self._core_stats = {}
-        for key, value in six.iteritems(kwargs):
-            self.add_core_stat(StatsEnum[key.capitalize()], value, value)
-
-    def on_register(self, host):
-        super().on_register(host)
-        host.register_observer(self, MessageType.AlterStat, self.alter_stat)
-
-    def alter_stat(self, stat_altered, potency):
-        self.modify_core_current_value(stat_altered, potency)
-
-    def add_core_stat(self, stat, current_value, maximum_value):
-        if stat in StatsEnum:
-            self._core_stats[stat] = Stat(stat, current_value, maximum_value)
-
-    def modify_core_current_value(self, stat, modifier):
-        if stat in self._core_stats:
-            if self._core_stats[stat].maximum >= self._core_stats[stat].current + modifier:
-                self._core_stats[stat].current += modifier
-            else:
-                self._core_stats[stat].current = self._core_stats[stat].maximum
-
-    def set_core_current_value(self, stat, current_value):
-        if stat in self._core_stats:
-            self._core_stats[stat].current = current_value
-
-    def set_core_maximum_value(self, stat, maximum_value):
-        if stat in self._core_stats:
-            self._core_stats[stat].maximum = maximum_value
-
-    def set_total_core_value(self, stat, value):
-        self.set_core_current_value(stat, value)
-        self.set_core_maximum_value(stat, value)
-
-    def remove(self, stat):
-        if stat in self._core_stats:
-            del self._core_stats[stat]
-
-    def get_current_value(self, stat):
-        if stat in StatsEnum:
-            stat_value = 0
-            if stat in self._core_stats:
-                stat_value += self._core_stats[stat].current
-
-            responses = self.host.transmit_query(self, QueryType.StatModifier, stat=stat)
-            for response in responses:
-                if response:
-                    stat_value += response.stat_modifier_value
-
-            return stat_value
-
-    def copy(self):
-        copy_instance = Stats()
-        copy_instance._core_stats = self._core_stats.copy()
-
-        return copy_instance
-
+from stats import Stat, StatsEnum
+from stats.enums import Size
+import copy
 
 class CharacterStats(Component):
     NAME = 'stats'
@@ -77,7 +9,7 @@ class CharacterStats(Component):
     This is the component that implements D&D stats.
     """
 
-    def __init__(self, base_ability_score_set):
+    def __init__(self, base_ability_score_set, size=Size.Medium):
         super().__init__()
         self.base_ability_score_set = base_ability_score_set
         self.registered_modifiers = {
@@ -87,31 +19,50 @@ class CharacterStats(Component):
             StatsEnum.Intelligence: [],
             StatsEnum.Wisdom: [],
             StatsEnum.Charisma: [],
+            StatsEnum.Size: [],
         }
+        self.base_size = size
 
     @property
     def strength(self):
         modifiers = self.registered_modifiers[StatsEnum.Strength]
-        return self.base_ability_score_set.strength + sum(modifiers)
+        return Stat(self.base_ability_score_set.strength + sum(modifiers))
+
+    @property
+    def dexterity(self):
+        modifiers = self.registered_modifiers[StatsEnum.Dexterity]
+        return Stat(self.base_ability_score_set.dexterity + sum(modifiers))
+
+    @property
+    def constitution(self):
+        modifiers = self.registered_modifiers[StatsEnum.Constitution]
+        return Stat(self.base_ability_score_set.constitution + sum(modifiers))
+
+    @property
+    def intelligence(self):
+        modifiers = self.registered_modifiers[StatsEnum.Intelligence]
+        return Stat(self.base_ability_score_set.intelligence + sum(modifiers))
+
+    @property
+    def wisdom(self):
+        modifiers = self.registered_modifiers[StatsEnum.Wisdom]
+        return Stat(self.base_ability_score_set.wisdom + sum(modifiers))
+
+    @property
+    def charisma(self):
+        modifiers = self.registered_modifiers[StatsEnum.Charisma]
+        return Stat(self.base_ability_score_set.charisma + sum(modifiers))
+
+    @property
+    def size(self):
+        modifiers = self.registered_modifiers[StatsEnum.Size]
+        return Stat(self.base_size + sum(modifiers))
 
     def register_modifier(self, stat_modifier):
-        self.registered_modifiers[stat_modifier.uid].append(stat_modifier)
+        self.registered_modifiers[stat_modifier.stat_enum].append(stat_modifier)
 
     def unregister_modifier(self, stat_modifier):
-        self.registered_modifiers[stat_modifier.uid].remove(stat_modifier)
+        self.registered_modifiers[stat_modifier.stat_enum].remove(stat_modifier)
 
-
-def make_character_stats(health=0, strength=8, dexterity=8, constitution=8,
-                         intelligence=8, charisma=8, wisdom=8, size=5, **kwargs):
-    """Helper function to add common core character stats."""
-    stats = Stats()
-    stats.add_core_stat(StatsEnum.Health, health, health)
-    stats.add_core_stat(StatsEnum.Strength, strength, strength)
-    stats.add_core_stat(StatsEnum.Dexterity, dexterity, dexterity)
-    stats.add_core_stat(StatsEnum.Constitution, constitution, constitution)
-    stats.add_core_stat(StatsEnum.Intelligence, intelligence, intelligence)
-    stats.add_core_stat(StatsEnum.Charisma, charisma, charisma)
-    stats.add_core_stat(StatsEnum.Weight, wisdom, wisdom)
-    stats.add_core_stat(StatsEnum.Size, size, size)
-
-    return stats
+    def copy(self):
+        return CharacterStats(copy.copy(self.base_ability_score_set))

@@ -2,7 +2,6 @@ import data.python_templates.material
 from combat.enums import DamageType
 from components.armor import Armor
 from components.display import Display
-from components.stats import Stats
 from components.weapon import Weapon
 from items import enums as item_enums
 from items.item import Item
@@ -17,9 +16,9 @@ def build_short_sword():
         name="Short Sword",
         description="A short sword.",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium
     )
     _short_sword.register_component(data.python_templates.material.Iron.copy())
-    _short_sword.register_component(Stats(health=1, size=Size.Medium))
     _short_sword.register_component(
         Weapon(weapon_category=item_enums.WeaponCategory.Martial, weapon_type=item_enums.WeaponType.Melee,
                size=Size.Small, melee_damage_type=DamageType.Pierce, melee_damage_dice=dice.DiceStack(1, dice.D6))
@@ -34,9 +33,9 @@ def build_long_sword():
         name="Longsword",
         description="A longsword.",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium
     )
     _long_sword.register_component(data.python_templates.material.Iron.copy())
-    _long_sword.register_component(Stats(health=1, size=Size.Medium))
     _long_sword.register_component(
         Weapon(weapon_category=item_enums.WeaponCategory.Martial, weapon_type=item_enums.WeaponType.Melee,
                size=Size.Medium, melee_damage_type=DamageType.Slash, melee_damage_dice=dice.DiceStack(1, dice.D8))
@@ -51,9 +50,9 @@ def build_helmet():
         name="Helmet",
         description="A helmet.",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=2
     )
     _helmet.register_component(data.python_templates.material.Iron.copy())
-    _helmet.register_component(Stats(health=10, size=Size.Medium, weight=2))
     _helmet.register_component(
         Armor(
             base_armor_class=2,
@@ -72,9 +71,9 @@ def build_leather_hood():
         name="hood",
         description="A leather hood.",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=2
     )
     _item.register_component(data.python_templates.material.Leather.copy())
-    _item.register_component(Stats(health=10, size=Size.Medium, weight=2))
     _item.register_component(
         Armor(
             base_armor_class=2,
@@ -93,9 +92,9 @@ def build_breastplate():
         name="Breastplate",
         description="An iron breastplate..",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=4
     )
     _breastplate.register_component(data.python_templates.material.Iron.copy())
-    _breastplate.register_component(Stats(health=10, size=Size.Medium, weight=4))
     _breastplate.register_component(
         Armor(
             base_armor_class=4,
@@ -114,9 +113,9 @@ def build_leather_cuirass():
         name="Cuirass",
         description="A leather cuirass",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=4
     )
     _item.register_component(data.python_templates.material.Leather.copy())
-    _item.register_component(Stats(health=10, size=Size.Medium, weight=4))
     _item.register_component(
         Armor(
             base_armor_class=4,
@@ -135,9 +134,9 @@ def build_bracer():
         name="Bracer",
         description="An iron bracer",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=0.5
     )
     _bracers.register_component(data.python_templates.material.Iron.copy())
-    _bracers.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
     _bracers.register_component(
         Armor(
             base_armor_class=0.5,
@@ -156,9 +155,9 @@ def build_gauntlet():
         name="Gauntlet",
         description="An iron gauntlet",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=0.5
     )
     _gauntlet.register_component(data.python_templates.material.Iron.copy())
-    _gauntlet.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
     _gauntlet.register_component(
         Armor(
             base_armor_class=0.5,
@@ -177,9 +176,9 @@ def build_greave():
         name="Greave",
         description="An iron greave",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=0.5
     )
     _greave.register_component(data.python_templates.material.Iron.copy())
-    _greave.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
     _greave.register_component(
         Armor(
             base_armor_class=0.5,
@@ -199,9 +198,9 @@ def build_leather_pants():
         name="pants",
         description="Leather pants",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=0.5
     )
     item.register_component(data.python_templates.material.Leather.copy())
-    item.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
     item.register_component(
         Armor(
             base_armor_class=1,
@@ -220,9 +219,9 @@ def build_boot():
         name="Boot",
         description="An iron boot",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium, weight=0.5
     )
     _boot.register_component(data.python_templates.material.Iron.copy())
-    _boot.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
     _boot.register_component(
         Armor(
             base_armor_class=0.5,
@@ -241,9 +240,9 @@ def build_longbow():
         name="Longbow",
         description="A Longbow",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Medium
     )
     _longbow.register_component(data.python_templates.material.Wood.copy())
-    _longbow.register_component(Stats(health=1, size=Size.Medium))
     _longbow.register_component(
         Weapon(
             weapon_category=item_enums.WeaponCategory.Martial,
@@ -270,9 +269,9 @@ def build_dagger():
         name="Dagger",
         description="A Dagger",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Small
     )
     _dagger.register_component(data.python_templates.material.Iron.copy())
-    _dagger.register_component(Stats(health=1, size=Size.Small))
     _dagger.register_component(
         Weapon(
             weapon_category=item_enums.WeaponCategory.Simple,
@@ -299,9 +298,9 @@ def build_arrow():
         name="Arrow",
         description="An arrow",
         display=Display(Colors.DARK_GRAY, Colors.BLACK, "!"),
+        size=Size.Small
     )
     _arrow.register_component(data.python_templates.material.Wood.copy())
-    _arrow.register_component(Stats(health=1, size=Size.Small))
 
     return _arrow
 

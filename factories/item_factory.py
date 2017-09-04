@@ -4,7 +4,6 @@ from data.python_templates.material import material_templates
 from stats.enums import Size
 from items.item import Item
 from components.consumable import Consumable
-from components.stats import Stats
 
 
 class ItemFactory(object):
@@ -56,7 +55,7 @@ class ItemFactory(object):
         material.name = name
         material.uid = uid
 
-        new_food_item = Item(uid=uid, name=name, description=description)
+        new_food_item = Item(uid=uid, name=name, description=description, size=Size.Tiny)
         on_consume_effects = []
         if nutrition_value:
             nutrition_effect = effects.restore_hunger.copy()
@@ -70,7 +69,6 @@ class ItemFactory(object):
             Consumable(message="{actor} eat a {target_item}", effects=on_consume_effects)
         )
         new_food_item.register_component(material)
-        new_food_item.register_component(Stats(size=Size.Tiny))
 
         return new_food_item
 
@@ -92,11 +90,10 @@ class ItemFactory(object):
         if extra_effects:
             on_consume_effects.extend(extra_effects)
 
-        new_food_item = Item(uid=uid, name=name, description=description)
+        new_food_item = Item(uid=uid, name=name, description=description, size=Size.Tiny)
         new_food_item.register_component(
             Consumable(message="{actor} drink from {target_item}", effects=on_consume_effects))
         new_food_item.register_component(material)
-        new_food_item.register_component(Stats(size=Size.Tiny))
 
         return new_food_item
 

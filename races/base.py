@@ -1,5 +1,6 @@
 import abc
 
+import stats
 from components.component import Component
 
 
@@ -65,3 +66,19 @@ class Race(Component):
 
     def copy(self):
         return type(self)()
+
+    # noinspection PyTypeChecker
+    def on_register(self, host):
+        super().on_register(host)
+        if self.ability_score_adjustments and host.stats:
+            for modifier in self.ability_score_adjustments.as_modifiers:
+                host.stats.register_modifier(modifier)
+
+        if host.stats:
+            host.stats.base_size = self.size
+
+    def on_unregister(self):
+        if self.ability_score_adjustments and self.host.stats:
+            for modifier in self.ability_score_adjustments.as_modifiers:
+                self.host.stats.unregister_modifier(modifier)
+        super().on_unregister()
