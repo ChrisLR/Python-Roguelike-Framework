@@ -37,8 +37,14 @@ def build_long_sword():
     )
     _long_sword.register_component(data.python_templates.material.Iron.copy())
     _long_sword.register_component(
-        Weapon(weapon_category=item_enums.WeaponCategory.Martial, weapon_type=item_enums.WeaponType.Melee,
-               size=Size.Medium, melee_damage_type=DamageType.Slash, melee_damage_dice=dice.DiceStack(1, dice.D8))
+        Weapon(
+            weapon_category=item_enums.WeaponCategory.Martial,
+            weapon_type=item_enums.WeaponType.Melee,
+            size=Size.Medium,
+            melee_damage_type=DamageType.Slash,
+            melee_damage_dice=dice.DiceStack(1, dice.D8),
+            two_handed=True
+        )
     )
 
     return _long_sword
@@ -247,7 +253,7 @@ def build_longbow():
         Weapon(
             weapon_category=item_enums.WeaponCategory.Martial,
             weapon_type=item_enums.WeaponType.Ranged,
-            size=Size.Medium,
+            size=Size.Large,
             melee_damage_type=DamageType.Blunt,
             melee_damage_dice=dice.DiceStack(1, dice.D4),
             ammunition_uid="arrow",

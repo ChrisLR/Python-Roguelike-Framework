@@ -94,10 +94,6 @@ class Character(GameObject):
         # TODO Figure out better ways to calculate this
         return self.stats.strength.modifier
 
-    def get_health_modifier(self):
-        # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(StatsEnum.Health)
-
     def get_speed_modifier(self):
         # TODO Figure out better ways to calculate this
         return self.stats.dexterity.modifier

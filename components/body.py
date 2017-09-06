@@ -96,9 +96,13 @@ class Body(Component):
         return self._random_roll_body_part(size_sorted_body_parts)
 
     def get_grasp_able_body_parts(self):
-        return [bodypart for bodypart in self.bodyparts
-                if bodypart.physical_abilities
-                and abilities.Grasp in bodypart.physical_abilities]
+        return [
+            bodypart for bodypart in self.bodyparts
+            if bodypart.physical_abilities and
+               [
+                   grasp for grasp in bodypart.physical_abilities if isinstance(grasp, abilities.Grasp)
+               ]
+        ]
 
     def get_physical_abilities(self):
         body_abilities = {}

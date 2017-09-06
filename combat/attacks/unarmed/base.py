@@ -28,7 +28,7 @@ class Punch(Attack):
     def execute(cls, attack_context):
         attacker = attack_context.attacker
         defender = attack_context.defender
-        hit_modifier = attacker.get_stat_modifier(StatsEnum.Strength)
+        hit_modifier = attacker.stats.strength.modifier
         attack_result = cls.make_hit_roll(attack_context, hit_modifier)
         attack_result.attack_message = cls.get_message(attacker, defender)
         attack_result.context.attacker_weapon = "fist"

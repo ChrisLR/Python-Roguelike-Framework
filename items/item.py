@@ -1,4 +1,5 @@
 from components.game_object import GameObject
+import stats
 
 
 class Item(GameObject):
@@ -21,7 +22,7 @@ class Item(GameObject):
             self.register_component(location)
         if display:
             self.register_component(display)
-        self.size = size
+        self.size = stats.Stat(size.value)
         self.weight = weight
 
     @property
@@ -45,6 +46,6 @@ class Item(GameObject):
         self._name = value
 
     def copy(self):
-        new_item = Item(self.uid, self._name, self._description, self.display)
+        new_item = Item(self.uid, self._name, self._description, self.display, size=self.size)
         return super().copy_to(new_item)
 

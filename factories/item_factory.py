@@ -41,6 +41,7 @@ class ItemFactory(object):
             name=item_template.name,
             description=item_template.description,
             display=item_template.display.copy(),
+            size=item_template.size
         )
         item_template.copy_to(new_instance)
 

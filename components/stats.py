@@ -56,7 +56,7 @@ class CharacterStats(Component):
     @property
     def size(self):
         modifiers = self.registered_modifiers[StatsEnum.Size]
-        return Stat(self.base_size + sum(modifiers))
+        return Stat(self.base_size.value + sum(modifiers))
 
     def register_modifier(self, stat_modifier):
         self.registered_modifiers[stat_modifier.stat_enum].append(stat_modifier)

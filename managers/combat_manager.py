@@ -62,7 +62,7 @@ def execute_combat_round(attacker, defender, attack_context=None):
 
     for attack_result in attack_results:
         attack_result.context.attack_used = attack_template
-        threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
+        threat_level = get_threat_level(attack_result.total_damage, defender.health.current)
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
         death = False
         if attack_result.success:
@@ -101,7 +101,7 @@ def take_damage(actor, attack_result):
                 wound_strings.append(attack_result.damage_message)
             else:
                 wound_strings.append(describe_wounds(damage_type))
-            actor.stats.modify_core_current_value(StatsEnum.Health, -damage)
+            actor.health.current -= damage
 
     damage_string += ",".join(wound_strings)
     damage_string += " {} {} for {} damage!".format(
@@ -113,7 +113,7 @@ def take_damage(actor, attack_result):
     is_killing_blow = False
     is_finisher = False
     # check for death. if there's a death function, call it
-    if actor.stats.get_current_value(StatsEnum.Health) <= 0:
+    if actor.health.current <= 0:
         is_killing_blow = True
         if random.randint(0, 100) <= 10:
             # Here, instead of displaying the damage, we try to execute a finisher.

@@ -34,7 +34,7 @@ class ThrowWeapon(RangedAttack):
         attacker = attack_context.attacker
         defender = attack_context.defender
         attacker_weapon = attack_context.attacker_weapon
-        hit_modifier = attacker.get_stat_modifier(StatsEnum.Dexterity)
+        hit_modifier = attacker.stats.dexterity.modifier
 
         attack_result = cls.make_hit_roll(attack_context, hit_modifier)
         attack_result.attack_message = cls.get_message(attack_context)
