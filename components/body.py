@@ -1,8 +1,9 @@
 import abc
+import copy
 import logging
 import random
 
-from abilities.physical_abilities import PhysicalAbilities
+import abilities
 from combat.enums import ThreatLevel
 from components.component import Component
 
@@ -95,21 +96,51 @@ class Body(Component):
         return self._random_roll_body_part(size_sorted_body_parts)
 
     def get_grasp_able_body_parts(self):
-        return [bodypart for bodypart in self.bodyparts
-                if bodypart.physical_abilities
-                and PhysicalAbilities.GRASP in bodypart.physical_abilities]
+        return [
+            bodypart for bodypart in self.bodyparts
+            if bodypart.physical_abilities and
+               [
+                   grasp for grasp in bodypart.physical_abilities if isinstance(grasp, abilities.Grasp)
+               ]
+        ]
 
     def get_physical_abilities(self):
-        abilities = {}
+        body_abilities = {}
         for bodypart in self.bodyparts:
             if not bodypart.physical_abilities:
                 continue
 
-            for ability_name, ability_value in bodypart.physical_abilities.items():
-                if ability_name not in abilities:
-                    abilities[ability_name] = ability_value
+            for ability in bodypart.physical_abilities:
+                if ability.name not in body_abilities:
+                    body_abilities[ability.name] = ability
                 else:
-                    if abilities[ability_name] < ability_value:
-                        abilities[ability_name] = ability_value
+                    if ability.is_stackable:
+                        joint_ability = copy.copy(ability)
+                        joint_ability.value += body_abilities.pop(ability.name).value
+                        body_abilities[ability.name] = joint_ability
 
-        return abilities
+                    if body_abilities[ability.name].value < ability.value:
+                        body_abilities[ability.name] = ability
+
+        return body_abilities
+
+    def get_ability(self, ability_type, minimum_value=0):
+        body_abilities = self.get_physical_abilities()
+        ability = body_abilities.get(ability_type.name, None)
+        if ability and ability.value >= minimum_value:
+            return ability
+
+    def replace_body_part(self, old_body_part, new_body_part):
+        self.bodyparts.remove(old_body_part)
+        for bodypart in self.bodyparts:
+            if old_body_part in bodypart.child_inserts:
+                bodypart.child_inserts.remove(old_body_part)
+                bodypart.child_inserts.append(new_body_part)
+
+            if old_body_part in bodypart.child_attachments:
+                bodypart.child_attachments.remove(old_body_part)
+                bodypart.child_attachments.append(new_body_part)
+
+        new_body_part.child_inserts = old_body_part.child_inserts
+        new_body_part.child_attachments = old_body_part.child_attachments
+        self.bodyparts.append(new_body_part)

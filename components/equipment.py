@@ -1,5 +1,6 @@
 from components.component import Component
 from components.messages import QueryType
+from managers.echo import EchoService
 from stats.enums import StatsEnum
 from util.decorators import cached, invalidate_cache
 
@@ -64,7 +65,7 @@ class Equipment(Component):
 
         if item.armor:
             armor = item.armor
-            if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
+            if item.size == self.host.stats.size:
                 for compatible_bodypart_uid in armor.wearable_body_parts_uid:
                     host_body_parts = self.host_body.get_body_parts(compatible_bodypart_uid)
                     for host_body_part in host_body_parts:
@@ -77,6 +78,7 @@ class Equipment(Component):
                             else:
                                 self.worn_equipment_map[host_body_part] = [item]
                                 return True
+
         return False
 
     @invalidate_cache
@@ -85,33 +87,31 @@ class Equipment(Component):
             self.host_body = self.host.body
 
         # Wielding requires bodyparts with GRASP
-        grasp_able_body_parts = self.host_body.get_grasp_able_body_parts()
+        grasp_able_body_parts = sorted(
+            [free_body_part for free_body_part in
+             self.host_body.get_grasp_able_body_parts()
+             if free_body_part not in self.wielded_equipment_map],
+            key=lambda x: x.relative_size, reverse=True
+        )
+
         # Wielding with one hand gets priority
-        two_hands_wielders = []
-        for grasp_able_body_part in grasp_able_body_parts:
-            if grasp_able_body_part in self.wielded_equipment_map:
-                continue
-
+        wielding_body_parts = []
+        total_size_held = 0
+        while grasp_able_body_parts:
+            free_body_part = grasp_able_body_parts.pop(0)
+            wielding_body_parts.append(free_body_part)
+            item_size = item.size.value
             # 10 is the normal relative_size for a hand
-            relative_size_modifier = grasp_able_body_part.relative_size - 10
+            relative_size_modifier = free_body_part.relative_size - 10
             relative_size_modifier = round(relative_size_modifier / 10) if relative_size_modifier else 0
-            relative_size = self.host.stats.get_current_value(StatsEnum.Size) + relative_size_modifier
-            item_size = int(item.stats.get_current_value(StatsEnum.Size))
-            if relative_size >= item_size:
-                # Can be wielded in one "hands"
-                self.wielded_equipment_map[grasp_able_body_part] = item
-                return True
-            elif relative_size < item_size <= relative_size + 2:
-                # Can be wielded in two "hands"
-                two_hands_wielders.append(grasp_able_body_part)
+            relative_size = self.host.stats.size.value + relative_size_modifier
 
-        if len(two_hands_wielders) >= 2:
-            first_wield = two_hands_wielders[0]
-            second_wield = two_hands_wielders[1]
-            self.wielded_equipment_map[first_wield] = item
-            self.wielded_equipment_map[second_wield] = item
-            return True
-
+            total_size_held += relative_size
+            if total_size_held >= item_size:
+                if item.weapon.two_handed and len(wielding_body_parts) >= 2 or not item.weapon.two_handed:
+                    for body_part in wielding_body_parts:
+                        self.wielded_equipment_map[body_part] = item
+                    return True
         return False
 
     @cached

@@ -14,14 +14,14 @@ class Outfit(object):
 
     def apply(self, game_object):
         if game_object.stats:
-            new_size = game_object.stats.get_current_value(StatsEnum.Size)
+            new_size = game_object.stats.size
             if game_object.equipment:
                 for item in self.items_worn:
-                    item.stats.set_total_core_value(StatsEnum.Size, new_size)
+                    item.size = new_size
                     game_object.equipment.wear(item)
 
                 for item in self.items_held:
-                    item.stats.set_total_core_value(StatsEnum.Size, new_size)
+                    item.size = new_size
                     game_object.equipment.wield(item)
 
             if game_object.inventory:

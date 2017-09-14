@@ -7,10 +7,11 @@ from components.location import Location
 from components.inventory import Inventory
 from stats.enums import StatsEnum
 from components.game_object import GameObject
+from components.health import Health
 
 
 class Character(GameObject):
-    def __init__(self, uid, name, character_class, character_race, stats, display, body,
+    def __init__(self, uid, name, character_class, character_race, stats, display, body, health=None,
                  inventory=None, main_experience_pool=None, location=None, equipment=None, sex=None):
         super().__init__()
         self.uid = uid
@@ -20,14 +21,14 @@ class Character(GameObject):
         else:
             self.register_component(main_experience_pool)
 
+        if stats:
+            self.register_component(stats)
+
         if character_class:
             self.register_component(character_class)
 
         if character_race:
             self.register_component(character_race)
-
-        if stats:
-            self.register_component(stats)
 
         if equipment:
             self.register_component(equipment)
@@ -47,6 +48,11 @@ class Character(GameObject):
 
         if body:
             self.register_component(body)
+
+        if not health:
+            health = Health(False)
+        self.register_component(health)
+
         self.is_player = False
         self.sex = sex if sex else Sex.Male
 
@@ -82,23 +88,15 @@ class Character(GameObject):
         :return: bool
         """
         # TODO Make this
-        return self.stats.get_current_value(StatsEnum.Health) <= 0
-
-    def get_stat_modifier(self, stat):
-        current_total = self.stats.get_current_value(stat)
-        return math.floor((current_total - 10) / 2)
+        return self.health.current <= 0
 
     def get_attack_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(StatsEnum.Strength)
-
-    def get_health_modifier(self):
-        # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(StatsEnum.Health)
+        return self.stats.strength.modifier
 
     def get_speed_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(StatsEnum.Dexterity)
+        return self.stats.dexterity.modifier
 
     def get_armor_class(self):
         base_ac = self._get_base_armor_class()
@@ -112,7 +110,7 @@ class Character(GameObject):
 
     def get_effective_dex_modifier(self):
         max_dex_modifier = self._get_maximum_dex_bonus()
-        effective_dex_modifier = self.get_stat_modifier(StatsEnum.Dexterity)
+        effective_dex_modifier = self.stats.dexterity.modifier
         if effective_dex_modifier > max_dex_modifier:
             effective_dex_modifier = max_dex_modifier
 
@@ -123,7 +121,7 @@ class Character(GameObject):
         return 10
 
     def _get_maximum_dex_bonus(self):
-        # This deviates from normal D&D rules but the benefit
+        # This deviates from normal SRD5 rules but the benefit
         # of handling multiple armor pieces is worth it.
         # This should still be close enough to the rules.
         total_weight = self.equipment.get_load_of_worn_items()
@@ -172,3 +170,7 @@ class Character(GameObject):
     @property
     def current_level(self):
         return self.location.level
+
+    @property
+    def character_level(self):
+        return self.experience_pool.total_level

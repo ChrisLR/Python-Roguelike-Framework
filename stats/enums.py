@@ -20,7 +20,7 @@ class StatsEnum(Enum):
     ArmorClass = 'armor_class'
 
 
-class Size:
+class Size(Enum):
     Fine = 0
     Diminutive = 1
     Tiny = 2

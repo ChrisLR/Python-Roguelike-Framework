@@ -43,3 +43,11 @@ class Actor(ContextParameter):
 
 class TargetItem(ContextParameter):
     wildcard = "{target_item}"
+
+
+class OldBodyPart(ContextParameter):
+    wildcard = "{old_body_part}"
+
+
+class NewBodyPart(ContextParameter):
+    wildcard = "{new_body_part}"

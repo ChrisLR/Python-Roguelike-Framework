@@ -15,15 +15,15 @@ class ItemQueryWindow(UIScene):
         self.covers_screen = True
         wielded_buttons = [
             ButtonView(item.name, callback=partial(self.callback_and_pop_scene, callback, item))
-            for item in wielded_items
+            for item in sorted(set(wielded_items), key=lambda item: item.name)
         ]
         worn_buttons = [
             ButtonView(item.name, callback=partial(self.callback_and_pop_scene, callback, item))
-            for item in worn_items
+            for item in sorted(set(worn_items), key=lambda item: item.name)
         ]
         inventory_buttons = [
             ButtonView(item.name, callback=partial(self.callback_and_pop_scene, callback, item))
-            for item in inventory_items
+            for item in sorted(set(inventory_items), key=lambda item: item.name)
         ]
 
         window_view = WindowView(

@@ -35,7 +35,7 @@ class ExperiencePool(Component):
 
     def __init__(self):
         super().__init__()
-        self.total_level = 0
+        self.total_level = 1
         self.unspent_levels = 0
         self.experience = 0
         self.child_pools = {}

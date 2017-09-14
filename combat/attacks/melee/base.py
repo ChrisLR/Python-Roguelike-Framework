@@ -46,7 +46,7 @@ class MeleeAttack(Attack):
             attack_result.attack_message = cls.get_message_for_weapon(attack_context)
             attack_result.context.attacker_weapon = weapon
             str_modifier = hit_modifier if stat_used == StatsEnum.Strength \
-                else attack_context.attacker.get_stat_modifier(StatsEnum.Strength)
+                else attack_context.attacker.stats.strength.modifier
 
             cls.make_damage_roll(attack_result, weapon, str_modifier, is_offhand)
 
@@ -75,9 +75,9 @@ class MeleeAttack(Attack):
     def get_stat_used(cls, attack_context):
         attacker = attack_context.attacker
         weapon_component = attack_context.attacker_weapon.weapon
-        str_modifier = attacker.get_stat_modifier(StatsEnum.Strength)
+        str_modifier = attacker.stats.strength.modifier
         if weapon_component and weapon_component.finesse:
-            dex_modifier = attacker.get_stat_modifier(StatsEnum.Dexterity)
+            dex_modifier = attacker.stats.dexterity.modifier
             if dex_modifier > str_modifier:
                 return StatsEnum.Dexterity, dex_modifier
 
@@ -104,7 +104,7 @@ class MeleeAttack(Attack):
             return 0
 
         if str_modifier is None:
-            str_modifier = attack_result.attacker.get_stat_modifier(StatsEnum.Strength)
+            str_modifier = attack_result.attacker.stats.strength.modifier
 
         return str_modifier
 
@@ -113,7 +113,7 @@ class MeleeAttack(Attack):
         weapon = weapon_item.weapon
         if weapon:
             return weapon_item.weapon.melee_damage_dice
-        return DiceStack(1, Dice(4))
+        return DiceStack(1, dice.D4)
 
     @classmethod
     def get_melee_damage_type(cls, item):

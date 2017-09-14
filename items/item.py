@@ -1,4 +1,5 @@
 from components.game_object import GameObject
+import stats
 
 
 class Item(GameObject):
@@ -12,7 +13,7 @@ class Item(GameObject):
     Painted, customized, engraved.
     A good loot system can go a long way in terms of extending play time.
     """
-    def __init__(self, uid, name="", description="", location=None, display=None):
+    def __init__(self, uid, name="", description="", location=None, display=None, size=None, weight=None):
         super().__init__()
         self.uid = uid
         self._name = name
@@ -21,6 +22,8 @@ class Item(GameObject):
             self.register_component(location)
         if display:
             self.register_component(display)
+        self.size = stats.Stat(size.value)
+        self.weight = weight
 
     @property
     def description(self):
@@ -43,6 +46,6 @@ class Item(GameObject):
         self._name = value
 
     def copy(self):
-        new_item = Item(self.uid, self._name, self._description, self.display)
+        new_item = Item(self.uid, self._name, self._description, self.display, size=self.size)
         return super().copy_to(new_item)
 

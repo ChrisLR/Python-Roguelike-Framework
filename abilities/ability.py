@@ -13,3 +13,4 @@ class Ability(object):
             return math.ceil(self.power * multiplier)
         else:
             return self.power
+

@@ -15,7 +15,7 @@ class HudWindow(RectView):
 
     @staticmethod
     def draw_gui(player, ctx):
-        ctx.printf(Point(0, 0), "Health: {}\n\n".format(int(player.stats.get_current_value(StatsEnum.Health))))
+        ctx.printf(Point(0, 0), "Health: {}\n\n".format(int(player.health.current)))
         ctx.printf(Point(0, 1), "Attack Power: {}\n\n".format(player.get_attack_modifier()))
         ctx.printf(Point(0, 2), "Defense: {}\n\n".format(player.get_armor_class()))
         ctx.printf(Point(0, 3), "Speed: {}\n\n".format(player.get_speed_modifier()))

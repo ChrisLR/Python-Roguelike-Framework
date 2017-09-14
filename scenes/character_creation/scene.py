@@ -10,13 +10,15 @@ from clubsandwich.ui import (
 )
 
 from components.needs import Needs
-from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.needs import hunger, thirst
 from data.python_templates.outfits import starter_warrior, starter_thief, starter_ranger
-from data.python_templates.races import race_templates
+import races
 from scenes.game.scene import GameScene
 from ui.controls.validatedintstepperview import ValidatedIntStepperView
+from scenes.character_creation.choicesresolution import ChoicesResolutionWindow
+from components.stats import CharacterStats
+from util.abilityscoreset import AbilityScoreSet
 
 
 class CharacterCreationScene(UIScene):
@@ -28,7 +30,7 @@ class CharacterCreationScene(UIScene):
         self.game_context = game_context
         self.sorted_classes = sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
         sorted_classes_names = [character_class.name for character_class in self.sorted_classes]
-        self.sorted_races = sorted(race_templates.values(), key=lambda race: race.name)
+        self.sorted_races = races.listing
         sorted_races_names = [race.name for race in self.sorted_races]
 
         views = [
@@ -94,7 +96,7 @@ class CharacterCreationScene(UIScene):
                     min_value=8, max_value=15,
                     layout_options=LayoutOptions(**get_right_layout(12, width=5))
                 ),
-                ButtonView('Finish', self.finish,
+                ButtonView('Finish', self.check_choices,
                            layout_options=LayoutOptions(**get_left_layout(13, left=0.45)))
             ])
         ]
@@ -114,6 +116,7 @@ class CharacterCreationScene(UIScene):
             "Wisdom": 8
         }
         self.points_left = 27
+        self.choices = {}
 
     def set_name(self, value):
         self.name = value
@@ -142,16 +145,39 @@ class CharacterCreationScene(UIScene):
                 return True
         return False
 
+    def check_choices(self):
+        if not self.choices:
+            if hasattr(self.race, 'choices'):
+                chain = ((key, value) for key, value in self.race.choices.items())
+
+                def move_through_chain(choice, choice_name):
+                    if choice and choice_name:
+                        self.choices[choice_name] = choice
+                    choice_name, choices = next(chain, (None, None))
+                    if choice_name:
+                        self.director.push_scene(ChoicesResolutionWindow(move_through_chain, choice_name, choices))
+                    else:
+                        self.finish()
+
+                move_through_chain(None, None)
+            else:
+                self.finish()
+
     def finish(self):
+        if self.choices:
+            race = self.race(**self.choices)
+        else:
+            race = self.race()
         self.game_context.player = self.character_factory.create(
             uid="player",
             name=self.name,
             class_uid=self.character_class.uid,
-            race_uid=self.race.uid,
-            stats=make_character_stats(
-                **{uid.lower(): value for uid, value in self.stats.items()}),
-            body_uid=self.race.body_template_uid
+            race=race,
+            stats=CharacterStats(AbilityScoreSet(**{uid.lower(): value for uid, value in self.stats.items()})),
+            body_uid=self.race.body.uid,
+            enforce_max_hp=True
         )
+
         player = self.game_context.player
         player.register_component(Needs.create_standard(1, 100, hunger, thirst))
         # TODO We will need a much better way to assign outfits.
