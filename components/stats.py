@@ -6,7 +6,7 @@ import copy
 class CharacterStats(Component):
     NAME = 'stats'
     """
-    This is the component that implements D&D stats.
+    This is the component that implements SRD5 stats.
     """
 
     def __init__(self, base_ability_score_set, size=Size.Medium):

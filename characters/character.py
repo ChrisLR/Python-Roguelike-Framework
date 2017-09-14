@@ -121,7 +121,7 @@ class Character(GameObject):
         return 10
 
     def _get_maximum_dex_bonus(self):
-        # This deviates from normal D&D rules but the benefit
+        # This deviates from normal SRD5 rules but the benefit
         # of handling multiple armor pieces is worth it.
         # This should still be close enough to the rules.
         total_weight = self.equipment.get_load_of_worn_items()

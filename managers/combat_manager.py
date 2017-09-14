@@ -10,7 +10,7 @@ from managers.echo import EchoService
 from stats.enums import StatsEnum
 from util.colors import Colors
 
-# TODO We are going the D&D 5E SRD route.
+# TODO We are going the SRD5 route.
 # TODO It still means we can have several attack flavors and defense flavors
 # TODO But we should streamline the actual attacks.
 all_attacks = (attacks.MeleeAttack, attacks.Punch, attacks.Bite, attacks.Claw)
