@@ -3,6 +3,7 @@ from stats import Stat, StatsEnum
 from stats.enums import Size
 import copy
 
+
 class CharacterStats(Component):
     NAME = 'stats'
     """
